@@ -1,0 +1,37 @@
+config:
+  admin:
+    password: aaaaaa
+    reset-pwd-when-updated-at: 1235
+  issuer: io.github.jinganix.admin.starter
+  jwt-secret: test-jwt-secret
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: admin-starter-service
+  profiles:
+    default: local
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/admin_starter
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+    visibility:
+      field: none
+      getter: any
+      is-getter: any
+      setter: any
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        auto_quote_keyword: true
+        jdbc:
+          batch_size: 100
+  data:
+    redis:
+      url: redis://127.0.0.1:6379

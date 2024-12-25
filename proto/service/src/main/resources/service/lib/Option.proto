@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package OptionProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.lib.option";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+
+message OptionStringPb {
+  option (m_opts).java = {annotation: '@Generated'};
+
+  required string label = 1;
+  required string value = 2;
+}
+
+message OptionIntegerPb {
+  option (m_opts).java = {annotation: '@Generated'};
+
+  required string label = 1;
+  required int32 value = 2;
+}

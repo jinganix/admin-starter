@@ -1,0 +1,41 @@
+syntax = "proto2";
+
+package SysAuditProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.sys.audit";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+import "service/lib/Pageable.proto";
+
+message AuditPb {
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required string username = 2 [(opts).java = {annotation: '@NotNull'}];
+  required string method = 3 [(opts).java = {annotation: '@NotNull'}];
+  required string path = 4 [(opts).java = {annotation: '@NotNull'}];
+  required int64 createdAt = 5 [(opts).java = {annotation: '@NotNull'}];
+}
+
+message AuditDetailsPb {
+  option (m_opts).opt = {extends: 'AuditPb'};
+
+  required string params = 1 [(opts).java = {annotation: '@NotNull'}];
+}
+
+message AuditListRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/audit/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&username={username}&method={method}&path={path}"
+  };
+
+  required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
+  optional string username = 2 [(opts).opt = {in_query: true}];
+  optional string method = 3 [(opts).opt = {in_query: true}];
+  optional string path = 4 [(opts).opt = {in_query: true}];
+}
+
+message AuditListResponse {
+  option (m_opts).opt = {extends: 'PagingPb'};
+
+  repeated AuditPb records = 1;
+}

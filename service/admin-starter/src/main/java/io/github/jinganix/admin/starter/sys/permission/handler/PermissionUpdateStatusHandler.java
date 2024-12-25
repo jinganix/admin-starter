@@ -1,0 +1,36 @@
+package io.github.jinganix.admin.starter.sys.permission.handler;
+
+import io.github.jinganix.admin.starter.helper.exception.ApiException;
+import io.github.jinganix.admin.starter.helper.utils.UtilsService;
+import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
+import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUpdateStatusRequest;
+import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUpdateStatusResponse;
+import io.github.jinganix.admin.starter.sys.permission.PermissionMapper;
+import io.github.jinganix.admin.starter.sys.permission.model.Permission;
+import io.github.jinganix.admin.starter.sys.permission.repository.PermissionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Component
+@RequiredArgsConstructor
+public class PermissionUpdateStatusHandler {
+
+  private final PermissionMapper permissionMapper;
+
+  private final PermissionRepository permissionRepository;
+
+  private final UtilsService utilsService;
+
+  @Transactional
+  public PermissionUpdateStatusResponse handle(PermissionUpdateStatusRequest request) {
+    Permission permission =
+        permissionRepository
+            .findById(request.getId())
+            .orElseThrow(() -> ApiException.of(ErrorCode.PERMISSION_NOT_FOUND));
+    long millis = utilsService.currentTimeMillis();
+    permission.setStatus(permissionMapper.status(request.getStatus())).setUpdatedAt(millis);
+    permissionRepository.save(permission);
+    return permissionMapper.updateStatusUpdate(permission);
+  }
+}

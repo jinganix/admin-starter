@@ -1,0 +1,59 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<ThemeCustomizer /> > when rendered > should match snapshot 1`] = `
+<div>
+  <div
+    class="flex items-center gap-2"
+  >
+    <button
+      aria-expanded="false"
+      aria-haspopup="menu"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 w-10 hover:bg-accent hover:text-accent-foreground rounded-full"
+      data-state="closed"
+      id="radix-:r0:"
+      type="button"
+    >
+      <svg
+        class="lucide lucide-palette"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="13.5"
+          cy="6.5"
+          fill="currentColor"
+          r=".5"
+        />
+        <circle
+          cx="17.5"
+          cy="10.5"
+          fill="currentColor"
+          r=".5"
+        />
+        <circle
+          cx="8.5"
+          cy="7.5"
+          fill="currentColor"
+          r=".5"
+        />
+        <circle
+          cx="6.5"
+          cy="12.5"
+          fill="currentColor"
+          r=".5"
+        />
+        <path
+          d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"
+        />
+      </svg>
+    </button>
+  </div>
+</div>
+`;

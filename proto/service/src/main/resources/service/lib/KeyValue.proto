@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package KeyValueProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.lib.kv";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+
+message KeyValuePb {
+  option (m_opts).java = {annotation: '@Generated'};
+
+  required string key = 1;
+  required string value = 2;
+}

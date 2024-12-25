@@ -1,0 +1,47 @@
+syntax = "proto2";
+
+package SysAuthProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.sys.auth";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+
+enum TokenType {
+  BEARER = 0 [(v_opts).opt = {value: 'Bearer'}];
+}
+
+message AuthLoginRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/auth/login"
+  };
+
+  required string username = 1 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 20)'}];
+  required string password = 2 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 6, max = 20)'}];
+}
+
+message AuthTokenRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/auth/token"
+  };
+
+  optional string refreshToken = 1 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 1, max = 40)'}];
+}
+
+message AuthSignupRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/auth/signup"
+  };
+
+  required string username = 1 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 20)'}];
+  required string password = 2 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 6, max = 20)'}];
+}
+
+message AuthTokenResponse {
+  required string accessToken = 1;
+  required int64 expiresIn = 2;
+  required string refreshToken = 3;
+}
