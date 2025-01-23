@@ -39,6 +39,10 @@ jobs:
         working-directory: frontend/admin
         run: npm install && npm run build
 
+      - name: Create _redirects
+        working-directory: frontend/admin
+        run: echo "/* /index.html 200" > dist/_redirects
+
       - name: Deploy to Netlify
         working-directory: frontend/admin
         run: |
