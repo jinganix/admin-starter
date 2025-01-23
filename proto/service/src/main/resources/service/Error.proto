@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package ErrorProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.service.error";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+import "service/enumeration/ErrorCode.proto";
+
+message ErrorMessage {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/msg/error"
+  };
+
+  required ErrorCodeEnum.ErrorCode code = 1;
+  optional string message = 2;
+  map<string, string> errors = 3;
+}

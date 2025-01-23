@@ -1,0 +1,488 @@
+{
+  "action": {
+    "add": "Add",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "delete": "Delete",
+    "edit": "Edit",
+    "reset": "Reset",
+    "search": "Search",
+    "submit": "Submit"
+  },
+  "admin.role.description": "This is an Administrator role that possesses all permissions within the system, enabling full access and control over all functionalities.",
+  "audit": {
+    "filter": {
+      "method": "Filter by method",
+      "path": "Filter by path",
+      "username": "Filter by username"
+    },
+    "header": {
+      "createdAt": "Created At",
+      "id": "ID",
+      "method": "Method",
+      "path": "Path",
+      "username": "Username"
+    },
+    "title": {
+      "": "Audit Logs",
+      "sub": "View your request audit logs here"
+    }
+  },
+  "auth": {
+    "hasAccount": "Already have an account?",
+    "login": "Login",
+    "noAccount": "Don't have an account?",
+    "password": {
+      "": "Password",
+      "confirm": "Confirm Password",
+      "max": "Password must not be longer than 20 characters",
+      "min": "Password must be at least 6 characters",
+      "notMatch": "Passwords don't match"
+    },
+    "signup": "Sign up",
+    "title": "Login",
+    "username": {
+      "": "Username",
+      "max": "Username must not be longer than 20 characters",
+      "min": "Username must be at least 3 characters"
+    }
+  },
+  "authority": {
+    "adm": {
+      "": "Admin",
+      "overview": {
+        "": "Overview",
+        "list": "Get overviews"
+      }
+    },
+    "button": {
+      "": "Button",
+      "addPermission": "Add Permission"
+    },
+    "menu": {
+      "": "Menu",
+      "dashboard": "Dashboard",
+      "system": {
+        "": "System",
+        "audits": "Audits",
+        "permissions": "Permissions",
+        "roles": "Roles",
+        "users": "Users"
+      }
+    },
+    "sys": {
+      "": "System",
+      "audit": {
+        "": "Audit",
+        "list": "Get audits"
+      },
+      "permission": {
+        "": "Permission",
+        "create": "Create permission",
+        "delete": "Delete permissions",
+        "list": "Get permissions",
+        "options": "Get permission options",
+        "reload": "Reload backend permissions",
+        "update": "Update permission",
+        "upload": "Upload frontend permissions"
+      },
+      "role": {
+        "": "Role",
+        "create": "Create role",
+        "delete": "Delete roles",
+        "get": "Get role details",
+        "list": "Get roles",
+        "options": "Get role options",
+        "permissions": "Update role permissions",
+        "update": "Update role"
+      },
+      "user": {
+        "": "User",
+        "create": "Create user",
+        "delete": "Delete users",
+        "list": "Get users",
+        "update": "Update user"
+      }
+    }
+  },
+  "dialog": {
+    "delete": {
+      "description": "This action cannot be undone. This will permanently delete the data from our servers.",
+      "title": "Are you absolutely sure?"
+    }
+  },
+  "error": {
+    "code": {
+      "1_ERROR": "Error",
+      "2_ACCESS_DENIED": "Access denied",
+      "3_AUTHORITY_NOT_FOUND": "Authority not found",
+      "4_BAD_CREDENTIAL": "Bad credential",
+      "5_BAD_TOKEN": "Bad token",
+      "6_BAD_REFRESH_TOKEN": "Bad refresh token",
+      "7_BAD_REQUEST": "Bad request",
+      "8_DUPLICATED_OPERATION": "Duplicated operation",
+      "9_ERROR_NETWORK": "Network error",
+      "10_FORCE_LOGOUT": "Force logout",
+      "11_INVALID_OPERATION": "Invalid operation",
+      "12_OPERATION_TOO_FREQUENT": "Operation too frequent",
+      "13_PERMISSION_DENIED": "Permission denied",
+      "14_REQUEST_TIMEOUT": "Request timeout",
+      "15_ROLE_NOT_FOUND": "Role not found",
+      "16_SIGNUP_ERROR": "Signup error",
+      "17_USER_NOT_FOUND": "User not found",
+      "18_PERMISSION_NOT_FOUND": "Permission not found",
+      "19_PASSWORD_NOT_MATCH": "Password not match",
+      "20_ADMIN_IS_IMMUTABLE": "Admin is immutable",
+      "21_USER_IS_INACTIVE": "User is inactive",
+      "22_ADMIN_NOT_FOUND": "Admin not found",
+      "23_PERMISSION_EXISTS": "Permission exists",
+      "24_USER_EXISTS": "User exists",
+      "25_ROLE_EXISTS": "Role exists",
+      "0_OK": "Operation successful"
+    },
+    "page": {
+      "403": {
+        "description": "You don't have necessary permission to view this resource.",
+        "reason": "Access Forbidden"
+      },
+      "goBack": "Go Back",
+      "signOut": "Sign Out"
+    },
+    "status": {
+      "100": "100: Continue",
+      "101": "101: Switching Protocols",
+      "102": "102: Processing",
+      "103": "103: Early Hints",
+      "200": "200: OK",
+      "201": "201: Created",
+      "202": "202: Accepted",
+      "203": "203: Non-Authoritative Information",
+      "204": "204: No Content",
+      "205": "205: Reset Content",
+      "206": "206: Partial Content",
+      "207": "207: Multi-Status",
+      "208": "208: Already Reported",
+      "226": "226: IM Used",
+      "300": "300: Multiple Choices",
+      "301": "301: Moved Permanently",
+      "302": "302: Found",
+      "303": "303: See Other",
+      "304": "304: Not Modified",
+      "305": "305: Use Proxy",
+      "306": "306: (Unused)",
+      "307": "307: Temporary Redirect",
+      "308": "308: Permanent Redirect",
+      "400": "400: Bad Request",
+      "401": "401: Unauthorized",
+      "402": "402: Payment Required",
+      "403": "403: Forbidden",
+      "404": "404: Not Found",
+      "405": "405: Method Not Allowed",
+      "406": "406: Not Acceptable",
+      "407": "407: Proxy Authentication Required",
+      "408": "408: Request Timeout",
+      "409": "409: Conflict",
+      "410": "410: Gone",
+      "411": "411: Length Required",
+      "412": "412: Precondition Failed",
+      "413": "413: Payload Too Large",
+      "414": "414: URI Too Long",
+      "415": "415: Unsupported Media Type",
+      "416": "416: Range Not Satisfiable",
+      "417": "417: Expectation Failed",
+      "418": "418: I'm a teapot",
+      "421": "421: Misdirected Request",
+      "422": "422: Unprocessable Entity",
+      "423": "423: Locked",
+      "424": "424: Failed Dependency",
+      "425": "425: Too Early",
+      "426": "426: Upgrade Required",
+      "428": "428: Precondition Required",
+      "429": "429: Too Many Requests",
+      "431": "431: Request Header Fields Too Large",
+      "451": "451: Unavailable For Legal Reasons",
+      "500": "500: Internal Server Error",
+      "501": "501: Not Implemented",
+      "502": "502: Bad Gateway",
+      "503": "503: Service Unavailable",
+      "504": "504: Gateway Timeout",
+      "505": "505: HTTP Version Not Supported",
+      "506": "506: Variant Also Negotiates",
+      "507": "507: Insufficient Storage",
+      "508": "508: Loop Detected",
+      "509": "509: Bandwidth Limit Exceeded",
+      "510": "510: Not Extended",
+      "511": "511: Network Authentication Required"
+    }
+  },
+  "menu": {
+    "": "Menu",
+    "dashboard": "Dashboard",
+    "system": {
+      "": "System",
+      "audits": "Audits",
+      "permissions": "Permissions",
+      "roles": "Roles",
+      "users": "Users"
+    }
+  },
+  "month": {
+    "abbr": {
+      "1": "Jan",
+      "2": "Feb",
+      "3": "Mar",
+      "4": "Apr",
+      "5": "May",
+      "6": "Jun",
+      "7": "Jul",
+      "8": "Aug",
+      "9": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dec"
+    },
+    "full": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    }
+  },
+  "option": {
+    "selector": {
+      "clear": "Clear selectors",
+      "none": "None"
+    }
+  },
+  "overview": {
+    "apiCalled": "Total API Called",
+    "chart": {
+      "apiCalled": "Api Called (Get and Post)",
+      "label": {
+        "created": "Created",
+        "deleted": "Deleted",
+        "get": "GET",
+        "post": "POST"
+      },
+      "permission": "Permissions (Created and Deleted)",
+      "role": "Roles (Created and Deleted)",
+      "user": "Users (Created and Deleted)"
+    },
+    "permissionCreated": "Total Historical Permissions",
+    "roleCreated": "Total Historical Roles",
+    "userCreated": "Total Historical Users"
+  },
+  "permission": {
+    "action": {
+      "reloadApi": "Reload API",
+      "syncUI": "Sync UI"
+    },
+    "dialog": {
+      "code": "Code",
+      "create": "Add New Permission",
+      "description": "Description",
+      "name": "Name",
+      "status": "Status",
+      "submit": "Save Changes",
+      "type": "Type",
+      "update": "Edit Permission"
+    },
+    "filter": {
+      "code": {
+        "placeholder": "Filter by code"
+      },
+      "type": "Type"
+    },
+    "header": {
+      "code": "Code",
+      "createdAt": "Created At",
+      "id": "ID",
+      "name": "Name",
+      "status": "Status",
+      "type": "Type"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "unselected": "Status"
+    },
+    "title": {
+      "": "Permission List",
+      "sub": "Manage your permissions here"
+    },
+    "type": {
+      "API": "API",
+      "GROUP": "Group",
+      "UI": "UI"
+    }
+  },
+  "role": {
+    "dialog": {
+      "code": "Code",
+      "create": "Add New Role",
+      "description": "Description",
+      "filter": "Filter by name",
+      "name": "Name",
+      "permissions": "Permissions",
+      "status": "Status",
+      "submit": "Save Changes",
+      "update": "Edit Role"
+    },
+    "filter": {
+      "nickname": {
+        "placeholder": "Filter by name"
+      }
+    },
+    "header": {
+      "code": "Code",
+      "createdAt": "Created At",
+      "id": "ID",
+      "name": "Name",
+      "status": "Status"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "unselected": "Status"
+    },
+    "title": {
+      "": "Role List",
+      "sub": "Manage your roles and their permissions here"
+    }
+  },
+  "settings": {
+    "credential": {
+      "": "Credential",
+      "confirm": "Confirm Password",
+      "current": {
+        "": "Current Password",
+        "placeholder": "Current Password"
+      },
+      "description": "Change your password here",
+      "password": "Password"
+    },
+    "description": "Manage your account settings and update profile",
+    "password": {
+      "": "Password",
+      "confirm": "Confirm Password",
+      "max": "Password must not be longer than 20 characters",
+      "min": "Password must be at least 6 characters"
+    },
+    "profile": {
+      "": "Profile",
+      "description": "This is how others will see you on the site",
+      "nickname": {
+        "": "Nickname",
+        "description": "This is your public display name. It can be your real name or a pseudonym.",
+        "max": "Nickname must not be longer than 20 characters",
+        "min": "Nickname must be at least 3 characters"
+      },
+      "submit": "Update profile"
+    },
+    "title": "Settings"
+  },
+  "table": {
+    "action": {
+      "header": "Table actions"
+    },
+    "empty": "No data",
+    "filter": {
+      "": "Filters",
+      "header": "Table filters"
+    },
+    "footer": {
+      "goto": "Goto",
+      "page": "Page {{page}} of {{total}}",
+      "rowsPerPage": "Rows per page",
+      "totalRecords": "Total records"
+    },
+    "header.menu": {
+      "asc": "Asc",
+      "desc": "Desc",
+      "hide": "Hide",
+      "unsorted": "Unsorted"
+    },
+    "view": {
+      "": "View",
+      "header": "Toggle columns"
+    }
+  },
+  "theme": {
+    "color": {
+      "": "Color",
+      "blue": "Blue",
+      "green": "Green",
+      "orange": "Orange",
+      "red": "Red",
+      "rose": "Rose",
+      "violet": "Violet",
+      "yellow": "Yellow",
+      "zinc": "Zinc"
+    },
+    "mode": {
+      "": "Mode",
+      "dark": "Dark",
+      "light": "Light"
+    },
+    "radius": "Radius",
+    "title": {
+      "": "Theme Customizer",
+      "sub": "Customize your components colors"
+    }
+  },
+  "user": {
+    "dialog": {
+      "create": {
+        "password": "Password",
+        "roles": "Roles",
+        "status": "Status",
+        "submit": "Save Changes",
+        "title": "Add New User",
+        "username": "Username"
+      },
+      "update": {
+        "nickname": "Nickname",
+        "roles": "Roles",
+        "status": "Status",
+        "submit": "Save Changes",
+        "title": "Edit User"
+      }
+    },
+    "filter": {
+      "roles": "Roles",
+      "username": {
+        "placeholder": "Filter by username"
+      }
+    },
+    "header": {
+      "code": "Code",
+      "createdAt": "Created At",
+      "id": "ID",
+      "nickname": "Nickname",
+      "status": "Status",
+      "username": "Username"
+    },
+    "nav": {
+      "refresh": "Refresh",
+      "settings": "Settings",
+      "signOut": "Log out"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "unselected": "Status"
+    },
+    "title": {
+      "": "User List",
+      "sub": "Manage your users and their roles here"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+syntax = "proto2";
+
+package PageableProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.lib.pageable";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+
+enum SortDirection {
+  asc = 0 [(v_opts).opt = {value: "asc"}];
+  desc = 1 [(v_opts).opt = {value: "desc"}];
+}
+
+message PageablePb {
+  option (m_opts).java = {annotation: '@Generated'};
+
+  optional int32 page = 1 [(opts).java = {annotation: '@Range(min = 0)'}];
+  optional int32 size = 2 [(opts).java = {annotation: '@Range(min = 10, max = 50)'}];
+  map<string, SortDirection> sort = 3 [(opts).java = {annotation: '@JsonDeserialize(using = PathVariableMapDeserializer.class)'}];
+}
+
+message PagingPb {
+  required int32 page = 1;
+  required int32 size = 2;
+  required int32 pages = 3;
+  required int32 total = 4;
+}

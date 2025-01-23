@@ -1,0 +1,205 @@
+syntax = "proto2";
+
+package SysUserProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.sys.user";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+import "service/lib/Pageable.proto";
+import "service/lib/Option.proto";
+import "service/lib/KeyValue.proto";
+
+enum UserStatus {
+  option (e_opts).java = {
+    annotation: '@JsonDeserialize(using = EnumerationDeserializer.class)'
+    annotation: '@JsonSerialize(using = EnumerationSerializer.class)',
+  };
+
+  INACTIVE = 0;
+  ACTIVE = 1;
+}
+
+message UserPb {
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required string username = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required string nickname = 3 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required UserStatus status = 4 [(opts).java = {annotation: '@NotNull'}];
+  required int64 createdAt = 6;
+}
+
+message UserDetailsPb {
+  option (m_opts).opt = {extends: 'UserPb'};
+
+  repeated int64 roleIds = 5 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
+}
+
+message UserCurrentPb {
+  option (m_opts).opt = {extends: 'UserPb'};
+
+  repeated string authorities = 1;
+}
+
+message UserCurrentRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/user/current"
+  };
+}
+
+message UserCurrentResponse {
+  required UserCurrentPb user = 1;
+}
+
+message UserListRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/user/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&username={username}&status={status}"
+  };
+
+  required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
+  optional string username = 2 [(opts).opt = {in_query: true}];
+  optional UserStatus status = 3 [(opts).opt = {in_query: true}];
+}
+
+message UserListResponse {
+  option (m_opts).opt = {extends: 'PagingPb'};
+
+  repeated UserPb records = 1;
+}
+
+message UserCreateRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/user/create"
+  };
+
+  required string username = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required string password = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required UserStatus status = 3 [(opts).java = {annotation: '@NotNull'}];
+  repeated int64 roleIds = 4 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
+}
+
+message UserCreateResponse {
+}
+
+message UserChangePasswordRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/user/password"
+  };
+
+  required string current = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 6, max = 20)'}];
+  required string password = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 6, max = 20)'}];
+}
+
+message UserChangePasswordResponse {
+}
+
+message UserDeleteRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/user/delete"
+  };
+
+  repeated int64 ids = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
+}
+
+message UserDeleteResponse {
+}
+
+message UserUpdateRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/user/update"
+  };
+
+  required int64 id = 1 [(opts).ts = {as_string: true}];
+  required string nickname = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required UserStatus status = 3 [(opts).java = {annotation: '@NotNull'}];
+  repeated int64 roleIds = 4 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
+}
+
+message UserUpdateResponse {
+  required UserPb user = 1;
+}
+
+message UserUpdateProfileRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/user/profile"
+  };
+
+  required string nickname = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+}
+
+message UserUpdateProfileResponse {
+  required UserPb user = 1;
+}
+
+message UserUpdateStatusRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/user/status"
+  };
+
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required UserStatus status = 2;
+}
+
+message UserUpdateStatusResponse {
+  required UserPb user = 1;
+}
+
+message UserRetrieveRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/user/retrieve?id={id}"
+  };
+
+  required int64 id = 1 [(opts).opt = {in_query: true}, (opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
+}
+
+message UserRetrieveResponse {
+  required UserDetailsPb user = 1;
+}
+
+message RoutePropsPb {
+  required string url = 1;
+}
+
+message RouteMetaPb {
+  required string title = 1;
+  required string i18nKey = 2;
+  required string icon = 3;
+  required string localIcon = 4;
+  required int32 order = 5;
+  required bool keepAlive = 6;
+  required bool hideInMenu = 7;
+  required bool multiTab = 8;
+  required int32 tabIndex = 9;
+  required string href = 10;
+  repeated KeyValueProto.KeyValuePb query = 11;
+  repeated string permissions = 12;
+}
+
+message RoutePb {
+  required string name = 1;
+  required string path = 2;
+  required string component = 3;
+  required RoutePropsPb props = 4;
+  required RouteMetaPb meta = 5;
+  repeated RoutePb children = 6;
+}
+
+message UserRoutesRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/user/routes"
+  };
+}
+
+message UserRoutesResponse {
+  required string home = 1;
+  repeated RoutePb routes = 2;
+}

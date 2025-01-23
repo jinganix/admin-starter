@@ -1,0 +1,136 @@
+syntax = "proto2";
+
+package SysRoleProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.sys.role";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+import "service/lib/Pageable.proto";
+import "service/lib/Option.proto";
+import "service/lib/KeyValue.proto";
+
+enum RoleStatus {
+  option (e_opts).java = {
+    annotation: '@JsonDeserialize(using = EnumerationDeserializer.class)'
+    annotation: '@JsonSerialize(using = EnumerationSerializer.class)',
+  };
+
+  INACTIVE = 0;
+  ACTIVE = 1;
+}
+
+message RoleEditPb {
+  required string name = 1 [(opts).java = {annotation: '@NotNull'}];
+  required string code = 2;
+  optional string description = 3;
+  required RoleStatus status = 4 [(opts).java = {annotation: '@NotNull'}];
+  repeated int64 permissionIds = 5 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
+}
+
+message RolePb {
+  option (m_opts).opt = {extends: 'RoleEditPb'};
+
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required int64 createdAt = 2;
+}
+
+message RoleTreePb {
+  option (m_opts).opt = {extends: 'RolePb'};
+
+  repeated RoleTreePb children = 1;
+}
+
+message RoleListRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/role/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&name={name}&status={status}"
+  };
+
+  required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
+  optional string name = 2 [(opts).opt = {in_query: true}];
+  optional RoleStatus status = 3 [(opts).opt = {in_query: true}];
+}
+
+message RoleListResponse {
+  option (m_opts).opt = {extends: 'PagingPb'};
+
+  repeated RolePb records = 1;
+}
+
+message RoleCreateRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/role/create"
+    extends: 'RoleEditPb'
+  };
+}
+
+message RoleCreateResponse {
+  required RolePb role = 1;
+}
+
+message RoleOptionsRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/role/options"
+  };
+}
+
+message RoleOptionsResponse {
+  repeated OptionProto.OptionStringPb options = 1;
+}
+
+message RoleUpdateRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/role/update"
+    extends: 'RoleEditPb'
+  };
+
+  required int64 id = 1 [(opts).ts = {as_string: true}];
+}
+
+message RoleUpdateResponse {
+  required RolePb role = 1;
+}
+
+message RoleDeleteRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/role/delete"
+  };
+
+  repeated int64 ids = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
+}
+
+message RoleDeleteResponse {
+}
+
+message RoleUpdateStatusRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/role/status"
+  };
+
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required RoleStatus status = 2;
+}
+
+message RoleUpdateStatusResponse {
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required RoleStatus status = 2;
+}
+
+message RoleRetrieveRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/role/retrieve?id={id}"
+  };
+
+  required int64 id = 1 [(opts).opt = {in_query: true}, (opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
+}
+
+message RoleRetrieveResponse {
+  required RolePb role = 1;
+}

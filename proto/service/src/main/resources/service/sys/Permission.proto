@@ -1,0 +1,172 @@
+syntax = "proto2";
+
+package SysPermissionProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.sys.permission";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+import "service/lib/Pageable.proto";
+import "service/lib/Option.proto";
+import "service/lib/KeyValue.proto";
+
+enum PermissionType {
+  option (e_opts).java = {
+    annotation: '@JsonDeserialize(using = EnumerationDeserializer.class)'
+    annotation: '@JsonSerialize(using = EnumerationSerializer.class)',
+  };
+
+  GROUP = 0;
+  API = 1;
+  UI = 2;
+}
+
+enum PermissionStatus {
+  option (e_opts).java = {
+    annotation: '@JsonDeserialize(using = EnumerationDeserializer.class)'
+    annotation: '@JsonSerialize(using = EnumerationSerializer.class)',
+  };
+
+  INACTIVE = 0;
+  ACTIVE = 1;
+}
+
+message PermissionOptionPb {
+  option (m_opts).opt = {extends: 'OptionProto.OptionStringPb'};
+
+  required string code = 1;
+}
+
+message PermissionEditPb {
+  required string name = 1 [(opts).java = {annotation: '@NotNull'}];
+  required PermissionType type = 2 [(opts).java = {annotation: '@NotNull'}];
+  required string code = 3;
+  optional string description = 4;
+  required PermissionStatus status = 5 [(opts).java = {annotation: '@NotNull'}];
+}
+
+message PermissionPb {
+  option (m_opts).opt = {extends: 'PermissionEditPb'};
+
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required int64 createdAt = 2;
+}
+
+message PermissionListRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/permission/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&code={code}&status={status}&types={types}"
+  };
+
+  required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
+  optional string code = 2 [(opts).opt = {in_query: true}];
+  optional PermissionStatus status = 3 [(opts).opt = {in_query: true}];
+  repeated PermissionType types = 4 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@JsonDeserialize(using = PathVariableArrayDeserializer.class)'}];
+}
+
+message PermissionListResponse {
+  option (m_opts).opt = {extends: 'PagingPb'};
+
+  repeated PermissionPb records = 1;
+}
+
+message PermissionCreateRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/permission/create"
+    extends: 'PermissionEditPb'
+  };
+}
+
+message PermissionCreateResponse {
+  required PermissionPb permission = 1;
+}
+
+message PermissionOptionsRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/permission/options"
+  };
+}
+
+message PermissionOptionsResponse {
+  repeated PermissionOptionPb options = 1;
+}
+
+message PermissionUpdateRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/permission/update"
+    extends: 'PermissionEditPb'
+  };
+
+  required int64 id = 1 [(opts).ts = {as_string: true}];
+}
+
+message PermissionUpdateResponse {
+  required PermissionPb permission = 1;
+}
+
+message PermissionDeleteRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/permission/delete"
+  };
+
+  repeated int64 ids = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
+}
+
+message PermissionDeleteResponse {
+}
+
+message PermissionUpdateStatusRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/permission/status"
+  };
+
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required PermissionStatus status = 2;
+}
+
+message PermissionUpdateStatusResponse {
+  required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required PermissionStatus status = 2;
+}
+
+message PermissionRetrieveRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/sys/permission/retrieve?id={id}"
+  };
+
+  required int64 id = 1 [(opts).opt = {in_query: true}, (opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
+}
+
+message PermissionRetrieveResponse {
+  required PermissionPb permission = 1;
+}
+
+message PermissionUploadRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/permission/upload"
+  };
+
+  repeated PermissionEditPb permissions = 1;
+}
+
+message PermissionUploadResponse {
+}
+
+message PermissionReloadRequest {
+  option (m_opts).opt = {
+    method: "POST"
+    path: "/sys/permission/reload"
+  };
+
+  repeated PermissionEditPb permissions = 1;
+}
+
+message PermissionReloadResponse {
+}

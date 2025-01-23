@@ -1,0 +1,13 @@
+*.iml
+.DS_Store
+.env.local
+.gradle/
+.idea/
+.kotlin
+.run/
+.tmp/
+LOG_DIR_IS_UNDEFINED/
+bin/
+build/
+logs/
+node_modules/

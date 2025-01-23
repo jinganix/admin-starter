@@ -1,0 +1,42 @@
+syntax = "proto2";
+
+package ErrorCodeEnum;
+
+option java_package = "io.github.jinganix.admin.starter.proto.service.enumeration";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+
+enum ErrorCode {
+  option (e_opts).java = {
+    annotation: '@JsonDeserialize(using = EnumerationDeserializer.class)'
+    annotation: '@JsonSerialize(using = EnumerationSerializer.class)',
+  };
+
+  OK = 0;
+  ERROR = 1;
+  ACCESS_DENIED = 2;
+  AUTHORITY_NOT_FOUND = 3;
+  BAD_CREDENTIAL = 4;
+  BAD_TOKEN = 5;
+  BAD_REFRESH_TOKEN = 6;
+  BAD_REQUEST = 7;
+  DUPLICATED_OPERATION = 8;
+  ERROR_NETWORK = 9;
+  FORCE_LOGOUT = 10;
+  INVALID_OPERATION = 11;
+  OPERATION_TOO_FREQUENT = 12;
+  PERMISSION_DENIED = 13;
+  REQUEST_TIMEOUT = 14;
+  ROLE_NOT_FOUND = 15;
+  SIGNUP_ERROR = 16;
+  USER_NOT_FOUND = 17;
+  PERMISSION_NOT_FOUND = 18;
+  PASSWORD_NOT_MATCH = 19;
+  ADMIN_IS_IMMUTABLE = 20;
+  USER_IS_INACTIVE = 21;
+  ADMIN_NOT_FOUND = 22;
+  PERMISSION_EXISTS = 23;
+  USERNAME_EXISTS = 24;
+  ROLE_EXISTS = 25;
+}

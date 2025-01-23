@@ -1,0 +1,41 @@
+services:
+  admin-starter-mysql:
+    image: mysql:9.1.0
+    command: --innodb-buffer-pool-size=32M --innodb_log_buffer_size=512K
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: admin_starter
+    ports:
+      - "3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+  admin-starter-redis:
+    image: redis:7.4.0-alpine
+    ports:
+      - "6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      timeout: 20s
+      retries: 10
+
+  admin-starter-service:
+    build: service/admin-starter
+    image: admin-starter/service
+    depends_on:
+      admin-starter-mysql:
+        condition: service_healthy
+      admin-starter-redis:
+        condition: service_healthy
+    environment:
+      JAVA_OPTS: >
+        -Xss512k
+        -XX:MaxRAM=260m
+        -Dspring.profiles.active=local
+        -Dspring.datasource.password=root
+        -Dspring.datasource.url=jdbc:mysql://admin-starter-mysql/admin_starter?allowPublicKeyRetrieval=true&useSSL=false
+        -Dspring.data.redis.url=redis://admin-starter-redis:6379
+    ports:
+      - "8080:8080"

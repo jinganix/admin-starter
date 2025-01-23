@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package AdmOverviewProto;
+
+option java_package = "io.github.jinganix.admin.starter.proto.adm.overview";
+
+import "imports/WebpbOptions.proto";
+import "webpb/WebpbExtend.proto";
+
+message OverviewPb {
+  required string month = 1;
+  required int64 apiGet = 2;
+  required int64 apiPost = 3;
+  required int64 userCreated = 4;
+  required int64 userDeleted = 5;
+  required int64 roleCreated = 6;
+  required int64 roleDeleted = 7;
+  required int64 permissionCreated = 8;
+  required int64 permissionDeleted = 9;
+}
+
+message OverviewListRequest {
+  option (m_opts).opt = {
+    method: "GET"
+    path: "/adm/overview/list"
+  };
+}
+
+message OverviewListResponse {
+  repeated OverviewPb records = 1;
+}
