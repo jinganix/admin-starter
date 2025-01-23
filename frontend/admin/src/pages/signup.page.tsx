@@ -102,7 +102,7 @@ export const SignupPage: FC = () => {
               />
               <Button disabled={submitting} type="submit" className="w-full mt-4">
                 <Spinner loading={submitting} />
-                Sign up
+                {t("auth.signup")}
               </Button>
             </form>
           </Form>

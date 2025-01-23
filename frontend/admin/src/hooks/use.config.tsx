@@ -21,7 +21,7 @@ type ConfigProviderState = {
 };
 
 const DEFAULT: Config = {
-  mode: "dark",
+  mode: "light",
   radius: 0.5,
   theme: "zinc",
 };
