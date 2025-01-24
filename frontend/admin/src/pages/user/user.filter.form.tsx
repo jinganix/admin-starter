@@ -44,6 +44,7 @@ export const UserFilterForm: FC<Props> = ({ form, loadData }) => {
                 <FormControl>
                   <div className="relative w-full max-w-sm">
                     <Input
+                      autoFocus={false}
                       className="h-8 placeholder:text-sm"
                       placeholder={t("user.filter.username.placeholder")}
                       {...field}

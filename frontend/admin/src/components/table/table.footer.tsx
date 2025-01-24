@@ -1,5 +1,6 @@
 import { Paging } from "@helpers/paging/paging.ts";
 import { getPageSize, mergeParams } from "@helpers/search.params.ts";
+import { ArrowBigRightIcon } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -56,17 +57,20 @@ export const TableFooter: FC<Props> = observer(({ paging, className }) => {
         </div>
       </div>
 
-      <div className="flex items-center w-full justify-end xl:justify-end space-x-4 xl:space-x-8">
-        <div className="flex items-center justify-between gap-1">
+      <div className="flex items-center w-full justify-between md:justify-end space-x-3 xl:space-x-6">
+        <div className="flex items-center justify-between space-x-1 md:space-x-2">
           <Input
             value={goto}
-            className="h-8 w-14 px-1"
+            className="h-8 w-12 md:w-16 px-1"
             type="number"
             onChange={onGotoChange}
             onKeyDown={handleKeyDown}
           />
-          <Button variant="outline" className="h-8 px-1" onClick={onGoto}>
+          <Button variant="outline" className="h-8 px-1 hidden md:flex" onClick={onGoto}>
             {t("table.footer.goto")}
+          </Button>
+          <Button variant="outline" className="h-8 w-8 md:hidden" onClick={onGoto}>
+            <ArrowBigRightIcon />
           </Button>
         </div>
 

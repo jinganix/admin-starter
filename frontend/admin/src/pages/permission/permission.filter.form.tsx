@@ -49,6 +49,7 @@ export const PermissionFilterForm: FC<Props> = ({ form, loadData }) => {
                 <FormControl>
                   <div className="relative w-full max-w-sm">
                     <Input
+                      autoFocus={false}
                       className="h-8 placeholder:text-sm"
                       placeholder={t("permission.filter.code.placeholder")}
                       {...field}

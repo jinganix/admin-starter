@@ -3,7 +3,7 @@ import { mergeParams } from "@helpers/search.params.ts";
 import { SortDirection } from "@proto/PageableProto.ts";
 import { flexRender, Table as TableDef } from "@tanstack/react-table";
 import { keyBy, mapValues } from "lodash";
-import { HTMLAttributes, ReactNode, useEffect } from "react";
+import { HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -26,6 +26,9 @@ export function DataTable<TData>({ table, loading, className }: Props<TData>): R
   const [params, setParams] = useTableParams();
   const setSort = (sort: object): void => setParams(mergeParams(params, { sort }));
 
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => void (loading && ref.current?.scrollTo(0, 0)), [loading]);
+
   const { sorting } = table.getState();
   useEffect(() => {
     const sorts = sorting
@@ -39,6 +42,7 @@ export function DataTable<TData>({ table, loading, className }: Props<TData>): R
 
   return (
     <div
+      ref={ref}
       className={cn(
         "relative rounded-md border",
         loading ? "overflow-hidden" : "overflow-auto",
