@@ -1,4 +1,4 @@
-name: NETLIFY
+name: Deploy to Netlify and ECS
 
 on:
   push:
@@ -38,6 +38,17 @@ jobs:
           VITE_API_HOST: ${{ vars.VITE_API_HOST }}
         working-directory: frontend/admin
         run: npm install && npm run build
+
+      - name: Deploy to ECS
+        working-directory: frontend/admin
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ECS_IP: ${{ secrets.ECS_IP }}
+          ECS_USER: ${{ secrets.ECS_USER }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" ./dist/ $ECS_USER@$ECS_IP:/var/www/admin-starter
 
       - name: Create _redirects
         working-directory: frontend/admin
