@@ -28,12 +28,6 @@
       "sub": "在此查看您的请求审计日志"
     }
   },
-  "dialog": {
-    "delete": {
-      "description": "此操作无法撤销。这将永久从我们的服务器上删除该数据。",
-      "title": "确定执行该操作？"
-    }
-  },
   "auth": {
     "hasAccount": "已经有账户？",
     "login": "登录",
@@ -89,6 +83,7 @@
         "list": "获取权限",
         "options": "获取权限选项",
         "reload": "重新加载后端权限",
+        "status": "更新权限状态",
         "update": "更新权限",
         "upload": "上传前端权限"
       },
@@ -100,6 +95,7 @@
         "list": "获取角色",
         "options": "获取角色选项",
         "permissions": "更新角色权限",
+        "status": "更新角色状态",
         "update": "更新角色"
       },
       "user": {
@@ -107,8 +103,15 @@
         "create": "创建用户",
         "delete": "删除用户",
         "list": "获取用户",
+        "status": "更新用户状态",
         "update": "更新用户"
       }
+    }
+  },
+  "dialog": {
+    "delete": {
+      "description": "此操作无法撤销。这将永久从我们的服务器上删除该数据。",
+      "title": "确定执行该操作？"
     }
   },
   "error": {

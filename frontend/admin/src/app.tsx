@@ -1,4 +1,4 @@
-import "@/helpers/i18n/config";
+import "@/helpers/i18n/i18n.config";
 import { TokenService } from "@helpers/network/token.service.ts";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect } from "react";

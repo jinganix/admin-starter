@@ -17,7 +17,7 @@ export const ThemePalette: FC = () => {
   const { config, setConfig, resetConfig } = useConfig();
 
   return (
-    <div className="flex flex-col space-y-4 md:space-y-6 p-4">
+    <div className="flex flex-col space-y-4 md:space-y-6 p-4 w-screen md:w-auto">
       <div className="flex items-start pt-4 md:pt-0">
         <div className="space-y-1 pr-2">
           <div className="font-semibold leading-none tracking-tight">{t("theme.title.")}</div>
@@ -89,7 +89,7 @@ export const ThemePalette: FC = () => {
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">{t("theme.mode.")}</Label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {mounted ? (
               <>
                 <Button

@@ -21,11 +21,13 @@ import {
 } from "@/components/shadcn/dialog";
 import { Form, FormField, FormItem } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input.tsx";
+import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { Separator } from "@/components/shadcn/separator.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
 import { Textarea } from "@/components/shadcn/textarea.tsx";
 import { TreeItem } from "@/components/tree/tree.view.item.tsx";
 import { TreeView } from "@/components/tree/tree.view.tsx";
+import { TreeStateProvider } from "@/components/tree/use.tree.state.tsx";
 import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { getPermissionOptions } from "@/sys/permission/permission.actions.ts";
@@ -122,75 +124,79 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
         <DialogHeader className="text-left">
           <DialogTitle>{role ? t("role.dialog.update") : t("role.dialog.create")}</DialogTitle>
         </DialogHeader>
-        <LabelAlignerProvider>
-          <Form {...form}>
-            <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-0.5">
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("role.dialog.code")}>
-                    <Input {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+        <ScrollArea className="h-[60vh] w-full py-2 overflow-x-scroll">
+          <LabelAlignerProvider>
+            <Form {...form}>
+              <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-1">
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <LabeledFormItem label={t("role.dialog.code")}>
+                      <Input {...field} autoComplete="off" />
+                    </LabeledFormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("role.dialog.description")}>
-                    <Textarea {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <LabeledFormItem label={t("role.dialog.description")}>
+                      <Textarea {...field} autoComplete="off" />
+                    </LabeledFormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("role.dialog.name")}>
-                    <Input {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <LabeledFormItem label={t("role.dialog.name")}>
+                      <Input {...field} autoComplete="off" />
+                    </LabeledFormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("role.dialog.status")}>
-                    <Switch
-                      checked={field.value === RoleStatus.ACTIVE}
-                      onCheckedChange={(x) =>
-                        field.onChange(x ? RoleStatus.ACTIVE : RoleStatus.INACTIVE)
-                      }
-                    />
-                  </LabeledFormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <LabeledFormItem label={t("role.dialog.status")}>
+                      <Switch
+                        checked={field.value === RoleStatus.ACTIVE}
+                        onCheckedChange={(x) =>
+                          field.onChange(x ? RoleStatus.ACTIVE : RoleStatus.INACTIVE)
+                        }
+                      />
+                    </LabeledFormItem>
+                  )}
+                />
 
-              <Separator />
+                <Separator />
 
-              <FormField
-                control={form.control}
-                name="permissions"
-                render={() => (
-                  <FormItem>
-                    <AlignedLabel>{t("role.dialog.permissions")}</AlignedLabel>
-                    <TreeView
-                      items={treeItems}
-                      title={t("role.dialog.filter")}
-                      className="rounded-md w-full"
-                      setSelected={(values) => form.setValue("permissions", values)}
-                      selected={form.getValues("permissions")}
-                    />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </LabelAlignerProvider>
+                <FormField
+                  control={form.control}
+                  name="permissions"
+                  render={() => (
+                    <FormItem className="max-w-full">
+                      <AlignedLabel>{t("role.dialog.permissions")}</AlignedLabel>
+                      <TreeStateProvider>
+                        <TreeView
+                          items={treeItems}
+                          title={t("role.dialog.filter")}
+                          className="w-full"
+                          setSelected={(values) => form.setValue("permissions", values)}
+                          selected={form.getValues("permissions")}
+                        />
+                      </TreeStateProvider>
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </LabelAlignerProvider>
+        </ScrollArea>
 
         <DialogFooter>
           <Button disabled={submitting} type="submit" form="user-form">

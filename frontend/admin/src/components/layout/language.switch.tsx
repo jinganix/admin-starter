@@ -1,3 +1,4 @@
+import { getLanguageName, LANGUAGE_DEFS } from "@helpers/i18n/language.names.ts";
 import { cn } from "@helpers/lib/cn.ts";
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { ReactNode } from "react";
@@ -26,18 +27,17 @@ export function LanguageSwitch({ className }: Props): ReactNode {
         <Button variant="outline" className="border-none h-8 px-2 py-1">
           <div className="flex items-center gap-1">
             <GlobeIcon />
-            {i18n.language.toUpperCase()}
+            {getLanguageName(i18n.language)}
           </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setLanguage("en")}>
-          English {i18n.language === "en" && <CheckIcon size={14} className="ml-auto" />}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLanguage("zh")}>
-          中文
-          {i18n.language === "zh" && <CheckIcon size={14} className="ml-auto" />}
-        </DropdownMenuItem>
+        {LANGUAGE_DEFS.map(({ tag, name }) => (
+          <DropdownMenuItem key={tag} onClick={() => setLanguage(tag)}>
+            {name}
+            {i18n.language === tag && <CheckIcon size={14} className="ml-auto" />}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

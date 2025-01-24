@@ -54,7 +54,7 @@ export const SignupPage: FC = () => {
 
   return (
     <div className="flex h-screen w-full items-center justify-center px-4">
-      <Card className="mx-auto w-9/12 sm:w-8/12 md:w-6/12 lg:w-4/12 xl:w-3/12 max-w-[400px]">
+      <Card className="mx-auto w-11/12 sm:w-8/12 md:w-6/12 lg:w-4/12 xl:w-3/12 max-w-[400px]">
         <CardHeader>
           <CardTitle className="text-2xl w-full text-center">{t("auth.signup")}</CardTitle>
         </CardHeader>

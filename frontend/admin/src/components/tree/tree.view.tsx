@@ -1,9 +1,11 @@
 import { includes } from "lodash";
-import { XIcon } from "lucide-react";
+import { MinusIcon, PlusIcon, XIcon } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
+import { useResizeDetector } from "react-resize-detector";
 import { Button } from "@/components/shadcn/button.tsx";
 import { Input } from "@/components/shadcn/input.tsx";
 import { TreeItem, TreeViewItem } from "@/components/tree/tree.view.item.tsx";
+import { useTreeState } from "@/components/tree/use.tree.state.tsx";
 import { cn } from "@/helpers/lib/cn";
 
 type Props<T> = {
@@ -38,40 +40,50 @@ export function TreeView<T>({
 }: Props<T>): ReactNode {
   const [keyword, setKeyword] = useState("");
   const [treeItems, setTreeItems] = useState(items);
+  const [_, setState] = useTreeState();
+  const detector = useResizeDetector();
 
   useEffect(() => setTreeItems(items), [items]);
   useEffect(() => setTreeItems(filter(items, keyword)), [keyword]);
 
   return (
-    <div className={cn("", className)}>
-      <div className="relative w-full">
-        <Input
-          className="border-b rounded-none rounded-t-md focus:outline-0 focus-visible:ring-0"
-          placeholder={title}
-          value={keyword}
-          onChange={(x) => setKeyword(x.target.value)}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-          onClick={() => setKeyword("")}
-        >
-          <XIcon className="h-4 w-4" />
+    <div className={cn("space-y-2", className)}>
+      <div ref={detector.ref} className="w-full flex items-center space-x-2">
+        <div className="relative flex-1">
+          <Input
+            className=""
+            placeholder={title}
+            value={keyword}
+            onChange={(x) => setKeyword(x.target.value)}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+            onClick={() => setKeyword("")}
+          >
+            <XIcon className="h-4 w-4" />
+          </Button>
+        </div>
+
+        <Button type="button" variant="outline" size="icon" onClick={() => setState("collapsed")}>
+          <MinusIcon />
+        </Button>
+
+        <Button type="button" variant="outline" size="icon" onClick={() => setState("expanded")}>
+          <PlusIcon />
         </Button>
       </div>
-      <div className="h-64 border border-t-0 rounded-b-md overflow-scroll">
-        <div className="space-y-2 w-16 p-4">
-          {treeItems.map((x) => (
-            <TreeViewItem
-              key={String(x.value)}
-              item={x}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          ))}
-        </div>
+      <div className="space-y-2 px-2 overflow-x-scroll" style={{ width: detector.width }}>
+        {treeItems.map((x) => (
+          <TreeViewItem
+            key={String(x.value)}
+            item={x}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        ))}
       </div>
     </div>
   );

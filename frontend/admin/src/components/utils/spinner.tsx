@@ -16,7 +16,7 @@ export const Spinner: FC<Props> = ({ loading, size, className, ...props }) => {
           className={cn("absolute w-full h-full flex items-center justify-center z-50", className)}
           {...props}
         >
-          <Loader2Icon {...(size ? { size } : {})} className="relative animate-spin" />
+          <Loader2Icon {...(size ? { size } : {})} className="relative animate-spin text-primary" />
         </div>
       )}
     </>

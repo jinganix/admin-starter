@@ -14,7 +14,7 @@ export function ThemeCustomizer(): ReactNode {
             <PaletteIcon />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="p-0 w-full md:w-auto">
           <ThemePalette />
         </DropdownMenuContent>
       </DropdownMenu>
