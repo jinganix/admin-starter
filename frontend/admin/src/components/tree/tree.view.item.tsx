@@ -1,7 +1,7 @@
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { groupBy } from "lodash";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/shadcn/button.tsx";
 import { Checkbox } from "@/components/shadcn/checkbox.tsx";
 import {
@@ -9,6 +9,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/shadcn/collapsible.tsx";
+import { useTreeState } from "@/components/tree/use.tree.state.tsx";
 import { cn } from "@/helpers/lib/cn";
 
 export interface TreeItem<T> {
@@ -27,6 +28,15 @@ type Props<T> = {
 
 export function TreeViewItem<T>({ item, level = 1, setSelected, selected }: Props<T>): ReactNode {
   const [open, setOpen] = useState(false);
+  const [state, setState] = useTreeState();
+
+  useEffect(() => void (state !== "partially" && setOpen(state === "expanded")), [state]);
+
+  const onSetOpen = (open: boolean): void => {
+    setOpen(open);
+    setState("partially");
+  };
+
   const selectedValues = new Set(selected || []);
 
   function checkedState(item: TreeItem<T>): CheckedState {
@@ -44,7 +54,7 @@ export function TreeViewItem<T>({ item, level = 1, setSelected, selected }: Prop
     return "indeterminate";
   }
 
-  const isSelected = checkedState(item);
+  const checked = checkedState(item);
 
   function onCheckedAll(checked: string | boolean, item: TreeItem<T>): void {
     if (checked) {
@@ -64,9 +74,9 @@ export function TreeViewItem<T>({ item, level = 1, setSelected, selected }: Prop
   return (
     <>
       {!item.items && (
-        <div className={cn("flex items-center space-x-2", { "pl-4 ml-2 border-l": level > 1 })}>
+        <div className={cn("flex items-center space-x-2", { "pl-4 ml-2": level > 1 })}>
           {item.value && (
-            <Checkbox id={item.code} checked={isSelected} onCheckedChange={(x) => onChecked(x)} />
+            <Checkbox id={item.code} checked={checked} onCheckedChange={(x) => onChecked(x)} />
           )}
           <label
             htmlFor={item.code}
@@ -82,11 +92,11 @@ export function TreeViewItem<T>({ item, level = 1, setSelected, selected }: Prop
       {item.items && (
         <Collapsible
           open={open}
-          onOpenChange={setOpen}
-          className={cn("space-y-2", { "pl-4 ml-2 border-l": level > 1 })}
+          onOpenChange={onSetOpen}
+          className={cn("space-y-2", { "pl-4 ml-2": level > 1 })}
         >
           <div className="flex items-center gap-2">
-            <Checkbox id="item" checked={isSelected} onCheckedChange={(x) => onChecked(x)} />
+            <Checkbox id="item" checked={checked} onCheckedChange={(x) => onChecked(x)} />
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="sm" className="p-0 h-auto">
                 {open ? (
@@ -101,7 +111,7 @@ export function TreeViewItem<T>({ item, level = 1, setSelected, selected }: Prop
               </Button>
             </CollapsibleTrigger>
           </div>
-          <CollapsibleContent className="space-y-2">
+          <CollapsibleContent className="space-y-2 ml-2 border-l">
             {item.items.map((x) => (
               <TreeViewItem
                 key={x.label}

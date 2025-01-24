@@ -83,6 +83,7 @@
         "list": "Get permissions",
         "options": "Get permission options",
         "reload": "Reload backend permissions",
+        "status": "Update permission status",
         "update": "Update permission",
         "upload": "Upload frontend permissions"
       },
@@ -94,6 +95,7 @@
         "list": "Get roles",
         "options": "Get role options",
         "permissions": "Update role permissions",
+        "status": "Update role status",
         "update": "Update role"
       },
       "user": {
@@ -101,6 +103,7 @@
         "create": "Create user",
         "delete": "Delete users",
         "list": "Get users",
+        "status": "Update user status",
         "update": "Update user"
       }
     }

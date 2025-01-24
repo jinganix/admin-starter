@@ -23,6 +23,9 @@ export default defineConfig({
       "@proto": resolve(__dirname, "build/generated/source/proto/main/ts"),
     },
   },
+  server: {
+    host: "0.0.0.0",
+  },
   test: {
     coverage: {
       exclude: ["src/components/shadcn/**", "src/index.tsx"],
