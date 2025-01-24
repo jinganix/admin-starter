@@ -25,10 +25,11 @@ import {
   SelectValue,
 } from "@/components/shadcn/select.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
+import { useTableData } from "@/components/table/table.data.context.tsx";
 import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
-import { Permission } from "@/sys/permission/permission.ts";
-import { permissionsStore } from "@/sys/permission/permissions.store.ts";
+import { PermissionActions } from "@/sys/permission/permission.actions.ts";
+import { Permission, PermissionQuery } from "@/sys/permission/permission.types.ts";
 
 const formSchema = z.object({
   code: z.string().min(1, { message: "Permission code is required." }),
@@ -46,6 +47,7 @@ interface Props {
 
 export function PermissionEditDialog({ permission, open, onOpenChange }: Props): ReactNode {
   const { t } = useTranslation();
+  const { records, setRecords, loadData } = useTableData<PermissionQuery, Permission>();
 
   const values = {
     code: permission?.code || "",
@@ -70,10 +72,13 @@ export function PermissionEditDialog({ permission, open, onOpenChange }: Props):
   const [submitting, onSubmit] = useLoading(
     async (values: z.infer<typeof formSchema>): Promise<void> => {
       if (permission) {
-        if (await permissionsStore.update(permission.id, values)) {
+        const newItem = await PermissionActions.update(permission.id, values);
+        if (newItem) {
+          setRecords(records.map((x) => (x.id === newItem.id ? newItem : x)));
           changeOpen(false);
         }
-      } else if (await permissionsStore.create(values)) {
+      } else if (await PermissionActions.create(values)) {
+        await loadData();
         changeOpen(false);
       }
     },

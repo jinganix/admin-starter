@@ -79,7 +79,6 @@ message PermissionCreateRequest {
 }
 
 message PermissionCreateResponse {
-  required PermissionPb permission = 1;
 }
 
 message PermissionOptionsRequest {

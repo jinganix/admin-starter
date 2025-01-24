@@ -1,12 +1,13 @@
-import { Paging } from "@helpers/paging/paging.ts";
-import { defaultSearchParams, toPageable, toSearchParams } from "@helpers/search.params.ts";
+import { emitter } from "@helpers/event/emitter.ts";
+import { DEFAULT_PAGEABLE } from "@helpers/paging/pageable.ts";
+import { toPageable } from "@helpers/search.params.ts";
+import { ErrorCode } from "@proto/ErrorCodeEnum.ts";
 import { UserStatus } from "@proto/SysUserProto.ts";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import i18next from "i18next";
 import { PlusIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
 import { LayoutContent } from "@/components/layout/layout.content.tsx";
@@ -14,97 +15,33 @@ import { Button } from "@/components/shadcn/button.tsx";
 import { Label } from "@/components/shadcn/label.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
 import { DataTable } from "@/components/table/data.table.tsx";
-import { RowAction, RowActions } from "@/components/table/row.actions.tsx";
 import { TableColumnHeader } from "@/components/table/table.column.header.tsx";
+import { TableDataProvider, useTableData } from "@/components/table/table.data.context.tsx";
 import { TableFooter } from "@/components/table/table.footer.tsx";
-import { TableParamsProvider, useTableParams } from "@/components/table/table.params.context.tsx";
+import { RowAction, TableRowActions } from "@/components/table/table.row.actions.tsx";
 import { tableRowCheckbox } from "@/components/table/table.row.checkbox.tsx";
 import { TableViewOptions } from "@/components/table/table.view.options.tsx";
 import { DeleteButton } from "@/components/utils/delete.button.tsx";
 import { useDataTable } from "@/hooks/use.data.table.tsx";
-import { useLoading } from "@/hooks/use.loading.ts";
 import { UserCreateDialog } from "@/pages/user/user.create.dialog.tsx";
-import { FormValues, useFilterForm } from "@/pages/user/user.filter.form.schema.tsx";
+import { valuesResolver } from "@/pages/user/user.filter.form.schema.tsx";
 import { UserFilterForm } from "@/pages/user/user.filter.form.tsx";
 import { UserUpdateDialog } from "@/pages/user/user.update.dialog.tsx";
-import { User } from "@/sys/user/user.ts";
-import { usersStore } from "@/sys/user/users.store";
+import { UserActions } from "@/sys/user/user.actions.ts";
+import { User, UserQuery } from "@/sys/user/user.types.ts";
 
 export type UserRowAction = RowAction<User>;
 const i18nKey = (id: string): string => `user.header.${id}`;
 
-export const columns = (setAction: (action: UserRowAction) => void): ColumnDef<User>[] => [
-  tableRowCheckbox(),
-  {
-    accessorKey: "id",
-    cell: ({ row }) => <div className="leading-6">{row.original.id}</div>,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "username",
-    cell: ({ row }) => <div className="whitespace-nowrap">{row.original.username}</div>,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "nickname",
-    cell: ({ row }) => <div className="whitespace-nowrap">{row.original.nickname}</div>,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "status",
-    cell: ({ row }) => (
-      <div className="flex justify-center items-center space-x-2">
-        <Switch
-          id="status"
-          checked={row.original.status === UserStatus.ACTIVE}
-          onCheckedChange={async (checked) => {
-            await usersStore.toggleStatus(
-              row.original.id,
-              checked ? UserStatus.ACTIVE : UserStatus.INACTIVE,
-            );
-          }}
-        />
-        <Label htmlFor="status">
-          {i18next.t(`user.status.${UserStatus[row.original.status]}`)}
-        </Label>
-      </div>
-    ),
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "createdAt",
-    cell: ({ row }) => (
-      <div className="whitespace-nowrap">{dayjs(row.original.createdAt).format()}</div>
-    ),
-    enableMultiSort: true,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    cell: ({ row }) => <RowActions item={row.original} setAction={setAction} />,
-    enableHiding: false,
-    id: "actions",
-  },
-];
-
-export const UsersComponent: FC = observer(() => {
+export const UsersComponent: FC = () => {
   const { t } = useTranslation();
-  const [params, setParams] = useTableParams();
+  const { loadData, loading, pageable, records, setRecords } = useTableData<UserQuery, User>();
   const [action, setAction] = useState<UserRowAction | null>(null);
 
-  const form = useFilterForm(params);
-
-  const pageable = toPageable(params);
-  const [loading, loadData] = useLoading(async (data?: FormValues): Promise<void> => {
-    data = data || form.getValues();
-    setParams(toSearchParams({ ...pageable, ...data }));
-    params.size && (await usersStore.load(pageable, data.username, data.status));
-  }, false);
   const onDelete = async (ids: (string | undefined)[]): Promise<boolean> => {
-    const filtered = ids.filter((x) => x !== undefined);
-    if (!filtered.length) {
-      return true;
-    }
-    if (await usersStore.delete(filtered)) {
+    if (await UserActions.delete(ids)) {
+      await loadData();
+      emitter.emit("error", ErrorCode.OK);
       setAction(null);
       table.resetRowSelection();
       return true;
@@ -112,9 +49,61 @@ export const UsersComponent: FC = observer(() => {
     return false;
   };
 
-  useEffect(() => void loadData(), [params]);
-  const { paging, records } = usersStore;
-  const table = useDataTable({ columns: columns(setAction), data: records, pageable });
+  const columns: ColumnDef<User>[] = [
+    tableRowCheckbox(),
+    {
+      accessorKey: "id",
+      cell: ({ row }) => <div className="leading-6">{row.original.id}</div>,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "username",
+      cell: ({ row }) => <div className="whitespace-nowrap">{row.original.username}</div>,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "nickname",
+      cell: ({ row }) => <div className="whitespace-nowrap">{row.original.nickname}</div>,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "status",
+      cell: ({ row }) => (
+        <div className="flex justify-center items-center space-x-2">
+          <Switch
+            id="status"
+            checked={row.original.status === UserStatus.ACTIVE}
+            onCheckedChange={async (checked) => {
+              const id = row.original.id;
+              const status = checked ? UserStatus.ACTIVE : UserStatus.INACTIVE;
+              if (await UserActions.updateStatus(id, status)) {
+                setRecords(records.map((x) => (x.id === id ? { ...x, status } : x)));
+              }
+            }}
+          />
+          <Label htmlFor="status">
+            {i18next.t(`user.status.${UserStatus[row.original.status]}`)}
+          </Label>
+        </div>
+      ),
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "createdAt",
+      cell: ({ row }) => (
+        <div className="whitespace-nowrap">{dayjs(row.original.createdAt).format()}</div>
+      ),
+      enableMultiSort: true,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      cell: ({ row }) => <TableRowActions item={row.original} setAction={setAction} />,
+      enableHiding: false,
+      id: "actions",
+    },
+  ];
+
+  const table = useDataTable({ columns, data: records, pageable });
   const selected = table.getSelectedRowModel().rows.map((x) => x.original);
 
   return (
@@ -127,7 +116,7 @@ export const UsersComponent: FC = observer(() => {
       </div>
 
       <div className="flex items-center justify-end xl:justify-between space-x-4">
-        <UserFilterForm form={form} loadData={loadData} />
+        <UserFilterForm />
 
         <div className="flex items-center gap-4">
           <Button className="h-8" size="sm" onClick={() => setAction({ type: "create" })}>
@@ -146,7 +135,7 @@ export const UsersComponent: FC = observer(() => {
 
       <DataTable table={table} loading={loading} />
 
-      <TableFooter paging={paging || new Paging(pageable.size)} />
+      <TableFooter />
 
       <DeleteDialog
         open={action?.type === "delete"}
@@ -166,14 +155,20 @@ export const UsersComponent: FC = observer(() => {
       />
     </div>
   );
-});
+};
 
 export const UsersPage: FC = () => {
+  const params = new URLSearchParams(window.location.search);
+
   return (
     <LayoutContent fixed>
-      <TableParamsProvider value={defaultSearchParams()}>
+      <TableDataProvider
+        loadData={UserActions.list}
+        pageable={params.size ? toPageable(params) : DEFAULT_PAGEABLE}
+        query={params.size ? valuesResolver.resolve(params) : {}}
+      >
         <UsersComponent />
-      </TableParamsProvider>
+      </TableDataProvider>
     </LayoutContent>
   );
 };

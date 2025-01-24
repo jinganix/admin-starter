@@ -18,7 +18,7 @@ import { Input } from "@/components/shadcn/input";
 import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { SettingsContainer } from "@/pages/settings/settings.container.tsx";
-import { changePassword } from "@/sys/user/user.actions.ts";
+import { UserActions } from "@/sys/user/user.actions.ts";
 
 export const SettingsCredentialPage: FC = () => {
   const { t } = useTranslation();
@@ -45,7 +45,7 @@ export const SettingsCredentialPage: FC = () => {
   });
 
   const [submitting, onSubmit] = useLoading(async (data: FormValues): Promise<void> => {
-    if (await changePassword(data.current, data.password)) {
+    if (await UserActions.changePassword(data.current, data.password)) {
       emitter.emit("error", ErrorCode.OK);
     }
   }, false);

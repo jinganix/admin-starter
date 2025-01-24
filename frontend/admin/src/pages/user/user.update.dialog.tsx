@@ -19,13 +19,13 @@ import { Form, FormField } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input.tsx";
 import { Skeleton } from "@/components/shadcn/skeleton.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
+import { useTableData } from "@/components/table/table.data.context.tsx";
 import { FacetedFilter } from "@/components/utils/faceted.filter.tsx";
 import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
-import { getRoleOptions } from "@/sys/role/role.actions.ts";
-import { retrieveUser } from "@/sys/user/user.actions.ts";
-import { User } from "@/sys/user/user.ts";
-import { usersStore } from "@/sys/user/users.store.ts";
+import { RoleActions } from "@/sys/role/role.actions.ts";
+import { UserActions } from "@/sys/user/user.actions.ts";
+import { UserQuery, User } from "@/sys/user/user.types.ts";
 
 interface Props {
   userId: string;
@@ -35,6 +35,7 @@ interface Props {
 
 export function UserUpdateDialog({ userId, open, onOpenChange }: Props): ReactNode {
   const { t } = useTranslation();
+  const { records, setRecords } = useTableData<UserQuery, User>();
   const [user, setUser] = useState<User | null>(null);
   const [options, setOptions] = useState<Option<string>[]>([]);
 
@@ -60,14 +61,17 @@ export function UserUpdateDialog({ userId, open, onOpenChange }: Props): ReactNo
     resolver: zodResolver(formSchema),
   });
 
-  const [loading, loadData] = useLoading(async () => {
-    const [user, options] = await Promise.all([retrieveUser(userId), getRoleOptions()]);
+  const [loading, loadUser] = useLoading(async () => {
+    const [user, options] = await Promise.all([
+      UserActions.retrieve(userId),
+      RoleActions.getOptions(),
+    ]);
     setUser(user);
     setOptions(options);
   }, true);
 
   useEffect(() => void (user && form.reset(values)), [user]);
-  useEffect(() => void (open && loadData()), [open]);
+  useEffect(() => void (open && loadUser()), [open]);
 
   const changeOpen = (state: boolean): void => {
     form.reset();
@@ -78,7 +82,9 @@ export function UserUpdateDialog({ userId, open, onOpenChange }: Props): ReactNo
     async ({ roles, ...values }: FormValues): Promise<void> => {
       const roleIds = roles ? roles : [];
       if (user) {
-        if (await usersStore.update({ ...values, id: user.id, roleIds })) {
+        const newItem = await UserActions.update(user.id, { ...values, roleIds });
+        if (newItem) {
+          setRecords(records.map((x) => (x.id === newItem.id ? newItem : x)));
           changeOpen(false);
         }
       }

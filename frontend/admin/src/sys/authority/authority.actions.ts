@@ -12,33 +12,30 @@ import {
 import { replace } from "lodash";
 import { container } from "tsyringe";
 import { Authority } from "@/sys/authority/authority.ts";
-import { permissionsStore } from "@/sys/permission/permissions.store.ts";
 
-export async function uploadAuthorities(): Promise<void> {
-  const permissions = Object.values(Authority).map((x) => {
-    return {
-      code: x,
-      description: "",
-      name: `authority${replace(x, /\//g, ".")}`,
-      status: PermissionStatus.ACTIVE,
-      type: x.endsWith(".") ? PermissionType.GROUP : PermissionType.UI,
-    };
-  });
-  const res = await container
-    .resolve(HttpService)
-    .request(PermissionUploadRequest.create({ permissions }), PermissionUploadResponse);
-  if (res) {
-    await permissionsStore.reload();
-    emitter.emit("error", ErrorCode.OK);
+export class AuthorityActions {
+  static async uploadUI(): Promise<boolean> {
+    const permissions = Object.values(Authority).map((x) => {
+      return {
+        code: x,
+        description: "",
+        name: `authority${replace(x, /\//g, ".")}`,
+        status: PermissionStatus.ACTIVE,
+        type: x.endsWith(".") ? PermissionType.GROUP : PermissionType.UI,
+      };
+    });
+    const res = await container
+      .resolve(HttpService)
+      .request(PermissionUploadRequest.create({ permissions }), PermissionUploadResponse);
+    res && emitter.emit("error", ErrorCode.OK);
+    return !!res;
   }
-}
 
-export async function reloadAuthorities(): Promise<void> {
-  const res = await container
-    .resolve(HttpService)
-    .request(PermissionReloadRequest.create(), PermissionReloadResponse);
-  if (res) {
-    await permissionsStore.reload();
-    emitter.emit("error", ErrorCode.OK);
+  static async reloadAPI(): Promise<boolean> {
+    const res = await container
+      .resolve(HttpService)
+      .request(PermissionReloadRequest.create(), PermissionReloadResponse);
+    res && emitter.emit("error", ErrorCode.OK);
+    return !!res;
   }
 }

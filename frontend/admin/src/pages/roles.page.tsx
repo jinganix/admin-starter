@@ -1,12 +1,13 @@
-import { Paging } from "@helpers/paging/paging.ts";
-import { defaultSearchParams, toPageable, toSearchParams } from "@helpers/search.params.ts";
+import { emitter } from "@helpers/event/emitter.ts";
+import { DEFAULT_PAGEABLE } from "@helpers/paging/pageable.ts";
+import { toPageable } from "@helpers/search.params.ts";
+import { ErrorCode } from "@proto/ErrorCodeEnum.ts";
 import { RoleStatus } from "@proto/SysRoleProto.ts";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import i18next from "i18next";
 import { PlusIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
 import { LayoutContent } from "@/components/layout/layout.content.tsx";
@@ -14,95 +15,31 @@ import { Button } from "@/components/shadcn/button.tsx";
 import { Label } from "@/components/shadcn/label.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
 import { DataTable } from "@/components/table/data.table.tsx";
-import { RowAction, RowActions } from "@/components/table/row.actions.tsx";
 import { TableColumnHeader } from "@/components/table/table.column.header.tsx";
+import { TableDataProvider, useTableData } from "@/components/table/table.data.context.tsx";
 import { TableFooter } from "@/components/table/table.footer.tsx";
-import { TableParamsProvider, useTableParams } from "@/components/table/table.params.context.tsx";
+import { RowAction, TableRowActions } from "@/components/table/table.row.actions.tsx";
 import { tableRowCheckbox } from "@/components/table/table.row.checkbox.tsx";
 import { TableViewOptions } from "@/components/table/table.view.options.tsx";
 import { DeleteButton } from "@/components/utils/delete.button.tsx";
 import { useDataTable } from "@/hooks/use.data.table.tsx";
-import { useLoading } from "@/hooks/use.loading.ts";
 import { RoleEditDialog } from "@/pages/role/role.edit.dialog.tsx";
-import { FormValues, useFilterForm } from "@/pages/role/role.filter.form.schema.tsx";
+import { valuesResolver } from "@/pages/role/role.filter.form.schema.tsx";
 import { RoleFilterForm } from "@/pages/role/role.filter.form.tsx";
-import { Role } from "@/sys/role/role.ts";
-import { rolesStore } from "@/sys/role/roles.store";
+import { RoleActions } from "@/sys/role/role.actions.ts";
+import { Role, RoleQuery } from "@/sys/role/role.types.ts";
 
 const i18nKey = (id: string): string => `role.header.${id}`;
 
-export const columns = (setAction: (action: RowAction<Role>) => void): ColumnDef<Role>[] => [
-  tableRowCheckbox(),
-  {
-    accessorKey: "id",
-    cell: ({ row }) => <div className="leading-6">{row.original.id}</div>,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "name",
-    cell: ({ row }) => <div className="whitespace-nowrap">{row.original.name}</div>,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "code",
-    cell: ({ row }) => <div className="whitespace-nowrap">{row.original.code}</div>,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "status",
-    cell: ({ row }) => (
-      <div className="flex justify-center items-center space-x-2">
-        <Switch
-          id="status"
-          checked={row.original.status === RoleStatus.ACTIVE}
-          onCheckedChange={async (checked) => {
-            await rolesStore.toggleStatus(
-              row.original.id,
-              checked ? RoleStatus.ACTIVE : RoleStatus.INACTIVE,
-            );
-          }}
-        />
-        <Label htmlFor="status">
-          {i18next.t(`role.status.${RoleStatus[row.original.status]}`)}
-        </Label>
-      </div>
-    ),
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    accessorKey: "createdAt",
-    cell: ({ row }) => (
-      <div className="whitespace-nowrap">{dayjs(row.original.createdAt).format()}</div>
-    ),
-    enableMultiSort: true,
-    header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
-  },
-  {
-    cell: ({ row }) => <RowActions item={row.original} setAction={setAction} />,
-    enableHiding: false,
-    id: "actions",
-  },
-];
-
-export const RolesComponent: FC = observer(() => {
+export const RolesComponent: FC = () => {
   const { t } = useTranslation();
-  const [params, setParams] = useTableParams();
+  const { loadData, loading, pageable, records, setRecords } = useTableData<RoleQuery, Role>();
   const [action, setAction] = useState<RowAction<Role> | null>(null);
 
-  const form = useFilterForm(params);
-
-  const pageable = toPageable(params);
-  const [loading, loadData] = useLoading(async (data?: FormValues): Promise<void> => {
-    data = data || form.getValues();
-    setParams(toSearchParams({ ...pageable, ...data }));
-    params.size && (await rolesStore.load(pageable, data.name, data.status));
-  }, false);
   const onDelete = async (ids: (string | undefined)[]): Promise<boolean> => {
-    const filtered = ids.filter((x) => x !== undefined);
-    if (!filtered.length) {
-      return true;
-    }
-    if (await rolesStore.delete(filtered)) {
+    if (await RoleActions.delete(ids)) {
+      await loadData();
+      emitter.emit("error", ErrorCode.OK);
       setAction(null);
       table.resetRowSelection();
       return true;
@@ -110,9 +47,61 @@ export const RolesComponent: FC = observer(() => {
     return false;
   };
 
-  useEffect(() => void loadData(), [params]);
-  const { paging, records } = rolesStore;
-  const table = useDataTable({ columns: columns(setAction), data: records, pageable });
+  const columns: ColumnDef<Role>[] = [
+    tableRowCheckbox(),
+    {
+      accessorKey: "id",
+      cell: ({ row }) => <div className="leading-6">{row.original.id}</div>,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "name",
+      cell: ({ row }) => <div className="whitespace-nowrap">{row.original.name}</div>,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "code",
+      cell: ({ row }) => <div className="whitespace-nowrap">{row.original.code}</div>,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "status",
+      cell: ({ row }) => (
+        <div className="flex justify-center items-center space-x-2">
+          <Switch
+            id="status"
+            checked={row.original.status === RoleStatus.ACTIVE}
+            onCheckedChange={async (checked) => {
+              const id = row.original.id;
+              const status = checked ? RoleStatus.ACTIVE : RoleStatus.INACTIVE;
+              if (await RoleActions.updateStatus(id, status)) {
+                setRecords(records.map((x) => (x.id === id ? { ...x, status } : x)));
+              }
+            }}
+          />
+          <Label htmlFor="status">
+            {i18next.t(`role.status.${RoleStatus[row.original.status]}`)}
+          </Label>
+        </div>
+      ),
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      accessorKey: "createdAt",
+      cell: ({ row }) => (
+        <div className="whitespace-nowrap">{dayjs(row.original.createdAt).format()}</div>
+      ),
+      enableMultiSort: true,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
+      cell: ({ row }) => <TableRowActions item={row.original} setAction={setAction} />,
+      enableHiding: false,
+      id: "actions",
+    },
+  ];
+
+  const table = useDataTable({ columns, data: records, pageable });
   const selected = table.getSelectedRowModel().rows.map((x) => x.original);
 
   return (
@@ -125,7 +114,7 @@ export const RolesComponent: FC = observer(() => {
       </div>
 
       <div className="flex items-center justify-end xl:justify-between space-x-4">
-        <RoleFilterForm form={form} loadData={loadData} />
+        <RoleFilterForm />
 
         <div className="flex items-center gap-4">
           <Button className="h-8" size="sm" onClick={() => setAction({ type: "create" })}>
@@ -144,7 +133,7 @@ export const RolesComponent: FC = observer(() => {
 
       <DataTable table={table} loading={loading} />
 
-      <TableFooter paging={paging || new Paging(pageable.size)} />
+      <TableFooter />
 
       <DeleteDialog
         open={action?.type === "delete"}
@@ -159,14 +148,20 @@ export const RolesComponent: FC = observer(() => {
       />
     </div>
   );
-});
+};
 
 export const RolesPage: FC = () => {
+  const params = new URLSearchParams(window.location.search);
+
   return (
     <LayoutContent fixed>
-      <TableParamsProvider value={defaultSearchParams()}>
+      <TableDataProvider
+        loadData={RoleActions.list}
+        pageable={params.size ? toPageable(params) : DEFAULT_PAGEABLE}
+        query={params.size ? valuesResolver.resolve(params) : {}}
+      >
         <RolesComponent />
-      </TableParamsProvider>
+      </TableDataProvider>
     </LayoutContent>
   );
 };

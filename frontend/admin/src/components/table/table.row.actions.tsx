@@ -24,7 +24,7 @@ type Props<T> = {
   children?: ReactNode;
 };
 
-export function RowActions<T>({ item, setAction, children }: Props<T>): ReactNode {
+export function TableRowActions<T>({ item, setAction, children }: Props<T>): ReactNode {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -49,6 +49,6 @@ public class RoleCreateHandler {
     roleRepository.save(role);
     roleService.createRolePermissions(role.getId(), request.getPermissionIds(), millis);
     emitter.roleCreated(role);
-    return new RoleCreateResponse(roleMapper.rolePb(role, request.getPermissionIds()));
+    return new RoleCreateResponse();
   }
 }

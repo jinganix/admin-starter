@@ -18,10 +18,10 @@ export const valuesResolver = new FormValuesResolver<FormValues>({
   types: [undefined, (x) => x.split(",").map((v) => Number(v))],
 });
 
-export const useFilterForm = (params: URLSearchParams): UseFormReturn<FormValues> => {
+export function useFilterForm<T extends FormValues>(query: T): UseFormReturn<FormValues> {
   return useForm<FormValues>({
     defaultValues: valuesResolver.resolve(),
     resolver: zodResolver(formSchema),
-    values: valuesResolver.resolve(params),
+    values: query,
   });
-};
+}
