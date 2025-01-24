@@ -17,6 +17,7 @@ jobs:
         with:
           configFile: package.json
           failOnWarnings: true
+
   build:
     name: Build
     needs: [ commitlint ]
@@ -28,14 +29,21 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.jdk }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Build with Gradle
+
+      - name: Build backend
         run: ./gradlew clean build
+
+      - name: Build frontend
+        working-directory: frontend/admin
+        run: npm ci && npm run test && npm run build

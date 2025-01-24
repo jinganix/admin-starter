@@ -5,7 +5,7 @@ import * as useLoading from "@/hooks/use.loading.ts";
 import * as routes from "@/routes.tsx";
 
 describe("<App />", () => {
-  beforeEach(() => vi.spyOn(routes, "getRoutes").mockResolvedValue([]));
+  beforeEach(() => vi.spyOn(routes, "getRoutes").mockReturnValue([]));
 
   describe("when loading", () => {
     it("should render spinner", () => {
