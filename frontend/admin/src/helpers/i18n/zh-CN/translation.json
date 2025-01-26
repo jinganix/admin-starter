@@ -15,6 +15,7 @@
     "filter": {
       "method": "按方法过滤",
       "path": "按路径过滤",
+      "userId": "按用户ID过滤",
       "username": "按用户名过滤"
     },
     "header": {

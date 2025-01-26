@@ -15,6 +15,7 @@
     "filter": {
       "method": "Filter by method",
       "path": "Filter by path",
+      "userId": "Filter by user ID",
       "username": "Filter by username"
     },
     "header": {

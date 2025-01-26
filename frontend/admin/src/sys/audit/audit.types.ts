@@ -9,6 +9,7 @@ export interface Audit {
 }
 
 export type AuditQuery = {
+  userId?: string;
   username?: string;
   method?: string;
   path?: string;
