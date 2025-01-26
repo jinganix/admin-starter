@@ -15,6 +15,7 @@ import {
 } from "@/components/shadcn/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
 import { cn } from "@/helpers/lib/cn";
+import { useIsMobile } from "@/hooks/use.mobile.tsx";
 
 interface Props<T> extends PopoverProps {
   options: Option<T>[];
@@ -33,6 +34,7 @@ export function OptionSelector<T>({
   ...props
 }: Props<T>): ReactNode {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   const [open, setOpen] = useState(false);
   const option = options.filter((x) => x.value === selected)[0];
@@ -51,7 +53,7 @@ export function OptionSelector<T>({
           <ChevronsUpDownIcon className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0">
+      <PopoverContent className="p-0" onOpenAutoFocus={(x) => isMobile && x.preventDefault()}>
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandList>

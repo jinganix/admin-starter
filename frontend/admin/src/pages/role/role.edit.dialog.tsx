@@ -25,15 +25,16 @@ import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { Separator } from "@/components/shadcn/separator.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
 import { Textarea } from "@/components/shadcn/textarea.tsx";
+import { useTableData } from "@/components/table/table.data.context.tsx";
 import { TreeItem } from "@/components/tree/tree.view.item.tsx";
 import { TreeView } from "@/components/tree/tree.view.tsx";
 import { TreeStateProvider } from "@/components/tree/use.tree.state.tsx";
 import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
-import { getPermissionOptions } from "@/sys/permission/permission.actions.ts";
+import { PermissionActions } from "@/sys/permission/permission.actions.ts";
 import { PermissionOption } from "@/sys/permission/permission.types.ts";
-import { Role } from "@/sys/role/role.ts";
-import { rolesStore } from "@/sys/role/roles.store.ts";
+import { RoleActions } from "@/sys/role/role.actions.ts";
+import { Role, RoleQuery } from "@/sys/role/role.types.ts";
 
 const formSchema = z.object({
   code: z.string().min(1, { message: "Role code is required." }),
@@ -72,6 +73,7 @@ interface Props {
 
 export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
   const { t } = useTranslation();
+  const { records, setRecords, loadData } = useTableData<RoleQuery, Role>();
   const [treeItems, setTreeItems] = useState<TreeItem<string>[]>([]);
 
   const values = {
@@ -92,7 +94,7 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
     () =>
       void (
         open &&
-        getPermissionOptions().then((options) =>
+        PermissionActions.getOptions().then((options) =>
           setTreeItems(toTreeItems(options.map((x) => ({ ...x, label: t(x.label) })))),
         )
       ),
@@ -108,10 +110,13 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
     async ({ permissions, ...values }: z.infer<typeof formSchema>): Promise<void> => {
       const permissionIds = permissions ? permissions : [];
       if (role) {
-        if (await rolesStore.update(role.id, { ...values, permissionIds })) {
+        const newItem = await RoleActions.update(role.id, { ...values, permissionIds });
+        if (newItem) {
+          setRecords(records.map((x) => (x.id === newItem.id ? newItem : x)));
           changeOpen(false);
         }
-      } else if (await rolesStore.create({ ...values, permissionIds })) {
+      } else if (await RoleActions.create({ ...values, permissionIds })) {
+        await loadData();
         changeOpen(false);
       }
     },

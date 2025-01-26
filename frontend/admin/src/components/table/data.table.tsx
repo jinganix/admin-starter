@@ -1,9 +1,8 @@
 import { cn } from "@helpers/lib/cn.ts";
-import { mergeParams } from "@helpers/search.params.ts";
 import { SortDirection } from "@proto/PageableProto.ts";
 import { flexRender, Table as TableDef } from "@tanstack/react-table";
 import { keyBy, mapValues } from "lodash";
-import { HTMLAttributes, ReactNode, useEffect } from "react";
+import { HTMLAttributes, ReactNode, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -13,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/shadcn/table";
-import { useTableParams } from "@/components/table/table.params.context.tsx";
+import { useTableData } from "@/components/table/table.data.context.tsx";
 import { Spinner } from "@/components/utils/spinner.tsx";
 
 interface Props<TData> extends HTMLAttributes<HTMLDivElement> {
@@ -23,8 +22,11 @@ interface Props<TData> extends HTMLAttributes<HTMLDivElement> {
 
 export function DataTable<TData>({ table, loading, className }: Props<TData>): ReactNode {
   const { t } = useTranslation();
-  const [params, setParams] = useTableParams();
-  const setSort = (sort: object): void => setParams(mergeParams(params, { sort }));
+  const { pageable, setPageable } = useTableData();
+  const setSort = (sort: Record<string, SortDirection>) => void setPageable({ ...pageable, sort });
+
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => void (loading && ref.current?.scrollTo(0, 0)), [loading]);
 
   const { sorting } = table.getState();
   useEffect(() => {
@@ -39,6 +41,7 @@ export function DataTable<TData>({ table, loading, className }: Props<TData>): R
 
   return (
     <div
+      ref={ref}
       className={cn(
         "relative rounded-md border",
         loading ? "overflow-hidden" : "overflow-auto",

@@ -20,6 +20,19 @@ enum UserStatus {
   ACTIVE = 1;
 }
 
+message UserCreatePb {
+  required string username = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required string password = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required UserStatus status = 3 [(opts).java = {annotation: '@NotNull'}];
+  repeated int64 roleIds = 4 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
+}
+
+message UserUpdatePb {
+  required string nickname = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
+  required UserStatus status = 2 [(opts).java = {annotation: '@NotNull'}];
+  repeated int64 roleIds = 3 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
+}
+
 message UserPb {
   required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
   required string username = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
@@ -72,12 +85,8 @@ message UserCreateRequest {
   option (m_opts).opt = {
     method: "POST"
     path: "/sys/user/create"
+    extends: 'UserCreatePb'
   };
-
-  required string username = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
-  required string password = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
-  required UserStatus status = 3 [(opts).java = {annotation: '@NotNull'}];
-  repeated int64 roleIds = 4 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
 }
 
 message UserCreateResponse {
@@ -112,12 +121,10 @@ message UserUpdateRequest {
   option (m_opts).opt = {
     method: "POST"
     path: "/sys/user/update"
+    extends: 'UserUpdatePb'
   };
 
   required int64 id = 1 [(opts).ts = {as_string: true}];
-  required string nickname = 2 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
-  required UserStatus status = 3 [(opts).java = {annotation: '@NotNull'}];
-  repeated int64 roleIds = 4 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];
 }
 
 message UserUpdateResponse {

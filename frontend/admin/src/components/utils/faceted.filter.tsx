@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/pop
 import { ScrollArea } from "@/components/shadcn/scroll-area.tsx";
 import { Separator } from "@/components/shadcn/separator";
 import { cn } from "@/helpers/lib/cn";
+import { useIsMobile } from "@/hooks/use.mobile.tsx";
 
 interface Props<TValue> {
   title?: string;
@@ -38,6 +39,7 @@ export function FacetedFilter<TValue>({
   className,
   maxShowed,
 }: Props<TValue>): ReactNode {
+  const isMobile = useIsMobile();
   const selectedValues = new Set(selected || []);
 
   return (
@@ -72,7 +74,11 @@ export function FacetedFilter<TValue>({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="min-w-48 p-0" align="start">
+      <PopoverContent
+        className="min-w-48 p-0"
+        align="start"
+        onOpenAutoFocus={(x) => isMobile && x.preventDefault()}
+      >
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>

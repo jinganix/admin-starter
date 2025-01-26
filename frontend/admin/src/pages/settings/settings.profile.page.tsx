@@ -20,7 +20,7 @@ import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { SettingsContainer } from "@/pages/settings/settings.container.tsx";
 import { authStore } from "@/sys/auth/auth.store.ts";
-import { updateProfile } from "@/sys/user/user.actions.ts";
+import { UserActions } from "@/sys/user/user.actions.ts";
 
 export function SettingsProfilePage(): ReactNode {
   const { t } = useTranslation();
@@ -42,7 +42,7 @@ export function SettingsProfilePage(): ReactNode {
   });
 
   const [submitting, onSubmit] = useLoading(async (data: FormValues) => {
-    if (await updateProfile(data.nickname)) {
+    if (await UserActions.updateProfile(data.nickname)) {
       emitter.emit("error", ErrorCode.OK);
     }
   }, false);

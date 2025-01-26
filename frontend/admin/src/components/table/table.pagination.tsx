@@ -1,5 +1,3 @@
-import { Paging } from "@helpers/paging/paging.ts";
-import { getPage, mergeParams } from "@helpers/search.params.ts";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -9,7 +7,7 @@ import {
 } from "lucide-react";
 import { FC } from "react";
 import { Button } from "@/components/shadcn/button";
-import { useTableParams } from "@/components/table/table.params.context.tsx";
+import { useTableData } from "@/components/table/table.data.context.tsx";
 import { cn } from "@/helpers/lib/cn";
 
 const ELLIPSIS = -1;
@@ -48,15 +46,11 @@ export function paginationData(page: number, totalPage: number): PaginationItem[
   }));
 }
 
-type Props = {
-  paging: Paging;
-};
+export const TablePagination: FC = () => {
+  const { pageable, setPageable, loading, paging } = useTableData();
+  const setPage = (page: number) => void setPageable({ ...pageable, page });
 
-export const TablePagination: FC<Props> = ({ paging }) => {
-  const [params, setParams] = useTableParams();
-  const setPage = (page: number): void => setParams(mergeParams(params, { page }));
-
-  const page = getPage(params);
+  const page = pageable.page;
   const { pages } = paging;
   const data = paginationData(page + 1 || 1, pages || 1);
 
@@ -67,7 +61,7 @@ export const TablePagination: FC<Props> = ({ paging }) => {
           variant="outline"
           className="h-8 min-w-8 p-0.5"
           onClick={() => setPage(0)}
-          disabled={page <= 0}
+          disabled={loading || page <= 0}
         >
           <ChevronsLeftIcon className="size-4" />
         </Button>
@@ -76,7 +70,7 @@ export const TablePagination: FC<Props> = ({ paging }) => {
           variant="outline"
           className="h-8 min-w-8 p-0.5"
           onClick={() => setPage(Math.max(0, page - 1))}
-          disabled={page <= 0}
+          disabled={loading || page <= 0}
         >
           <ChevronLeftIcon className="size-4" />
         </Button>
@@ -89,7 +83,7 @@ export const TablePagination: FC<Props> = ({ paging }) => {
               "border-2 border-primary text-primary": page === item.page - 1,
             })}
             onClick={() => setPage(item.page - 1)}
-            disabled={item.page === ELLIPSIS}
+            disabled={loading || item.page === ELLIPSIS}
           >
             {item.page === ELLIPSIS ? <MoreHorizontalIcon /> : item.page}
           </Button>
@@ -99,7 +93,7 @@ export const TablePagination: FC<Props> = ({ paging }) => {
           variant="outline"
           className="h-8 min-w-8 p-0.5"
           onClick={() => setPage(Math.min(pages, page + 1))}
-          disabled={page >= pages - 1}
+          disabled={loading || page >= pages - 1}
         >
           <ChevronRightIcon className="size-4" />
         </Button>
@@ -108,7 +102,7 @@ export const TablePagination: FC<Props> = ({ paging }) => {
           variant="outline"
           className="h-8 min-w-8 p-0.5"
           onClick={() => setPage(pages - 1)}
-          disabled={page >= pages - 1}
+          disabled={loading || page >= pages - 1}
         >
           <ChevronsRightIcon className="size-4" />
         </Button>

@@ -1,18 +1,19 @@
 import { FormValuesResolver } from "@helpers/search.params.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserStatus } from "@proto/SysUserProto.ts";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
 export const formSchema = z.object({
-  status: z.nativeEnum(UserStatus).optional(),
+  method: z.string().optional(),
+  path: z.string().optional(),
   username: z.string().optional(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
 
 export const valuesResolver = new FormValuesResolver<FormValues>({
-  status: [undefined, (x) => Number(x)],
+  method: ["", (x) => x],
+  path: ["", (x) => x],
   username: ["", (x) => x],
 });
 

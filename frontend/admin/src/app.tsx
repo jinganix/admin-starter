@@ -1,6 +1,5 @@
 import "@/helpers/i18n/i18n.config";
 import { TokenService } from "@helpers/network/token.service.ts";
-import { observer } from "mobx-react-lite";
 import { FC, useEffect } from "react";
 import { BrowserRouter, Routes } from "react-router";
 import { container } from "tsyringe";
@@ -10,7 +9,7 @@ import { useLoading } from "@/hooks/use.loading.ts";
 import { getRoutes } from "@/routes.tsx";
 import { authStore } from "@/sys/auth/auth.store.ts";
 
-export const App: FC = observer(() => {
+export const App: FC = () => {
   const [loading, loadUser] = useLoading(
     () => authStore.initialize(async () => await container.resolve(TokenService).deleteToken()),
     true,
@@ -29,4 +28,4 @@ export const App: FC = observer(() => {
       <Toaster />
     </>
   );
-});
+};

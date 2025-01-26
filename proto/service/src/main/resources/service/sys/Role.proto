@@ -67,7 +67,6 @@ message RoleCreateRequest {
 }
 
 message RoleCreateResponse {
-  required RolePb role = 1;
 }
 
 message RoleOptionsRequest {

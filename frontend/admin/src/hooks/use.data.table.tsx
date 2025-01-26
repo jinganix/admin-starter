@@ -1,4 +1,4 @@
-import { Pageable } from "@helpers/paging/pageable.ts";
+import { DEFAULT_PAGEABLE, Pageable } from "@helpers/paging/pageable.ts";
 import { SortDirection } from "@proto/PageableProto.ts";
 import { ColumnDef, getCoreRowModel, Table, useReactTable } from "@tanstack/react-table";
 
@@ -11,7 +11,7 @@ interface Props<TData, TValue> {
 export function useDataTable<TData, TValue>({
   columns,
   data,
-  pageable = new Pageable(),
+  pageable = DEFAULT_PAGEABLE,
 }: Props<TData, TValue>): Table<TData> {
   return useReactTable({
     columns,

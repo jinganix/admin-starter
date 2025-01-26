@@ -1,41 +1,39 @@
 import { enumToOptions } from "@helpers/option.ts";
-import { overrideParams } from "@helpers/search.params.ts";
 import { UserStatus } from "@proto/SysUserProto.ts";
 import { XIcon } from "lucide-react";
 import { FC } from "react";
-import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/shadcn/button.tsx";
 import { Form, FormControl, FormField, FormItem } from "@/components/shadcn/form.tsx";
 import { Input } from "@/components/shadcn/input.tsx";
 import { OptionSelector } from "@/components/table/option.selector.tsx";
+import { useTableData } from "@/components/table/table.data.context.tsx";
 import { TableFilters } from "@/components/table/table.filters.tsx";
-import { useTableParams } from "@/components/table/table.params.context.tsx";
 import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
-import { FormValues, valuesResolver } from "@/pages/user/user.filter.form.schema.tsx";
+import { useFilterForm, valuesResolver } from "@/pages/user/user.filter.form.schema.tsx";
+import {UserQuery} from "@/sys/user/user.types.ts";
 
-type Props = {
-  form: UseFormReturn<FormValues>;
-  loadData: () => Promise<void>;
-};
-
-export const UserFilterForm: FC<Props> = ({ form, loadData }) => {
+export const UserFilterForm: FC = () => {
   const { t } = useTranslation();
-  const [params, setParams] = useTableParams();
 
-  const [submitting, onSubmit] = useLoading(loadData, false);
+  const { query, setQuery } = useTableData<UserQuery>();
+  const form = useFilterForm(query);
 
-  const reset = (): void => {
-    const defaultValues = valuesResolver.resolve();
-    form.reset(defaultValues);
-    setParams(overrideParams(params, defaultValues));
-  };
+  const [resetting, reset] = useLoading(async () => {
+    form.reset(valuesResolver.resolve());
+    await setQuery({});
+  }, false);
+
+  const [submitting, submit] = useLoading(async () => {
+    const values = form.getValues();
+    await setQuery(values);
+  }, false);
 
   return (
     <TableFilters>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col xl:flex-row gap-4">
+        <form onSubmit={form.handleSubmit(submit)} className="flex flex-col xl:flex-row gap-4">
           <FormField
             control={form.control}
             name="username"
@@ -44,6 +42,7 @@ export const UserFilterForm: FC<Props> = ({ form, loadData }) => {
                 <FormControl>
                   <div className="relative w-full max-w-sm">
                     <Input
+                      autoFocus={false}
                       className="h-8 placeholder:text-sm"
                       placeholder={t("user.filter.username.placeholder")}
                       {...field}
@@ -79,7 +78,8 @@ export const UserFilterForm: FC<Props> = ({ form, loadData }) => {
           />
 
           <div className="flex justify-end xl:justify-between gap-4">
-            <Button className="h-8" type="button" onClick={reset}>
+            <Button disabled={resetting} className="h-8" type="button" onClick={reset}>
+              <Spinner loading={resetting} />
               {t("action.reset")}
             </Button>
             <Button disabled={submitting} className="h-8" type="submit">

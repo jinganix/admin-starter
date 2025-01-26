@@ -46,6 +46,6 @@ public class PermissionCreateHandler {
     permissionMapper.fill(permission, request);
     permissionRepository.save(permission);
     emitter.permissionsCreated(List.of(permission));
-    return new PermissionCreateResponse(permissionMapper.mapToPb(permission));
+    return new PermissionCreateResponse();
   }
 }

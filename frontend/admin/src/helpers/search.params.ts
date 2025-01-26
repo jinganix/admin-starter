@@ -1,8 +1,8 @@
-import { keyBy, mapValues, split } from "lodash";
+import { isEqual, keyBy, mapValues, split } from "lodash";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, Pageable, SortDirection } from "./paging/pageable";
 
-const skipPredicate = (x: unknown): boolean =>
-  x === null || x === undefined || typeof x === "function";
+const defaultRemovePredicate = (x: unknown): boolean =>
+  x === null || x === undefined || x === "" || typeof x === "function";
 
 export function overrideParams(params: URLSearchParams, data: object): URLSearchParams {
   return mergeParams(params, data, () => false);
@@ -11,14 +11,11 @@ export function overrideParams(params: URLSearchParams, data: object): URLSearch
 export function mergeParams(
   params: URLSearchParams,
   data: object,
-  skip = skipPredicate,
+  removePredicate = defaultRemovePredicate,
 ): URLSearchParams {
   const newParams = new URLSearchParams(params);
   for (const [key, value] of Object.entries(data)) {
-    if (skip && skip(value)) {
-      continue;
-    }
-    if (!value) {
+    if (removePredicate && removePredicate(value)) {
       newParams.delete(key);
       continue;
     }
@@ -42,9 +39,6 @@ export function toSearchParams(data: object): URLSearchParams {
 }
 
 export function toPageable(params: URLSearchParams): Pageable {
-  const pageable = new Pageable();
-  pageable.page = getPage(params);
-  pageable.size = getPageSize(params);
   const sorts = (params.get("sort") || "")
     .split(";")
     .map((x) => {
@@ -52,8 +46,11 @@ export function toPageable(params: URLSearchParams): Pageable {
       return { direction: SortDirection[dir as keyof typeof SortDirection], name };
     })
     .filter(({ name }) => Boolean(name));
-  pageable.sort = mapValues(keyBy(sorts, "name"), "direction");
-  return pageable;
+  return {
+    page: getPage(params),
+    size: getPageSize(params),
+    sort: mapValues(keyBy(sorts, "name"), "direction"),
+  };
 }
 
 export function defaultSearchParams(
@@ -78,6 +75,10 @@ export class FormValuesResolver<T extends Record<string, unknown>> {
     }
     return data;
   }
+}
+
+export function paramsEquals(a: URLSearchParams, b: URLSearchParams): boolean {
+  return isEqual(Object.fromEntries(a.entries()), Object.fromEntries(b.entries()));
 }
 
 export function getPage(params: URLSearchParams): number {

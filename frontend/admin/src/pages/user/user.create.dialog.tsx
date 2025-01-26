@@ -18,11 +18,13 @@ import {
 import { Form, FormField } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
+import { useTableData } from "@/components/table/table.data.context.tsx";
 import { FacetedFilter } from "@/components/utils/faceted.filter.tsx";
 import { Spinner } from "@/components/utils/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
-import { getRoleOptions } from "@/sys/role/role.actions.ts";
-import { usersStore } from "@/sys/user/users.store.ts";
+import { RoleActions } from "@/sys/role/role.actions.ts";
+import { Role, RoleQuery } from "@/sys/role/role.types.ts";
+import { UserActions } from "@/sys/user/user.actions.ts";
 
 interface Props {
   open: boolean;
@@ -32,6 +34,7 @@ interface Props {
 export function UserCreateDialog({ open, onOpenChange }: Props): ReactNode {
   const { t } = useTranslation();
   const [options, setOptions] = useState<Option<string>[]>([]);
+  const { loadData } = useTableData<RoleQuery, Role>();
 
   const formSchema = z.object({
     password: z.string().min(6, t("auth.password.min")).max(20, t("auth.password.max")),
@@ -54,7 +57,7 @@ export function UserCreateDialog({ open, onOpenChange }: Props): ReactNode {
     resolver: zodResolver(formSchema),
   });
 
-  useEffect(() => void (open && getRoleOptions().then((x) => setOptions(x))), [open]);
+  useEffect(() => void (open && RoleActions.getOptions().then((x) => setOptions(x))), [open]);
 
   const changeOpen = (state: boolean): void => {
     form.reset();
@@ -64,7 +67,8 @@ export function UserCreateDialog({ open, onOpenChange }: Props): ReactNode {
   const [submitting, onSubmit] = useLoading(
     async ({ roles, ...values }: FormValues): Promise<void> => {
       const roleIds = roles ? roles : [];
-      if (await usersStore.create({ ...values, roleIds })) {
+      if (await UserActions.create({ ...values, roleIds })) {
+        await loadData();
         changeOpen(false);
       }
     },
