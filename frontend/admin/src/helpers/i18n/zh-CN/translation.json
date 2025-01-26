@@ -11,6 +11,7 @@
   },
   "admin.role.description": "这是一个管理员角色，拥有系统内的所有权限，能够全面访问和控制所有功能。",
   "audit": {
+    "deleted": "已删除",
     "filter": {
       "method": "按方法过滤",
       "path": "按路径过滤",
@@ -21,6 +22,7 @@
       "id": "ID",
       "method": "方法",
       "path": "路径",
+      "userId": "用户ID",
       "username": "用户名"
     },
     "title": {
@@ -139,7 +141,7 @@
       "21_USER_IS_INACTIVE": "用户不可用",
       "22_ADMIN_NOT_FOUND": "管理员未找到",
       "23_PERMISSION_EXISTS": "权限已存在",
-      "24_USER_EXISTS": "用户已存在",
+      "24_USERNAME_EXISTS": "用户名已存在",
       "25_ROLE_EXISTS": "角色已存在",
       "0_OK": "操作成功"
     },

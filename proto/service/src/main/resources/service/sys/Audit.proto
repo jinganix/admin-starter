@@ -10,10 +10,11 @@ import "service/lib/Pageable.proto";
 
 message AuditPb {
   required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
-  required string username = 2 [(opts).java = {annotation: '@NotNull'}];
-  required string method = 3 [(opts).java = {annotation: '@NotNull'}];
-  required string path = 4 [(opts).java = {annotation: '@NotNull'}];
-  required int64 createdAt = 5 [(opts).java = {annotation: '@NotNull'}];
+  required int64 userId = 2 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
+  required string username = 3 [(opts).java = {annotation: '@NotNull'}];
+  required string method = 4 [(opts).java = {annotation: '@NotNull'}];
+  required string path = 5 [(opts).java = {annotation: '@NotNull'}];
+  required int64 createdAt = 6 [(opts).java = {annotation: '@NotNull'}];
 }
 
 message AuditDetailsPb {
