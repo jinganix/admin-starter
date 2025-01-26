@@ -1,5 +1,6 @@
 export interface Audit {
   id: string;
+  userId: string;
   username: string;
   method: string;
   path: string;

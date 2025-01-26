@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface AuditRepository extends JpaRepository<Audit, Long> {
 
   @Query(
-      "SELECT x AS audit, u.username AS username FROM Audit x JOIN UserCredential u ON x.userId = u.id "
+      "SELECT x AS audit, u.username AS username FROM Audit x LEFT JOIN UserCredential u ON x.userId = u.id "
           + "WHERE (:username IS NULL OR u.username LIKE %:username%) "
           + "AND (:method IS NULL OR x.method = :method) "
           + "AND (:path IS NULL OR x.path LIKE %:path%)")

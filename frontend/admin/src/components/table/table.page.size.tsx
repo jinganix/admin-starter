@@ -1,3 +1,4 @@
+import { DEFAULT_PAGE } from "@helpers/paging/pageable.ts";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,7 +14,7 @@ export function TablePageSize(): ReactNode {
   const { t } = useTranslation();
   const { loading, pageable, setPageable } = useTableData();
 
-  const setSize = (size: number) => void setPageable({ ...pageable, size });
+  const setSize = (size: number) => void setPageable({ ...pageable, page: DEFAULT_PAGE, size });
 
   return (
     <div className="flex items-center space-x-2 font-medium">

@@ -30,8 +30,18 @@ export const AuditsComponent: FC = () => {
       header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
     },
     {
+      accessorKey: "userId",
+      cell: ({ row }) => <div>{row.original.userId}</div>,
+      header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
+    },
+    {
       accessorKey: "username",
-      cell: ({ row }) => <div>{row.original.username}</div>,
+      cell: ({ row }) => (
+        <>
+          {row.original.username && <div>{row.original.username}</div>}
+          {!row.original.username && <div className="text-red-400">[{t("audit.deleted")}]</div>}
+        </>
+      ),
       header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
     },
     {

@@ -11,6 +11,7 @@
   },
   "admin.role.description": "This is an Administrator role that possesses all permissions within the system, enabling full access and control over all functionalities.",
   "audit": {
+    "deleted": "Deleted",
     "filter": {
       "method": "Filter by method",
       "path": "Filter by path",
@@ -21,6 +22,7 @@
       "id": "ID",
       "method": "Method",
       "path": "Path",
+      "userId": "User ID",
       "username": "Username"
     },
     "title": {
@@ -139,7 +141,7 @@
       "21_USER_IS_INACTIVE": "User is inactive",
       "22_ADMIN_NOT_FOUND": "Admin not found",
       "23_PERMISSION_EXISTS": "Permission exists",
-      "24_USER_EXISTS": "User exists",
+      "24_USERNAME_EXISTS": "Username exists",
       "25_ROLE_EXISTS": "Role exists",
       "0_OK": "Operation successful"
     },
