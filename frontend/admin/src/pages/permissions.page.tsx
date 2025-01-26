@@ -17,6 +17,7 @@ import { Button } from "@/components/shadcn/button.tsx";
 import { DataTable } from "@/components/table/data.table.tsx";
 import { TableColumnHeader } from "@/components/table/table.column.header.tsx";
 import { TableDataProvider, useTableData } from "@/components/table/table.data.context.tsx";
+import { TableFilterableCell } from "@/components/table/table.filterable.cell.tsx";
 import { TableFooter } from "@/components/table/table.footer.tsx";
 import { RowAction, TableRowActions } from "@/components/table/table.row.actions.tsx";
 import { tableRowCheckbox } from "@/components/table/table.row.checkbox.tsx";
@@ -36,7 +37,7 @@ const i18nKey = (id: string): string => `permission.header.${id}`;
 
 export const PermissionsComponent: FC = () => {
   const { t } = useTranslation();
-  const { loadData, loading, pageable, records, setRecords } = useTableData<
+  const { loadData, loading, pageable, records, setRecords, query, setQuery } = useTableData<
     PermissionQuery,
     Permission
   >();
@@ -72,7 +73,11 @@ export const PermissionsComponent: FC = () => {
     },
     {
       accessorKey: "type",
-      cell: ({ row }) => <div>{t(`permission.type.${PermissionType[row.original.type]}`)}</div>,
+      cell: ({ row }) => (
+        <TableFilterableCell onClick={() => setQuery({ ...query, types: [row.original.type] })}>
+          {t(`permission.type.${PermissionType[row.original.type]}`)}
+        </TableFilterableCell>
+      ),
       header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
     },
     {

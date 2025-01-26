@@ -12,7 +12,7 @@ import { TableFilters } from "@/components/table/table.filters.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { useFilterForm, valuesResolver } from "@/pages/user/user.filter.form.schema.tsx";
-import {UserQuery} from "@/sys/user/user.types.ts";
+import { UserQuery } from "@/sys/user/user.types.ts";
 
 export const UserFilterForm: FC = () => {
   const { t } = useTranslation();
@@ -34,6 +34,33 @@ export const UserFilterForm: FC = () => {
     <TableFilters>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(submit)} className="flex flex-col xl:flex-row gap-4">
+          <FormField
+            control={form.control}
+            name="userId"
+            render={({ field }) => (
+              <FormItem className="w-64 xl:w-auto">
+                <FormControl>
+                  <div className="relative w-full max-w-sm">
+                    <Input
+                      type="number"
+                      className="h-8 placeholder:text-sm"
+                      placeholder={t("audit.filter.userId")}
+                      {...field}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                      onClick={() => form.setValue("userId", "")}
+                    >
+                      <XIcon className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="username"

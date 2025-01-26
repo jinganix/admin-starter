@@ -39,6 +39,7 @@ export const AuditFilterForm: FC = () => {
                 <FormControl>
                   <div className="relative w-full max-w-sm">
                     <Input
+                      type="number"
                       className="h-8 placeholder:text-sm"
                       placeholder={t("audit.filter.userId")}
                       {...field}
