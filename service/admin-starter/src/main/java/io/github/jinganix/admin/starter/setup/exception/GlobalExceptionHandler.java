@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
@@ -71,8 +72,10 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<?> handleAuthenticationException(AuthenticationException ex) {
+    ErrorCode code =
+        ex instanceof DisabledException ? ErrorCode.USER_IS_INACTIVE : ErrorCode.BAD_CREDENTIAL;
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-        .body(new ErrorMessage(ErrorCode.BAD_CREDENTIAL, ex.getMessage(), null));
+        .body(new ErrorMessage(code, ex.getMessage(), null));
   }
 
   /**

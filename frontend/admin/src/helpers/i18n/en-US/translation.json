@@ -152,6 +152,7 @@
         "reason": "Access Forbidden"
       },
       "goBack": "Go Back",
+      "home": "Home",
       "signOut": "Sign Out"
     },
     "status": {

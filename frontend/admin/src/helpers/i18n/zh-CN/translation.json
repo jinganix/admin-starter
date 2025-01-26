@@ -122,7 +122,7 @@
       "1_ERROR": "错误",
       "2_ACCESS_DENIED": "访问被拒绝",
       "3_AUTHORITY_NOT_FOUND": "权限未找到",
-      "4_BAD_CREDENTIAL": "凭证错误",
+      "4_BAD_CREDENTIAL": "用户名或密码错误",
       "5_BAD_TOKEN": "令牌错误",
       "6_BAD_REFRESH_TOKEN": "刷新令牌错误",
       "7_BAD_REQUEST": "请求错误",
@@ -139,7 +139,7 @@
       "18_PERMISSION_NOT_FOUND": "权限未找到",
       "19_PASSWORD_NOT_MATCH": "密码不匹配",
       "20_ADMIN_IS_IMMUTABLE": "管理员不可修改",
-      "21_USER_IS_INACTIVE": "用户不可用",
+      "21_USER_IS_INACTIVE": "用户被禁用",
       "22_ADMIN_NOT_FOUND": "管理员未找到",
       "23_PERMISSION_EXISTS": "权限已存在",
       "24_USERNAME_EXISTS": "用户名已存在",
@@ -152,6 +152,7 @@
         "reason": "访问被禁止"
       },
       "goBack": "返回",
+      "home": "首页",
       "signOut": "登出"
     },
     "status": {

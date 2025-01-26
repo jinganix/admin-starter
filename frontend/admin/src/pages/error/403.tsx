@@ -15,6 +15,9 @@ export const Error403: FC = () => {
         <span className="font-medium">{t("error.page.403.reason")}</span>
         <p className="text-center text-muted-foreground w-72">{t("error.page.403.description")}</p>
         <div className="mt-6 flex gap-4">
+          <Button variant="outline" onClick={() => navigate("/")}>
+            {t("error.page.home")}
+          </Button>
           <Button variant="outline" onClick={() => navigate(-1)}>
             {t("error.page.goBack")}
           </Button>
