@@ -8,10 +8,9 @@ import {
   not,
   or,
 } from "@helpers/condition/cond.utils.ts";
-import { ReactElement, ReactNode } from "react";
-import { Route } from "react-router";
+import { ReactElement } from "react";
 import { Navigate } from "react-router-dom";
-import { CondRoute, CondRouteDef } from "@/components/condition/cond.route.tsx";
+import { CondRouteDef } from "@/components/condition/cond.route.tsx";
 import { AuthedPageLayout } from "@/components/layout/authed.page.layout.tsx";
 import { PageLayout } from "@/components/layout/page.layout.tsx";
 import { AuditsPage } from "@/pages/audits.page.tsx";
@@ -26,26 +25,6 @@ import { SettingsProfilePage } from "@/pages/settings/settings.profile.page.tsx"
 import { SignupPage } from "@/pages/signup.page.tsx";
 import { UsersPage } from "@/pages/users.page.tsx";
 import { Authority } from "@/sys/authority/authority.ts";
-
-export function toRoutes(routes: CondRouteDef[] = []): ReactNode[] {
-  return routes.map((props) => {
-    if (!props.cond) {
-      if ("routes" in props) {
-        return <Route {...props}>{...toRoutes(props.routes)}</Route>;
-      }
-      return <Route {...props} />;
-    }
-    if ("routes" in props) {
-      return (
-        <Route {...props} element={<CondRoute {...props} />}>
-          {...toRoutes(props.routes)}
-        </Route>
-      );
-    } else {
-      return <Route {...props} element={<CondRoute {...props} />} />;
-    }
-  });
-}
 
 function cond(path: string, cond: Cond, element: ReactElement): CondRouteDef {
   return { cond, element, path, redirects: [{ cond: not(isAuthed()), path: "/login" }] };
@@ -107,7 +86,3 @@ export const ROUTES: CondRouteDef[] = [
     ],
   },
 ];
-
-export function getRoutes(): ReactNode[] {
-  return toRoutes(ROUTES);
-}

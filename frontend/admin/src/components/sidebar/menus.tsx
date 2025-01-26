@@ -9,7 +9,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { CondRouteDef } from "@/components/condition/cond.route.tsx";
-import { ROUTES } from "@/routes.tsx";
+import { ROUTES } from "@/components/routes/routes.tsx";
 
 export interface MenuDef {
   title: string;
