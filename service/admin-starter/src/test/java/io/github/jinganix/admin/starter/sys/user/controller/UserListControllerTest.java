@@ -76,7 +76,7 @@ class UserListControllerTest extends SpringBootIntegrationTests {
             .request(
                 UID_1,
                 new UserListRequest(
-                    new PageablePb().setSort(Map.of("id", SortDirection.desc)), null, null))
+                    new PageablePb().setSort(Map.of("id", SortDirection.desc)), null, null, null))
             .andExpect(status().isOk())
             .andExpect(
                 result ->
@@ -105,6 +105,7 @@ class UserListControllerTest extends SpringBootIntegrationTests {
                     new PageablePb()
                         .setSort(Map.of("id", SortDirection.asc, "nickname", SortDirection.desc)),
                     null,
+                    null,
                     null))
             .andExpect(status().isOk())
             .andExpect(
@@ -127,7 +128,7 @@ class UserListControllerTest extends SpringBootIntegrationTests {
             .request(
                 UID_1,
                 new UserListRequest(
-                    new PageablePb().setSort(Map.of("id", SortDirection.desc)), null, null))
+                    new PageablePb().setSort(Map.of("id", SortDirection.desc)), null, null, null))
             .andExpect(status().isOk())
             .andExpect(
                 result ->

@@ -67,12 +67,13 @@ message UserCurrentResponse {
 message UserListRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/user/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&username={username}&status={status}"
+    path: "/sys/user/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&userId={userId}&username={username}&status={status}"
   };
 
   required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
-  optional string username = 2 [(opts).opt = {in_query: true}];
-  optional UserStatus status = 3 [(opts).opt = {in_query: true}];
+  optional int64 userId = 2 [(opts).ts = {as_string: true}];
+  optional string username = 3 [(opts).opt = {in_query: true}];
+  optional UserStatus status = 4 [(opts).opt = {in_query: true}];
 }
 
 message UserListResponse {

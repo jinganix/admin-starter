@@ -21,7 +21,10 @@ public class UserListHandler {
   public UserListResponse handle(Pageable pageable, UserListRequest request) {
     Page<UserWithUsername> users =
         userRepository.filter(
-            pageable, request.getUsername(), userMapper.status(request.getStatus()));
+            pageable,
+            request.getUserId(),
+            request.getUsername(),
+            userMapper.status(request.getStatus()));
     return userMapper.page(users);
   }
 }

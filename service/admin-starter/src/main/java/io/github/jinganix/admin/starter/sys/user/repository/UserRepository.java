@@ -20,8 +20,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query(
       "SELECT x AS user, u.username AS username FROM User x JOIN UserCredential u ON x.id = u.id "
-          + "WHERE (:username IS NULL OR u.username like %:username%) "
+          + "WHERE (:userId IS NULL OR x.id = :userId) "
+          + "AND (:username IS NULL OR u.username like %:username%) "
           + "AND (:status IS NULL OR x.status = :status)")
   Page<UserWithUsername> filter(
-      Pageable pageable, @Param("username") String username, @Param("status") UserStatus status);
+      Pageable pageable,
+      @Param("userId") Long userId,
+      @Param("username") String username,
+      @Param("status") UserStatus status);
 }

@@ -9,6 +9,7 @@ import { TableTitle } from "@/components/layout/table.title.tsx";
 import { DataTable } from "@/components/table/data.table.tsx";
 import { TableColumnHeader } from "@/components/table/table.column.header.tsx";
 import { TableDataProvider, useTableData } from "@/components/table/table.data.context.tsx";
+import { TableFilterableCell } from "@/components/table/table.filterable.cell.tsx";
 import { TableFooter } from "@/components/table/table.footer.tsx";
 import { TableViewOptions } from "@/components/table/table.view.options.tsx";
 import { useDataTable } from "@/hooks/use.data.table.tsx";
@@ -21,7 +22,7 @@ const i18nKey = (id: string): string => `audit.header.${id}`;
 
 export const AuditsComponent: FC = () => {
   const { t } = useTranslation();
-  const { loading, pageable, records } = useTableData<AuditQuery, Audit>();
+  const { loading, pageable, records, query, setQuery } = useTableData<AuditQuery, Audit>();
 
   const columns: ColumnDef<Audit>[] = [
     {
@@ -31,14 +32,24 @@ export const AuditsComponent: FC = () => {
     },
     {
       accessorKey: "userId",
-      cell: ({ row }) => <div>{row.original.userId}</div>,
+      cell: ({ row }) => (
+        <TableFilterableCell onClick={() => setQuery({ ...query, userId: row.original.userId })}>
+          {row.original.userId}
+        </TableFilterableCell>
+      ),
       header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
     },
     {
       accessorKey: "username",
       cell: ({ row }) => (
         <>
-          {row.original.username && <div>{row.original.username}</div>}
+          {row.original.username && (
+            <TableFilterableCell
+              onClick={() => setQuery({ ...query, username: row.original.username })}
+            >
+              {row.original.username}
+            </TableFilterableCell>
+          )}
           {!row.original.username && <div className="text-red-400">[{t("audit.deleted")}]</div>}
         </>
       ),
@@ -46,12 +57,20 @@ export const AuditsComponent: FC = () => {
     },
     {
       accessorKey: "path",
-      cell: ({ row }) => <div>{row.original.path}</div>,
+      cell: ({ row }) => (
+        <TableFilterableCell onClick={() => setQuery({ ...query, path: row.original.path })}>
+          {row.original.path}
+        </TableFilterableCell>
+      ),
       header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
     },
     {
       accessorKey: "method",
-      cell: ({ row }) => <div>{row.original.method}</div>,
+      cell: ({ row }) => (
+        <TableFilterableCell onClick={() => setQuery({ ...query, method: row.original.method })}>
+          {row.original.method}
+        </TableFilterableCell>
+      ),
       header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
     },
     {
