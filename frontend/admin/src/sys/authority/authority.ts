@@ -7,5 +7,6 @@ export enum Authority {
   MENU_ROLES = "/menu/system/roles",
   MENU_PERMISSIONS = "/menu/system/permissions",
   BUTTON = "/button/",
+  BTN_ADD_USER = "/button/addUser",
   BTN_ADD_PERMISSION = "/button/addPermission",
 }

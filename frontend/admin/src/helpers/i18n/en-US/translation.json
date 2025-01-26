@@ -60,7 +60,8 @@
     },
     "button": {
       "": "Button",
-      "addPermission": "Add Permission"
+      "addPermission": "Add Permission",
+      "addUser": "Add User"
     },
     "menu": {
       "": "Menu",

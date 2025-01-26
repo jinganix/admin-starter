@@ -15,7 +15,7 @@ export type FormValues = z.infer<typeof formSchema>;
 export const valuesResolver = new FormValuesResolver<FormValues>({
   code: ["", (x) => x],
   status: [null, (x) => Number(x)],
-  types: [undefined, (x) => x.split(",").map((v) => Number(v))],
+  types: [[], (x) => x.split(",").map((v) => Number(v))],
 });
 
 export function useFilterForm<T extends FormValues>(query: T): UseFormReturn<FormValues> {

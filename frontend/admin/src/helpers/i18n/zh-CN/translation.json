@@ -60,7 +60,8 @@
     },
     "button": {
       "": "按钮",
-      "addPermission": "添加权限"
+      "addPermission": "添加权限",
+      "addUser": "添加用户"
     },
     "menu": {
       "": "菜单",
