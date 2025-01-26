@@ -1,3 +1,4 @@
+import { Replay } from "@helpers/network/replay.ts";
 import { DEFAULT_PAGEABLE, DEFAULT_PAGING, Pageable, Paging } from "@helpers/paging/pageable.ts";
 import { paramsEquals, toSearchParams } from "@helpers/search.params.ts";
 import { DataLoader, DataRecords } from "@helpers/table/table.types.ts";
@@ -49,7 +50,7 @@ class MemorizedDataLoader<Query, T> {
   loadData: DataLoader<Query, T>;
   loadedAt = 0;
   query: CachedQuery<Query> | null = null;
-  loadedData: DataRecords<T> | null = null;
+  replay = new Replay<DataRecords<T> | null>();
 
   constructor(loadData: DataLoader<Query, T>) {
     this.loadData = loadData;
@@ -57,10 +58,11 @@ class MemorizedDataLoader<Query, T> {
 
   async load(pageable: Pageable, query: Query): Promise<DataRecords<T> | null> {
     if (this.useCache(pageable, query)) {
-      return this.loadedData;
+      return this.replay.value();
     }
-    this.loadedData = await this.loadData(pageable, query);
-    return this.loadedData;
+    this.replay = new Replay();
+    await this.replay.resolve(() => this.loadData(pageable, query));
+    return this.replay.value();
   }
 
   private useCache(pageable: Pageable, query: Query): boolean {
