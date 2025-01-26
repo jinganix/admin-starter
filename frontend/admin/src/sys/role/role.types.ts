@@ -12,5 +12,5 @@ export interface Role {
 
 export type RoleQuery = {
   name?: string;
-  status?: RoleStatus;
+  status?: RoleStatus | null;
 };

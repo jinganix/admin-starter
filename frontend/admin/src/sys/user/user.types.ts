@@ -12,5 +12,5 @@ export interface User {
 export type UserQuery = {
   userId?: string;
   username?: string;
-  status?: UserStatus;
+  status?: UserStatus | null;
 };

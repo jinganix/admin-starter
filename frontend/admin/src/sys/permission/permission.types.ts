@@ -12,7 +12,7 @@ export interface Permission {
 
 export type PermissionQuery = {
   code?: string;
-  status?: PermissionStatus;
+  status?: PermissionStatus | null;
   types?: PermissionType[];
 };
 
