@@ -13,8 +13,8 @@ import { Input } from "@/components/shadcn/input.tsx";
 import { OptionSelector } from "@/components/table/option.selector.tsx";
 import { useTableData } from "@/components/table/table.data.context.tsx";
 import { TableFilters } from "@/components/table/table.filters.tsx";
-import { FacetedFilter } from "@/components/utils/faceted.filter.tsx";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { FacetedFilter } from "@/components/ui/faceted.filter.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import {
   useFilterForm,

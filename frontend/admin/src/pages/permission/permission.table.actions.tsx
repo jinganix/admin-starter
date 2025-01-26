@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/shadcn/button.tsx";
 import { TableActions } from "@/components/table/table.actions.tsx";
 import { useTableData } from "@/components/table/table.data.context.tsx";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { AuthorityActions } from "@/sys/authority/authority.actions.ts";
 import { Permission, PermissionQuery } from "@/sys/permission/permission.types";

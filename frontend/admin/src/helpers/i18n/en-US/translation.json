@@ -301,6 +301,16 @@
       "type": "Type",
       "update": "Edit Permission"
     },
+    "edit": {
+      "code": {
+        "max": "Role code must not be longer than 20 characters",
+        "min": "Role code must be at least 3 characters"
+      },
+      "name": {
+        "max": "Role name must not be longer than 40 characters",
+        "min": "Role name must be at least 3 characters"
+      }
+    },
     "filter": {
       "code": {
         "placeholder": "Filter by code"
@@ -341,6 +351,16 @@
       "status": "Status",
       "submit": "Save Changes",
       "update": "Edit Role"
+    },
+    "edit": {
+      "code": {
+        "max": "Role code must not be longer than 20 characters",
+        "min": "Role code must be at least 3 characters"
+      },
+      "name": {
+        "max": "Role name must not be longer than 40 characters",
+        "min": "Role name must be at least 3 characters"
+      }
     },
     "filter": {
       "nickname": {

@@ -26,18 +26,10 @@ import {
 } from "@/components/shadcn/select.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
 import { useTableData } from "@/components/table/table.data.context.tsx";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { PermissionActions } from "@/sys/permission/permission.actions.ts";
 import { Permission, PermissionQuery } from "@/sys/permission/permission.types.ts";
-
-const formSchema = z.object({
-  code: z.string().min(1, { message: "Permission code is required." }),
-  description: z.string().optional(),
-  name: z.string().min(1, { message: "Name is required." }),
-  status: z.nativeEnum(PermissionStatus),
-  type: z.nativeEnum(PermissionType),
-});
 
 interface Props {
   permission?: Permission;
@@ -57,7 +49,16 @@ export function PermissionEditDialog({ permission, open, onOpenChange }: Props):
     type: permission?.type ?? PermissionType.API,
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const formSchema = z.object({
+    code: z.string().min(3, t("role.edit.code.min")).max(20, t("role.edit.code.max")),
+    description: z.string().optional(),
+    name: z.string().min(3, t("role.edit.name.min")).max(40, t("role.edit.name.max")),
+    status: z.nativeEnum(PermissionStatus),
+    type: z.nativeEnum(PermissionType),
+  });
+  type FormValues = z.infer<typeof formSchema>;
+
+  const form = useForm<FormValues>({
     defaultValues: values,
     resolver: zodResolver(formSchema),
   });
@@ -69,21 +70,18 @@ export function PermissionEditDialog({ permission, open, onOpenChange }: Props):
     onOpenChange(state);
   };
 
-  const [submitting, onSubmit] = useLoading(
-    async (values: z.infer<typeof formSchema>): Promise<void> => {
-      if (permission) {
-        const newItem = await PermissionActions.update(permission.id, values);
-        if (newItem) {
-          setRecords(records.map((x) => (x.id === newItem.id ? newItem : x)));
-          changeOpen(false);
-        }
-      } else if (await PermissionActions.create(values)) {
-        await loadData();
+  const [submitting, onSubmit] = useLoading(async (values: FormValues): Promise<void> => {
+    if (permission) {
+      const newItem = await PermissionActions.update(permission.id, values);
+      if (newItem) {
+        setRecords(records.map((x) => (x.id === newItem.id ? newItem : x)));
         changeOpen(false);
       }
-    },
-    false,
-  );
+    } else if (await PermissionActions.create(values)) {
+      await loadData();
+      changeOpen(false);
+    }
+  }, false);
 
   return (
     <Dialog open={open} onOpenChange={(state) => changeOpen(state)}>

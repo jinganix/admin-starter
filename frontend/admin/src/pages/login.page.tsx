@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 import { TokenService } from "@/helpers/network/token.service.ts";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { authStore } from "@/sys/auth/auth.store.ts";
