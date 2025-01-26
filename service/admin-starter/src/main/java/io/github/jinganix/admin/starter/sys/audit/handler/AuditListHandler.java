@@ -21,7 +21,11 @@ public class AuditListHandler {
   public AuditListResponse handle(Pageable pageable, AuditListRequest request) {
     Page<AuditWithUsername> page =
         auditRepository.filter(
-            pageable, request.getUsername(), request.getMethod(), request.getPath());
+            pageable,
+            request.getUserId(),
+            request.getUsername(),
+            request.getMethod(),
+            request.getPath());
     return auditMapper.page(page);
   }
 }

@@ -14,11 +14,13 @@ public interface AuditRepository extends JpaRepository<Audit, Long> {
 
   @Query(
       "SELECT x AS audit, u.username AS username FROM Audit x LEFT JOIN UserCredential u ON x.userId = u.id "
-          + "WHERE (:username IS NULL OR u.username LIKE %:username%) "
+          + "WHERE (:userId IS NULL OR x.userId = :userId) "
+          + "AND (:username IS NULL OR u.username LIKE %:username%) "
           + "AND (:method IS NULL OR x.method = :method) "
           + "AND (:path IS NULL OR x.path LIKE %:path%)")
   Page<AuditWithUsername> filter(
       Pageable pageable,
+      @Param("userId") Long useId,
       @Param("username") String username,
       @Param("method") String method,
       @Param("path") String path);

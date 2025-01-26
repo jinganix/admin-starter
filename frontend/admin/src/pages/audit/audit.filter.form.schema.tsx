@@ -6,6 +6,7 @@ import { z } from "zod";
 export const formSchema = z.object({
   method: z.string().optional(),
   path: z.string().optional(),
+  userId: z.string().optional(),
   username: z.string().optional(),
 });
 
@@ -14,6 +15,7 @@ export type FormValues = z.infer<typeof formSchema>;
 export const valuesResolver = new FormValuesResolver<FormValues>({
   method: ["", (x) => x],
   path: ["", (x) => x],
+  userId: ["", (x) => x],
   username: ["", (x) => x],
 });
 
