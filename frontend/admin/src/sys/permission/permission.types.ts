@@ -6,7 +6,7 @@ export interface Permission {
   type: PermissionType;
   code: string;
   status: PermissionStatus;
-  description?: string;
+  description?: string | null;
   createdAt: number;
 }
 

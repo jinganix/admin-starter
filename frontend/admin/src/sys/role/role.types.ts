@@ -5,7 +5,7 @@ export interface Role {
   name: string;
   code: string;
   status: RoleStatus;
-  description?: string;
+  description?: string | null;
   permissionIds: string[];
   createdAt: number;
 }
