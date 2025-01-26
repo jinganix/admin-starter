@@ -21,8 +21,8 @@ enum RoleStatus {
 }
 
 message RoleEditPb {
-  required string name = 1 [(opts).java = {annotation: '@NotNull'}];
-  required string code = 2;
+  required string name = 1  [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 40)'}];
+  required string code = 2 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 20)'}];
   optional string description = 3;
   required RoleStatus status = 4 [(opts).java = {annotation: '@NotNull'}];
   repeated int64 permissionIds = 5 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = CollectionLongToStringSerializer.class)'}];

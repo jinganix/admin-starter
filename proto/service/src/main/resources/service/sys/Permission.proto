@@ -38,9 +38,9 @@ message PermissionOptionPb {
 }
 
 message PermissionEditPb {
-  required string name = 1 [(opts).java = {annotation: '@NotNull'}];
-  required PermissionType type = 2 [(opts).java = {annotation: '@NotNull'}];
-  required string code = 3;
+  required string name = 1  [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 40)'}];
+  required string code = 2 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 20)'}];
+  required PermissionType type = 3 [(opts).java = {annotation: '@NotNull'}];
   optional string description = 4;
   required PermissionStatus status = 5 [(opts).java = {annotation: '@NotNull'}];
 }

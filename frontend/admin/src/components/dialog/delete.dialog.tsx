@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/shadcn/alert-dialog";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 
 export type DeleteDialogProps = {

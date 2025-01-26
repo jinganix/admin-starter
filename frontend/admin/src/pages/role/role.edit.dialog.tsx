@@ -29,20 +29,12 @@ import { useTableData } from "@/components/table/table.data.context.tsx";
 import { TreeItem } from "@/components/tree/tree.view.item.tsx";
 import { TreeView } from "@/components/tree/tree.view.tsx";
 import { TreeStateProvider } from "@/components/tree/use.tree.state.tsx";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { PermissionActions } from "@/sys/permission/permission.actions.ts";
 import { PermissionOption } from "@/sys/permission/permission.types.ts";
 import { RoleActions } from "@/sys/role/role.actions.ts";
 import { Role, RoleQuery } from "@/sys/role/role.types.ts";
-
-const formSchema = z.object({
-  code: z.string().min(1, { message: "Role code is required." }),
-  description: z.string().optional(),
-  name: z.string().min(1, { message: "Name is required." }),
-  permissions: z.array(z.string()).optional(),
-  status: z.nativeEnum(RoleStatus),
-});
 
 function putTreeItems(
   option: PermissionOption,
@@ -84,7 +76,16 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
     status: role?.status ?? RoleStatus.ACTIVE,
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const formSchema = z.object({
+    code: z.string().min(3, t("role.edit.code.min")).max(20, t("role.edit.code.max")),
+    description: z.string().optional(),
+    name: z.string().min(3, t("role.edit.name.min")).max(40, t("role.edit.name.max")),
+    permissions: z.array(z.string()).optional(),
+    status: z.nativeEnum(RoleStatus),
+  });
+  type FormValues = z.infer<typeof formSchema>;
+
+  const form = useForm<FormValues>({
     defaultValues: values,
     resolver: zodResolver(formSchema),
   });
@@ -107,7 +108,7 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
   };
 
   const [submitting, onSubmit] = useLoading(
-    async ({ permissions, ...values }: z.infer<typeof formSchema>): Promise<void> => {
+    async ({ permissions, ...values }: FormValues): Promise<void> => {
       const permissionIds = permissions ? permissions : [];
       if (role) {
         const newItem = await RoleActions.update(role.id, { ...values, permissionIds });

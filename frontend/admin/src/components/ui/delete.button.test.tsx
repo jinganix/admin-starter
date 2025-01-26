@@ -2,7 +2,7 @@ import { act, render, RenderResult } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DeleteDialogProps } from "@/components/dialog/delete.dialog.tsx";
-import { DeleteButton } from "@/components/utils/delete.button.tsx";
+import { DeleteButton } from "@/components/ui/delete.button.tsx";
 
 let deleteDialogProps: DeleteDialogProps | null = null;
 vi.mock("@/components/dialog/delete.dialog.tsx", () => ({

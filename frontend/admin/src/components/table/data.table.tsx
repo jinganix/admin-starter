@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/shadcn/table";
 import { useTableData } from "@/components/table/table.data.context.tsx";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 
 interface Props<TData> extends HTMLAttributes<HTMLDivElement> {
   table: TableDef<TData>;

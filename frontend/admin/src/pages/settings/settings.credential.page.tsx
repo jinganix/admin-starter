@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
-import { Spinner } from "@/components/utils/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 import { SettingsContainer } from "@/pages/settings/settings.container.tsx";
 import { UserActions } from "@/sys/user/user.actions.ts";

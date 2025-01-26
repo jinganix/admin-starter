@@ -5,15 +5,12 @@ import { ErrorCode } from "@proto/ErrorCodeEnum.ts";
 import { RoleStatus } from "@proto/SysRoleProto.ts";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import i18next from "i18next";
 import { PlusIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
 import { LayoutContent } from "@/components/layout/layout.content.tsx";
 import { Button } from "@/components/shadcn/button.tsx";
-import { Label } from "@/components/shadcn/label.tsx";
-import { Switch } from "@/components/shadcn/switch.tsx";
 import { DataTable } from "@/components/table/data.table.tsx";
 import { TableColumnHeader } from "@/components/table/table.column.header.tsx";
 import { TableDataProvider, useTableData } from "@/components/table/table.data.context.tsx";
@@ -21,7 +18,8 @@ import { TableFooter } from "@/components/table/table.footer.tsx";
 import { RowAction, TableRowActions } from "@/components/table/table.row.actions.tsx";
 import { tableRowCheckbox } from "@/components/table/table.row.checkbox.tsx";
 import { TableViewOptions } from "@/components/table/table.view.options.tsx";
-import { DeleteButton } from "@/components/utils/delete.button.tsx";
+import { DeleteButton } from "@/components/ui/delete.button.tsx";
+import { StatusSwitch } from "@/components/ui/status.switch.tsx";
 import { useDataTable } from "@/hooks/use.data.table.tsx";
 import { RoleEditDialog } from "@/pages/role/role.edit.dialog.tsx";
 import { valuesResolver } from "@/pages/role/role.filter.form.schema.tsx";
@@ -67,22 +65,17 @@ export const RolesComponent: FC = () => {
     {
       accessorKey: "status",
       cell: ({ row }) => (
-        <div className="flex justify-center items-center space-x-2">
-          <Switch
-            id="status"
-            checked={row.original.status === RoleStatus.ACTIVE}
-            onCheckedChange={async (checked) => {
-              const id = row.original.id;
-              const status = checked ? RoleStatus.ACTIVE : RoleStatus.INACTIVE;
-              if (await RoleActions.updateStatus(id, status)) {
-                setRecords(records.map((x) => (x.id === id ? { ...x, status } : x)));
-              }
-            }}
-          />
-          <Label htmlFor="status">
-            {i18next.t(`role.status.${RoleStatus[row.original.status]}`)}
-          </Label>
-        </div>
+        <StatusSwitch
+          i18nKey={`role.status.${RoleStatus[row.original.status]}`}
+          checked={row.original.status === RoleStatus.ACTIVE}
+          onCheckedChange={async (checked) => {
+            const id = row.original.id;
+            const status = checked ? RoleStatus.ACTIVE : RoleStatus.INACTIVE;
+            if (await RoleActions.updateStatus(id, status)) {
+              setRecords(records.map((x) => (x.id === id ? { ...x, status } : x)));
+            }
+          }}
+        />
       ),
       header: ({ column }) => <TableColumnHeader column={column} i18nKey={i18nKey} />,
     },
