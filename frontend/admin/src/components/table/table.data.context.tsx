@@ -1,5 +1,11 @@
 import { Replay } from "@helpers/network/replay.ts";
-import { DEFAULT_PAGEABLE, DEFAULT_PAGING, Pageable, Paging } from "@helpers/paging/pageable.ts";
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGEABLE,
+  DEFAULT_PAGING,
+  Pageable,
+  Paging,
+} from "@helpers/paging/pageable.ts";
 import { paramsEquals, toSearchParams } from "@helpers/search.params.ts";
 import { DataLoader, DataRecords } from "@helpers/table/table.types.ts";
 import { isEqual } from "lodash";
@@ -104,8 +110,10 @@ export function TableDataProvider<Query, T>({
   }, [pageable, query]);
 
   const asyncSetQuery = async (query: Query): Promise<boolean> => {
+    const newPageable = { ...pageable, page: DEFAULT_PAGE };
+    setPageable(newPageable);
     setQuery(query);
-    return await asyncLoadData(pageable, query);
+    return await asyncLoadData(newPageable, query);
   };
 
   const asyncSetPageable = async (pageable: Pageable): Promise<boolean> => {
