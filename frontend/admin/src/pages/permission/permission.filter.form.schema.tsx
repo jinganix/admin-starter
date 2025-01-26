@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const formSchema = z.object({
   code: z.string().optional(),
-  status: z.nativeEnum(PermissionStatus).optional(),
+  status: z.nativeEnum(PermissionStatus).optional().nullable(),
   types: z.array(z.nativeEnum(PermissionType)).optional(),
 });
 
@@ -14,7 +14,7 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export const valuesResolver = new FormValuesResolver<FormValues>({
   code: ["", (x) => x],
-  status: [undefined, (x) => Number(x)],
+  status: [null, (x) => Number(x)],
   types: [undefined, (x) => x.split(",").map((v) => Number(v))],
 });
 

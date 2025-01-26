@@ -2,9 +2,9 @@ import { ReactNode } from "react";
 
 export const GithubLink = (): ReactNode => {
   return (
-    <div className="hover:bg-accent hover:text-accent-foreground rounded-full h-10 w-10 flex items-center justify-center">
+    <div className="hover:bg-accent hover:text-accent-foreground rounded-full h-10 w-10">
       <a
-        className="text-sm text-gray-500 transition hover:text-gray-600"
+        className="text-sm text-gray-500 transition hover:text-gray-600 w-full h-full cursor-pointer flex items-center justify-center"
         target="_blank"
         rel="noopener noreferrer"
         href="https://github.com/jinganix/admin-starter"

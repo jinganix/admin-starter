@@ -6,14 +6,14 @@ import { z } from "zod";
 
 export const formSchema = z.object({
   name: z.string().optional(),
-  status: z.nativeEnum(RoleStatus).optional(),
+  status: z.nativeEnum(RoleStatus).optional().nullable(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
 
 export const valuesResolver = new FormValuesResolver<FormValues>({
   name: ["", (x) => x],
-  status: [undefined, (x) => Number(x)],
+  status: [null, (x) => Number(x)],
 });
 
 export function useFilterForm<T extends FormValues>(query: T): UseFormReturn<FormValues> {

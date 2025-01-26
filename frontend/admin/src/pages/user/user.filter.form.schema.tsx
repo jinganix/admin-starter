@@ -5,7 +5,7 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
 export const formSchema = z.object({
-  status: z.nativeEnum(UserStatus).optional(),
+  status: z.nativeEnum(UserStatus).optional().nullable(),
   userId: z.string().optional(),
   username: z.string().optional(),
 });
@@ -13,7 +13,7 @@ export const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 export const valuesResolver = new FormValuesResolver<FormValues>({
-  status: [undefined, (x) => Number(x)],
+  status: [null, (x) => Number(x)],
   userId: ["", (x) => x],
   username: ["", (x) => x],
 });
