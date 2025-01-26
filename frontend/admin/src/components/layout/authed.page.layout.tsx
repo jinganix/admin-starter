@@ -7,6 +7,7 @@ import { UserNav } from "@/components/layout/user.nav.tsx";
 import { SidebarProvider } from "@/components/shadcn/sidebar";
 import { AppSidebar } from "@/components/sidebar/app.sidebar";
 import { ThemeCustomizer } from "@/components/theme/theme.customizer.tsx";
+import { GithubLink } from "@/components/ui/github.link.tsx";
 
 export const AuthedPageLayout: FC = () => {
   return (
@@ -28,6 +29,7 @@ export const AuthedPageLayout: FC = () => {
           <div className="ml-auto flex items-center space-x-4">
             <ThemeCustomizer />
             <LanguageSwitch />
+            <GithubLink />
             <UserNav />
           </div>
         </Header>
