@@ -1,3 +1,4 @@
+import { hasAuthority } from "@helpers/condition/cond.utils.ts";
 import { emitter } from "@helpers/event/emitter.ts";
 import { DEFAULT_PAGEABLE } from "@helpers/paging/pageable.ts";
 import { toPageable } from "@helpers/search.params.ts";
@@ -8,6 +9,7 @@ import dayjs from "dayjs";
 import { PlusIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CondComponent } from "@/components/condition/cond.component";
 import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
 import { LayoutContent } from "@/components/layout/layout.content.tsx";
 import { Button } from "@/components/shadcn/button.tsx";
@@ -25,6 +27,7 @@ import { UserCreateDialog } from "@/pages/user/user.create.dialog.tsx";
 import { valuesResolver } from "@/pages/user/user.filter.form.schema.tsx";
 import { UserFilterForm } from "@/pages/user/user.filter.form.tsx";
 import { UserUpdateDialog } from "@/pages/user/user.update.dialog.tsx";
+import { Authority } from "@/sys/authority/authority.ts";
 import { UserActions } from "@/sys/user/user.actions.ts";
 import { User, UserQuery } from "@/sys/user/user.types.ts";
 
@@ -112,10 +115,12 @@ export const UsersComponent: FC = () => {
         <UserFilterForm />
 
         <div className="flex items-center gap-4">
-          <Button className="h-8" size="sm" onClick={() => setAction({ type: "create" })}>
-            <PlusIcon />
-            <span className="hidden lg:block">{t("action.add")}</span>
-          </Button>
+          <CondComponent cond={hasAuthority(Authority.BTN_ADD_USER)}>
+            <Button className="h-8" size="sm" onClick={() => setAction({ type: "create" })}>
+              <PlusIcon />
+              <span className="hidden lg:block">{t("action.add")}</span>
+            </Button>
+          </CondComponent>
 
           <DeleteButton
             disabled={!selected.length}
