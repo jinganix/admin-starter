@@ -20,7 +20,9 @@ export const StatusSwitch: FC<Props> = ({ checked, i18nKey, onCheckedChange }) =
         <Spinner loading={loading} />
         <Switch id="status" checked={checked} disabled={loading} onCheckedChange={onToggle} />
       </div>
-      <Label htmlFor="status">{i18next.t(i18nKey)}</Label>
+      <Label className="whitespace-nowrap" htmlFor="status">
+        {i18next.t(i18nKey)}
+      </Label>
     </div>
   );
 };

@@ -43,7 +43,7 @@ export const LabelAlignerProvider: FC<LabelResizerProviderProps> = ({
 export const useLabelAligner = (): LabelAligner => {
   const context = useContext(LabelAlignerContext);
   if (context === undefined) {
-    throw new Error("useConfig must be used within a ConfigProvider");
+    throw new Error("useLabelAligner must be used within a LabelAlignerProvider");
   }
   return context;
 };
