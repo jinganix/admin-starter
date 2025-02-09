@@ -48,7 +48,7 @@ export function DataTable<TData>({ table, loading, className }: Props<TData>): R
         className,
       )}
     >
-      <Spinner className="bg-secondary/50" loading={loading} size={30} />
+      <Spinner className="bg-secondary/50" loading={loading} iconClass="size-8 md:size-10" />
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

@@ -19,7 +19,7 @@ export const App: FC = () => {
   return (
     <>
       {!loading && <AppRouter />}
-      {loading && <Spinner test-id="spinner" loading={loading} size={40} />}
+      {loading && <Spinner test-id="spinner" loading={loading} iconClass="size-10 md:size-12" />}
       <Toaster />
     </>
   );

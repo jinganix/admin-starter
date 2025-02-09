@@ -5,7 +5,6 @@ import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import { LabelAlignerProvider } from "@/components/form/aligned.label.tsx";
 import { LabeledFormItem } from "@/components/form/labeled.form.item.tsx";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -108,55 +107,53 @@ export function UserUpdateDialog({ userId, open, onOpenChange }: Props): ReactNo
         )}
 
         {!loading && (
-          <LabelAlignerProvider>
-            <Form {...form}>
-              <form
-                id="user-form"
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4 p-0.5"
-              >
-                <FormField
-                  control={form.control}
-                  name="nickname"
-                  render={({ field }) => (
-                    <LabeledFormItem label={t("user.dialog.update.nickname")}>
-                      <Input {...field} autoComplete="off" />
-                    </LabeledFormItem>
-                  )}
-                />
+          <Form {...form}>
+            <form
+              id="user-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="border-spacing-y-4 p-1"
+            >
+              <FormField
+                control={form.control}
+                name="nickname"
+                render={({ field }) => (
+                  <LabeledFormItem label={t("user.dialog.update.nickname")}>
+                    <Input {...field} autoComplete="off" />
+                  </LabeledFormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <LabeledFormItem label={t("user.dialog.update.status")}>
-                      <Switch
-                        checked={field.value === UserStatus.ACTIVE}
-                        onCheckedChange={(x) =>
-                          field.onChange(x ? UserStatus.ACTIVE : UserStatus.INACTIVE)
-                        }
-                      />
-                    </LabeledFormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <LabeledFormItem label={t("user.dialog.update.status")}>
+                    <Switch
+                      checked={field.value === UserStatus.ACTIVE}
+                      onCheckedChange={(x) =>
+                        field.onChange(x ? UserStatus.ACTIVE : UserStatus.INACTIVE)
+                      }
+                    />
+                  </LabeledFormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="roles"
-                  render={() => (
-                    <LabeledFormItem label={t("user.dialog.update.roles")}>
-                      <FacetedFilter
-                        options={options}
-                        setSelected={(values) => form.setValue("roles", values)}
-                        selected={form.getValues("roles")}
-                        maxShowed={Number.MAX_VALUE}
-                      />
-                    </LabeledFormItem>
-                  )}
-                />
-              </form>
-            </Form>
-          </LabelAlignerProvider>
+              <FormField
+                control={form.control}
+                name="roles"
+                render={() => (
+                  <LabeledFormItem label={t("user.dialog.update.roles")}>
+                    <FacetedFilter
+                      options={options}
+                      setSelected={(values) => form.setValue("roles", values)}
+                      selected={form.getValues("roles")}
+                      maxShowed={Number.MAX_VALUE}
+                    />
+                  </LabeledFormItem>
+                )}
+              />
+            </form>
+          </Form>
         )}
 
         <DialogFooter>
