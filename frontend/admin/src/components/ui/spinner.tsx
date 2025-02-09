@@ -4,11 +4,10 @@ import { cn } from "@/helpers/lib/cn";
 
 type Props = {
   loading: boolean;
-  size?: number;
-  className?: string;
+  iconClass?: string;
 } & HTMLAttributes<HTMLDivElement>;
 
-export const Spinner: FC<Props> = ({ loading, size, className, ...props }) => {
+export const Spinner: FC<Props> = ({ loading, iconClass, className, ...props }) => {
   return (
     <>
       {loading && (
@@ -16,7 +15,7 @@ export const Spinner: FC<Props> = ({ loading, size, className, ...props }) => {
           className={cn("absolute w-full h-full flex items-center justify-center z-50", className)}
           {...props}
         >
-          <Loader2Icon {...(size ? { size } : {})} className="relative animate-spin text-primary" />
+          <Loader2Icon className={cn("relative animate-spin text-primary", iconClass)} />
         </div>
       )}
     </>

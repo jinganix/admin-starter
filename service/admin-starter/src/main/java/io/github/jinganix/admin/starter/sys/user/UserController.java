@@ -63,7 +63,7 @@ public class UserController {
 
   @PreAuthorize("hasRole(T(io.github.jinganix.admin.starter.sys.role.RoleCode).AUTHED_USER)")
   @WebpbRequestMapping
-  public UserChangePasswordResponse current(
+  public UserChangePasswordResponse changePassword(
       @UserId Long userId, @Valid @RequestBody UserChangePasswordRequest request) {
     return userChangePasswordHandler.handle(userId, request);
   }

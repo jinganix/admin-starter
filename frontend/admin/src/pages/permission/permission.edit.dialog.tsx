@@ -5,7 +5,6 @@ import { ReactNode, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import { LabelAlignerProvider } from "@/components/form/aligned.label";
 import { LabeledFormItem } from "@/components/form/labeled.form.item.tsx";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -91,82 +90,84 @@ export function PermissionEditDialog({ permission, open, onOpenChange }: Props):
             {permission ? t("permission.dialog.update") : t("permission.dialog.create")}
           </DialogTitle>
         </DialogHeader>
-        <LabelAlignerProvider>
-          <Form {...form}>
-            <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-0.5">
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("permission.dialog.type")} controlled={false}>
-                    <Select
-                      onValueChange={(x) => field.onChange(Number(x))}
-                      defaultValue={String(field.value)}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="col-span-2">
-                          <SelectValue placeholder="Select a verified email to display" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {enumToOptions(PermissionType, `permission.type`).map((x) => (
-                          <SelectItem key={x.value} value={`${x.value}`}>
-                            {x.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </LabeledFormItem>
-                )}
-              />
+        <Form {...form}>
+          <form
+            id="user-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="border-spacing-y-4 p-1"
+          >
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <LabeledFormItem label={t("permission.dialog.type")} controlled={false}>
+                  <Select
+                    onValueChange={(x) => field.onChange(Number(x))}
+                    defaultValue={String(field.value)}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="col-span-2">
+                        <SelectValue placeholder="Select a verified email to display" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {enumToOptions(PermissionType, `permission.type`).map((x) => (
+                        <SelectItem key={x.value} value={`${x.value}`}>
+                          {x.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </LabeledFormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("permission.dialog.name")}>
-                    <Input {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <LabeledFormItem label={t("permission.dialog.name")}>
+                  <Input {...field} autoComplete="off" />
+                </LabeledFormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("permission.dialog.code")}>
-                    <Input {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="code"
+              render={({ field }) => (
+                <LabeledFormItem label={t("permission.dialog.code")}>
+                  <Input {...field} autoComplete="off" />
+                </LabeledFormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("permission.dialog.description")}>
-                    <Input {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <LabeledFormItem label={t("permission.dialog.description")}>
+                  <Input {...field} autoComplete="off" />
+                </LabeledFormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("permission.dialog.status")}>
-                    <Switch
-                      checked={field.value === PermissionStatus.ACTIVE}
-                      onCheckedChange={(x) =>
-                        field.onChange(x ? PermissionStatus.ACTIVE : PermissionStatus.INACTIVE)
-                      }
-                    />
-                  </LabeledFormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </LabelAlignerProvider>
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <LabeledFormItem label={t("permission.dialog.status")}>
+                  <Switch
+                    checked={field.value === PermissionStatus.ACTIVE}
+                    onCheckedChange={(x) =>
+                      field.onChange(x ? PermissionStatus.ACTIVE : PermissionStatus.INACTIVE)
+                    }
+                  />
+                </LabeledFormItem>
+              )}
+            />
+          </form>
+        </Form>
 
         <DialogFooter>
           <Button disabled={submitting} type="submit" form="user-form">

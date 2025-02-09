@@ -5,11 +5,6 @@ import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import {
-  AlignedLabel,
-  LabelAligner,
-  LabelAlignerProvider,
-} from "@/components/form/aligned.label.tsx";
 import { LabeledFormItem } from "@/components/form/labeled.form.item.tsx";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -19,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/shadcn/dialog";
-import { Form, FormField, FormItem } from "@/components/shadcn/form";
+import { Form, FormField, FormItem, FormLabel } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input.tsx";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
 import { Separator } from "@/components/shadcn/separator.tsx";
@@ -60,7 +55,6 @@ interface Props {
   role?: Role;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  labelResizer?: LabelAligner;
 }
 
 export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
@@ -131,62 +125,71 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
           <DialogTitle>{role ? t("role.dialog.update") : t("role.dialog.create")}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="h-[60vh] w-full py-2 overflow-x-scroll">
-          <LabelAlignerProvider>
-            <Form {...form}>
-              <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-1">
-                <FormField
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => (
-                    <LabeledFormItem label={t("role.dialog.code")}>
-                      <Input {...field} autoComplete="off" />
-                    </LabeledFormItem>
-                  )}
-                />
+          <Form {...form}>
+            <form
+              id="user-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="border-spacing-y-4 p-1"
+            >
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <LabeledFormItem label={t("role.dialog.code")}>
+                    <Input {...field} autoComplete="off" />
+                  </LabeledFormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <LabeledFormItem label={t("role.dialog.description")}>
-                      <Textarea {...field} autoComplete="off" />
-                    </LabeledFormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <LabeledFormItem label={t("role.dialog.description")}>
+                    <Textarea {...field} autoComplete="off" />
+                  </LabeledFormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <LabeledFormItem label={t("role.dialog.name")}>
-                      <Input {...field} autoComplete="off" />
-                    </LabeledFormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <LabeledFormItem label={t("role.dialog.name")}>
+                    <Input {...field} autoComplete="off" />
+                  </LabeledFormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <LabeledFormItem label={t("role.dialog.status")}>
-                      <Switch
-                        checked={field.value === RoleStatus.ACTIVE}
-                        onCheckedChange={(x) =>
-                          field.onChange(x ? RoleStatus.ACTIVE : RoleStatus.INACTIVE)
-                        }
-                      />
-                    </LabeledFormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <LabeledFormItem label={t("role.dialog.status")}>
+                    <Switch
+                      checked={field.value === RoleStatus.ACTIVE}
+                      onCheckedChange={(x) =>
+                        field.onChange(x ? RoleStatus.ACTIVE : RoleStatus.INACTIVE)
+                      }
+                    />
+                  </LabeledFormItem>
+                )}
+              />
 
-                <Separator />
+              <Separator />
 
-                <FormField
-                  control={form.control}
-                  name="permissions"
-                  render={() => (
-                    <FormItem className="max-w-full">
-                      <AlignedLabel>{t("role.dialog.permissions")}</AlignedLabel>
+              <FormField
+                control={form.control}
+                name="permissions"
+                render={() => (
+                  <>
+                    <div className="table-row space-x-4">
+                      <div className="table-cell w-[1%] min-w-16 whitespace-nowrap text-right">
+                        <FormLabel className="text-right">{t("role.dialog.permissions")}</FormLabel>
+                      </div>
+                      <div />
+                    </div>
+                    <FormItem className="max-w-full space-y-0">
                       <TreeStateProvider>
                         <TreeView
                           items={treeItems}
@@ -197,11 +200,11 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
                         />
                       </TreeStateProvider>
                     </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
-          </LabelAlignerProvider>
+                  </>
+                )}
+              />
+            </form>
+          </Form>
         </ScrollArea>
 
         <DialogFooter>

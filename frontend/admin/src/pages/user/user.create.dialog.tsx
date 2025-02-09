@@ -5,7 +5,6 @@ import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import { LabelAlignerProvider } from "@/components/form/aligned.label.tsx";
 import { LabeledFormItem } from "@/components/form/labeled.form.item.tsx";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -81,61 +80,63 @@ export function UserCreateDialog({ open, onOpenChange }: Props): ReactNode {
         <DialogHeader className="text-left">
           <DialogTitle>{t("user.dialog.create.title")}</DialogTitle>
         </DialogHeader>
-        <LabelAlignerProvider>
-          <Form {...form}>
-            <form id="user-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-0.5">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("user.dialog.create.username")}>
-                    <Input {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+        <Form {...form}>
+          <form
+            id="user-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="border-spacing-y-4 p-1"
+          >
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <LabeledFormItem label={t("user.dialog.create.username")}>
+                  <Input {...field} autoComplete="off" />
+                </LabeledFormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("user.dialog.create.password")}>
-                    <Input {...field} autoComplete="off" />
-                  </LabeledFormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <LabeledFormItem label={t("user.dialog.create.password")}>
+                  <Input {...field} autoComplete="off" />
+                </LabeledFormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <LabeledFormItem label={t("user.dialog.create.status")}>
-                    <Switch
-                      checked={field.value === UserStatus.ACTIVE}
-                      onCheckedChange={(x) =>
-                        field.onChange(x ? UserStatus.ACTIVE : UserStatus.INACTIVE)
-                      }
-                    />
-                  </LabeledFormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <LabeledFormItem label={t("user.dialog.create.status")}>
+                  <Switch
+                    checked={field.value === UserStatus.ACTIVE}
+                    onCheckedChange={(x) =>
+                      field.onChange(x ? UserStatus.ACTIVE : UserStatus.INACTIVE)
+                    }
+                  />
+                </LabeledFormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="roles"
-                render={() => (
-                  <LabeledFormItem label={t("user.dialog.create.roles")}>
-                    <FacetedFilter
-                      options={options}
-                      setSelected={(values) => form.setValue("roles", values)}
-                      selected={form.getValues("roles")}
-                      maxShowed={Number.MAX_VALUE}
-                    />
-                  </LabeledFormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </LabelAlignerProvider>
+            <FormField
+              control={form.control}
+              name="roles"
+              render={() => (
+                <LabeledFormItem label={t("user.dialog.create.roles")}>
+                  <FacetedFilter
+                    options={options}
+                    setSelected={(values) => form.setValue("roles", values)}
+                    selected={form.getValues("roles")}
+                    maxShowed={Number.MAX_VALUE}
+                  />
+                </LabeledFormItem>
+              )}
+            />
+          </form>
+        </Form>
 
         <DialogFooter>
           <Button disabled={submitting} type="submit" form="user-form">

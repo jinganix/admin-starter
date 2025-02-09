@@ -1,6 +1,5 @@
 import { FC, ReactNode } from "react";
-import { AlignedLabel } from "@/components/form/aligned.label.tsx";
-import { FormControl, FormItem, FormMessage } from "@/components/shadcn/form.tsx";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/shadcn/form.tsx";
 
 type Props = {
   label: string;
@@ -10,18 +9,13 @@ type Props = {
 
 export const LabeledFormItem: FC<Props> = ({ label, children, controlled = true }) => {
   return (
-    <FormItem className="space-y-1">
-      <div className="flex items-center space-x-4">
-        <AlignedLabel>{label}</AlignedLabel>
-        {controlled && (
-          <FormControl>
-            <div className="flex-1">{children}</div>
-          </FormControl>
-        )}
-        {!controlled && <div className="flex-1">{children}</div>}
+    <FormItem className="table-row space-x-4">
+      <div className="table-cell w-[1%] min-w-16 whitespace-nowrap text-right">
+        <FormLabel className="text-right">{label}</FormLabel>
       </div>
-      <div className="flex items-center space-x-4">
-        <AlignedLabel />
+      <div className="space-y-1">
+        {controlled && <FormControl>{children}</FormControl>}
+        {!controlled && children}
         <FormMessage />
       </div>
     </FormItem>

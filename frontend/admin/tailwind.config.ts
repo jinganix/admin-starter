@@ -1,10 +1,11 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
+import checker from "vite-plugin-checker";
 
 const config = {
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   darkMode: ["class"],
-  plugins: [animate],
+  plugins: [checker({ typescript: { tsconfigPath: "./tsconfig.app.json" } }), animate],
   prefix: "",
   theme: {
     container: {
@@ -78,20 +79,12 @@ const config = {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
     },
