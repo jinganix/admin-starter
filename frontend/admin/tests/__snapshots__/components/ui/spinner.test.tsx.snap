@@ -6,6 +6,7 @@ exports[`<Spinner /> > when loading is true > should match snapshot 1`] = `
     class="absolute w-full h-full flex items-center justify-center z-50"
   >
     <svg
+      aria-hidden="true"
       class="lucide lucide-loader-circle relative animate-spin text-primary"
       fill="none"
       height="24"

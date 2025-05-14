@@ -2,6 +2,7 @@
   "action": {
     "add": "Add",
     "cancel": "Cancel",
+    "clearFilters": "Clear Filters",
     "continue": "Continue",
     "delete": "Delete",
     "edit": "Edit",

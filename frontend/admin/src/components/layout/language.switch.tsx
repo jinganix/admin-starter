@@ -24,7 +24,7 @@ export function LanguageSwitch({ className }: Props): ReactNode {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild className={cn(className)}>
-        <Button variant="outline" className="border-none px-2 py-1">
+        <Button variant="ghost" className="border-none px-2 py-1">
           <div className="flex items-center gap-1">
             <GlobeIcon />
             {getLanguageName(i18n.language)}

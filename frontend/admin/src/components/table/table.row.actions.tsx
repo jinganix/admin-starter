@@ -45,7 +45,7 @@ export function TableRowActions<T>({ item, setAction, children }: Props<T>): Rea
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
-          className="!text-red-500"
+          className="text-red-500!"
           onClick={() => setAction({ item, type: "delete" })}
         >
           {i18next.t("action.delete")}

@@ -56,7 +56,7 @@ export const TablePagination: FC = () => {
 
   return (
     <div className="flex items-center">
-      <nav className="relative z-0 inline-flex space-x-1 rounded-md shadow-sm">
+      <nav className="relative z-0 inline-flex space-x-1 rounded-md">
         <Button
           variant="outline"
           className="h-8 min-w-8 p-0.5"

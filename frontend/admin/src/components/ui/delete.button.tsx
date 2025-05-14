@@ -1,12 +1,12 @@
 import { Trash2Icon } from "lucide-react";
-import { FC, useState } from "react";
+import { ComponentProps, FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
-import { Button, ButtonProps } from "@/components/shadcn/button.tsx";
+import { Button } from "@/components/shadcn/button.tsx";
 
 type Props = {
   onDelete: () => Promise<boolean>;
-} & ButtonProps;
+} & ComponentProps<"button">;
 
 export const DeleteButton: FC<Props> = ({ onDelete, ...props }) => {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export const DeleteButton: FC<Props> = ({ onDelete, ...props }) => {
       <Button
         variant="outline"
         size="sm"
-        className="ml-auto h-8 !text-red-500 !border-red-500"
+        className="ml-auto h-8 text-red-500! border-red-500!"
         onClick={() => setOpen(true)}
         {...props}
       >
