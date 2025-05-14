@@ -11,7 +11,7 @@ export const LayoutContent: FC<MainProps> = ({ fixed, className, ...props }) => 
     <main
       className={cn(
         "peer-[.fixed-header]/header:mt-16",
-        fixed && "fixed-main flex flex-col flex-grow overflow-hidden",
+        fixed && "fixed-main flex flex-col grow overflow-hidden",
         className,
       )}
       {...props}

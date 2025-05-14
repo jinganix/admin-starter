@@ -1,6 +1,7 @@
 import { CheckIcon, PlusCircleIcon } from "lucide-react";
 import { ComponentType, ReactNode } from "react";
 
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -39,6 +40,8 @@ export function FacetedFilter<TValue>({
   className,
   maxShowed,
 }: Props<TValue>): ReactNode {
+  const { t } = useTranslation();
+
   const isMobile = useIsMobile();
   const selectedValues = new Set(selected || []);
 
@@ -127,7 +130,7 @@ export function FacetedFilter<TValue>({
                     onSelect={() => setSelected(undefined)}
                     className="justify-center text-center"
                   >
-                    Clear filters
+                    {t("action.clearFilters")}
                   </CommandItem>
                 </CommandGroup>
               </>

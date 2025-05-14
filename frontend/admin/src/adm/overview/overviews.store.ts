@@ -22,11 +22,11 @@ export interface EntityChartItem {
 
 const entityConfig: ChartConfigProvider = (t) => ({
   created: {
-    color: "hsl(var(--chart-2))",
+    color: "var(--chart-2)",
     label: t("overview.chart.label.created"),
   },
   deleted: {
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1)",
     label: t("overview.chart.label.deleted"),
   },
 });
@@ -58,11 +58,11 @@ export class OverviewsStore {
   );
   apiData: ChartData<ApiChartItem> = new ChartData("overview.chart.apiCalled", "month", (t) => ({
     get: {
-      color: "hsl(var(--chart-2))",
+      color: "var(--chart-2)",
       label: t("overview.chart.label.get"),
     },
     post: {
-      color: "hsl(var(--chart-1))",
+      color: "var(--chart-1)",
       label: t("overview.chart.label.post"),
     },
   }));

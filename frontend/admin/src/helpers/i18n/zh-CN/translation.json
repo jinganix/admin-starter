@@ -2,6 +2,7 @@
   "action": {
     "add": "添加",
     "cancel": "取消",
+    "clearFilters": "清除过滤器",
     "continue": "继续",
     "delete": "删除",
     "edit": "编辑",
