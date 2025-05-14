@@ -55,6 +55,8 @@ jobs:
         run: echo "/* /index.html 200" > dist/_redirects
 
       - name: Deploy to Netlify
+        env:
+          VITE_API_HOST: ${{ vars.VITE_API_HOST }}
         working-directory: frontend/admin
         run: |
           npm install -g netlify-cli
