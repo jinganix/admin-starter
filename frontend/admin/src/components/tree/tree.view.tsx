@@ -48,7 +48,7 @@ export function TreeView<T>({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <div ref={detector.ref} className="w-full flex items-center space-x-2">
+      <div ref={detector.ref} className="w-full flex items-center space-x-2 p-1">
         <div className="relative flex-1">
           <Input
             className=""
