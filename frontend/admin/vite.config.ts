@@ -1,6 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
+import checker from "vite-plugin-checker";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
@@ -14,15 +15,22 @@ export default defineConfig({
     },
   },
   envDir: "./env",
-  plugins: [react(), tsconfigPaths(), tailwindcss()],
+  plugins: [
+    checker({ typescript: { tsconfigPath: "./tsconfig.app.json" } }),
+    react(),
+    tsconfigPaths(),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
-      "@proto": resolve(__dirname, "build/generated/source/proto/main/ts"),
+      "@proto": resolve(__dirname, "build/generated/sources/proto/main/ts"),
     },
   },
   server: {
+    allowedHosts: true,
     host: "0.0.0.0",
+    port: 5174,
   },
   test: {
     coverage: {

@@ -33,6 +33,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -79,7 +80,8 @@ public class PermissionController {
   @PreAuthorize(
       "hasAuthority(T(io.github.jinganix.admin.starter.sys.permission.Authority).SYS_PERMISSION_LIST)")
   @WebpbRequestMapping
-  public PermissionListResponse list(Pageable pageable, @Valid PermissionListRequest request) {
+  public PermissionListResponse list(
+      Pageable pageable, @Valid @ModelAttribute PermissionListRequest request) {
     return permissionListHandler.handle(pageable, request);
   }
 
@@ -100,7 +102,8 @@ public class PermissionController {
   @PreAuthorize(
       "hasAuthority(T(io.github.jinganix.admin.starter.sys.permission.Authority).SYS_PERMISSION_LIST)")
   @WebpbRequestMapping
-  public PermissionRetrieveResponse retrieve(@Valid PermissionRetrieveRequest request) {
+  public PermissionRetrieveResponse retrieve(
+      @Valid @ModelAttribute PermissionRetrieveRequest request) {
     return permissionRetrieveHandler.handle(request);
   }
 

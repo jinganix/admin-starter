@@ -27,6 +27,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -67,7 +68,7 @@ public class RoleController {
   @PreAuthorize(
       "hasAuthority(T(io.github.jinganix.admin.starter.sys.permission.Authority).SYS_ROLE_LIST)")
   @WebpbRequestMapping
-  public RoleListResponse list(Pageable pageable, @Valid RoleListRequest request) {
+  public RoleListResponse list(Pageable pageable, @Valid @ModelAttribute RoleListRequest request) {
     return roleListHandler.handle(pageable, request);
   }
 
@@ -81,7 +82,7 @@ public class RoleController {
   @PreAuthorize(
       "hasAuthority(T(io.github.jinganix.admin.starter.sys.permission.Authority).SYS_ROLE_GET)")
   @WebpbRequestMapping
-  public RoleRetrieveResponse retrieve(@Valid RoleRetrieveRequest request) {
+  public RoleRetrieveResponse retrieve(@Valid @ModelAttribute RoleRetrieveRequest request) {
     return roleRetrieveHandler.handle(request);
   }
 

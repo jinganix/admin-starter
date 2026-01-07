@@ -6,7 +6,7 @@ import org.testcontainers.utility.DockerImageName;
 /** Start a redis docker container. */
 public class RedisContainer extends GenericContainer<RedisContainer> {
 
-  private static final String VERSION = "7.4.0-alpine";
+  private static final String VERSION = "8.2.1-alpine";
 
   /** REDIS_PORT. */
   public static final Integer REDIS_PORT = 6379;

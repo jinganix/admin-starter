@@ -8,7 +8,9 @@ import utils.Vers.versionCaffeine
 import utils.Vers.versionCommonsCodec
 import utils.Vers.versionCommonsLang3
 import utils.Vers.versionFlyway
+import utils.Vers.versionGuava
 import utils.Vers.versionJackson
+import utils.Vers.versionJacksonAnnotations
 import utils.Vers.versionJwt
 import utils.Vers.versionLombok
 import utils.Vers.versionMapstruct
@@ -44,11 +46,9 @@ dependencies {
   annotationProcessor("org.mapstruct:mapstruct-processor:${versionMapstruct}")
   compileOnly("org.projectlombok:lombok:$versionLombok")
   implementation("com.auth0:java-jwt:${versionJwt}")
-  implementation("com.fasterxml.jackson.core:jackson-annotations:${versionJackson}")
-  implementation("com.fasterxml.jackson.core:jackson-core:${versionJackson}")
-  implementation("com.fasterxml.jackson.core:jackson-databind:${versionJackson}")
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${versionJackson}")
+  implementation("com.fasterxml.jackson.core:jackson-annotations:${versionJacksonAnnotations}")
   implementation("com.github.ben-manes.caffeine:caffeine:${versionCaffeine}")
+  implementation("com.google.guava:guava:${versionGuava}")
   implementation("com.google.protobuf:protobuf-java:${versionProtobufJava}")
   implementation("commons-codec:commons-codec:${versionCommonsCodec}")
   implementation("io.github.jinganix.peashooter:peashooter:${versionPeashooter}")
@@ -62,6 +62,7 @@ dependencies {
   implementation("org.redisson:redisson-spring-boot-starter:${versionRedisson}")
   implementation("org.springframework.boot:spring-boot-configuration-processor")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-web")
@@ -71,13 +72,16 @@ dependencies {
   implementation("org.testcontainers:junit-jupiter:${versionTestContainers}")
   implementation("org.testcontainers:mysql:${versionTestContainers}")
   implementation("org.testcontainers:testcontainers:${versionTestContainers}")
+  implementation("tools.jackson.core:jackson-core:${versionJackson}")
+  implementation("tools.jackson.core:jackson-databind:${versionJackson}")
   protobuf(project(":proto:imports"))
   protobuf(project(":proto:service"))
-  runtimeOnly("mysql:mysql-connector-java:${versionMysqlConnector}")
-  testAnnotationProcessor("org.projectlombok:lombok:$versionLombok")
+  runtimeOnly("com.mysql:mysql-connector-j:${versionMysqlConnector}")
   testAnnotationProcessor("org.mapstruct:mapstruct-processor:${versionMapstruct}")
+  testAnnotationProcessor("org.projectlombok:lombok:$versionLombok")
   testCompileOnly("org.projectlombok:lombok:$versionLombok")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.testcontainers:junit-jupiter:${versionTestContainers}")
   testImplementation("org.testcontainers:testcontainers:${versionTestContainers}")
@@ -89,7 +93,6 @@ tasks.withType<Test> {
 
 tasks.bootJar {
   archiveFileName.set("admin-starter-service.jar")
-  launchScript()
 }
 
 tasks.test {

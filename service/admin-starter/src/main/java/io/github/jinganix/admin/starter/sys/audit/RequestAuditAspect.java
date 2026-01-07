@@ -1,6 +1,5 @@
 package io.github.jinganix.admin.starter.sys.audit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.jinganix.admin.starter.adm.overview.repository.OverviewRepository;
 import io.github.jinganix.admin.starter.helper.auth.token.AuthUserToken;
 import io.github.jinganix.admin.starter.helper.uid.UidGenerator;
@@ -19,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Aspect

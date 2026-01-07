@@ -1,17 +1,14 @@
 package io.github.jinganix.admin.starter.helper.jackson;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import java.io.IOException;
 import java.util.List;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ValueDeserializer;
 
-public class PathVariableArrayDeserializer<T> extends JsonDeserializer<List<T>>
-    implements ContextualDeserializer {
+public class PathVariableArrayDeserializer<T> extends ValueDeserializer<List<T>> {
 
   private JavaType javaType;
 
@@ -22,7 +19,7 @@ public class PathVariableArrayDeserializer<T> extends JsonDeserializer<List<T>>
   }
 
   @Override
-  public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
+  public ValueDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
     if (property != null) {
       JavaType type = property.getType();
       return new PathVariableArrayDeserializer<>(type);
@@ -31,16 +28,16 @@ public class PathVariableArrayDeserializer<T> extends JsonDeserializer<List<T>>
   }
 
   @Override
-  public List<T> deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
+  public List<T> deserialize(JsonParser p, DeserializationContext ctx) {
     JavaType targetType = javaType;
     if (targetType == null) {
       throw new IllegalStateException("Target type cannot be determined");
     }
 
-    String rawValue = p.getText();
+    String rawValue = p.getString();
     String json = convertToArrayJson(rawValue);
 
-    ObjectReader mapper = (ObjectReader) p.getCodec();
+    ObjectReader mapper = (ObjectReader) p.objectReadContext();
     return mapper.forType(targetType).readValue(json);
   }
 

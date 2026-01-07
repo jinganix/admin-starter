@@ -1,5 +1,5 @@
 import { render, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "@/app.tsx";
 import * as useLoading from "@/hooks/use.loading.ts";
 
@@ -8,6 +8,8 @@ vi.mock("@/components/routes/app.routes.tsx", () => ({
 }));
 
 describe("<App />", () => {
+  afterEach(() => vi.resetAllMocks());
+
   describe("when loading", () => {
     it("should render spinner", () => {
       const spyUserLoading = vi.spyOn(useLoading, "useLoading").mockReturnValue([true, vi.fn()]);
