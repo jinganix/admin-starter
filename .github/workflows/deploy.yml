@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        jdk: [ 21 ]
+        jdk: [ 25 ]
       fail-fast: false
     steps:
       - name: Checkout master

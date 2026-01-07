@@ -1,18 +1,15 @@
 package io.github.jinganix.admin.starter.helper.jackson;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import java.io.IOException;
 import java.util.Map;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ValueDeserializer;
 
-public class PathVariableMapDeserializer<K, V> extends JsonDeserializer<Map<K, V>>
-    implements ContextualDeserializer {
+public class PathVariableMapDeserializer<K, V> extends ValueDeserializer<Map<K, V>> {
 
   private JavaType javaType;
 
@@ -23,7 +20,7 @@ public class PathVariableMapDeserializer<K, V> extends JsonDeserializer<Map<K, V
   }
 
   @Override
-  public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
+  public ValueDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
     if (property != null) {
       JavaType type = property.getType();
       return new PathVariableMapDeserializer<>(type);
@@ -32,20 +29,20 @@ public class PathVariableMapDeserializer<K, V> extends JsonDeserializer<Map<K, V
   }
 
   @Override
-  public Map<K, V> deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
+  public Map<K, V> deserialize(JsonParser p, DeserializationContext ctx) {
     JavaType targetType = javaType;
     if (targetType == null) {
       throw new IllegalStateException("Target type cannot be determined");
     }
 
-    String rawValue = p.getText();
+    String rawValue = p.getString();
     String json = convertToArrayJson(p, rawValue);
 
-    ObjectReader mapper = (ObjectReader) p.getCodec();
+    ObjectReader mapper = (ObjectReader) p.objectReadContext();
     return mapper.forType(targetType).readValue(json);
   }
 
-  private String convertToArrayJson(JsonParser p, String rawValue) throws JsonMappingException {
+  private String convertToArrayJson(JsonParser p, String rawValue) throws DatabindException {
     if (rawValue.startsWith("{") && rawValue.endsWith("}")) {
       return rawValue;
     }
@@ -53,7 +50,7 @@ public class PathVariableMapDeserializer<K, V> extends JsonDeserializer<Map<K, V
     for (String s : rawValue.split(";")) {
       String[] parts = s.split(",");
       if (parts.length != 2) {
-        throw new JsonMappingException(p, "Bad value: " + rawValue);
+        throw DatabindException.from(p, "Bad value: " + rawValue);
       }
       for (int i = 0; i < parts.length; i++) {
         String str = parts[i];

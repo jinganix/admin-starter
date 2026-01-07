@@ -22,7 +22,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@helpers/*": ["./src/helpers/*"],
-      "@proto/*": ["build/generated/source/proto/main/ts/*"]
+      "@proto/*": ["build/generated/sources/proto/main/ts/*"]
     },
 
     /* Linting */

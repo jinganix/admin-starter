@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,7 +20,8 @@ public class AuditController {
   @PreAuthorize(
       "hasAuthority(T(io.github.jinganix.admin.starter.sys.permission.Authority).SYS_AUDIT_LIST)")
   @WebpbRequestMapping
-  public AuditListResponse list(Pageable pageable, @Valid AuditListRequest request) {
+  public AuditListResponse list(
+      Pageable pageable, @Valid @ModelAttribute AuditListRequest request) {
     return auditListHandler.handle(pageable, request);
   }
 }

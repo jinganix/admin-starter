@@ -41,7 +41,7 @@ public class SecurityConfiguration {
 
   @Bean
   SecurityFilterChain securityWebFilterChain(
-      HttpSecurity security, AuthenticationManager authenticationManager) throws Exception {
+      HttpSecurity security, AuthenticationManager authenticationManager) {
     security.authenticationManager(authenticationManager);
 
     security.authorizeHttpRequests(httpRequestsCustomizer);

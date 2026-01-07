@@ -1,11 +1,11 @@
 package io.github.jinganix.admin.starter.sys.permission.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.github.jinganix.admin.starter.helper.enumeration.IntegerEnumMapper;
+import io.github.jinganix.admin.starter.helper.jackson.enumeration.EnumerationDeserializer;
+import io.github.jinganix.admin.starter.helper.jackson.enumeration.EnumerationSerializer;
 import io.github.jinganix.webpb.runtime.enumeration.Enumeration;
-import io.github.jinganix.webpb.runtime.enumeration.EnumerationDeserializer;
-import io.github.jinganix.webpb.runtime.enumeration.EnumerationSerializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 @JsonDeserialize(using = EnumerationDeserializer.class)
 @JsonSerialize(using = EnumerationSerializer.class)

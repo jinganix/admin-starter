@@ -9,7 +9,7 @@ import io.github.jinganix.webpb.runtime.reactive.WebpbClient;
 import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
-import org.springframework.boot.web.embedded.tomcat.TomcatProtocolHandlerCustomizer;
+import org.springframework.boot.tomcat.TomcatProtocolHandlerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;

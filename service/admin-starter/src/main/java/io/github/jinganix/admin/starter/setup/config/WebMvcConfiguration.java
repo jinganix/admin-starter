@@ -2,12 +2,12 @@ package io.github.jinganix.admin.starter.setup.config;
 
 import io.github.jinganix.admin.starter.helper.AuthedUser;
 import io.github.jinganix.admin.starter.setup.argument.mvc.UserIdArgumentResolver;
-import io.github.jinganix.webpb.runtime.mvc.WebpbHandlerMethodArgumentResolver;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
@@ -17,6 +17,8 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 import org.springframework.data.web.config.SortHandlerMethodArgumentResolverCustomizer;
+import org.springframework.format.Formatter;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -28,10 +30,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /** Configuration for {@link WebMvcConfigurer}. */
 @Configuration
 @RequiredArgsConstructor
-@EnableConfigurationProperties(SpringDataWebProperties.class)
+@EnableConfigurationProperties(DataWebProperties.class)
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-  private final SpringDataWebProperties properties;
+  private final DataWebProperties properties;
 
   @Bean
   SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver() {
@@ -42,7 +44,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
   @ConditionalOnMissingBean
   PageableHandlerMethodArgumentResolverCustomizer pageableCustomizer() {
     return (resolver) -> {
-      SpringDataWebProperties.Pageable pageable = this.properties.getPageable();
+      DataWebProperties.Pageable pageable = this.properties.getPageable();
       resolver.setPageParameterName(pageable.getPageParameter());
       resolver.setSizeParameterName(pageable.getSizeParameter());
       resolver.setOneIndexedParameters(pageable.isOneIndexedParameters());
@@ -75,7 +77,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
     resolvers.add(new UserIdArgumentResolver());
-    resolvers.add(new WebpbHandlerMethodArgumentResolver());
     resolvers.add(pageableHandlerMethodArgumentResolver());
     resolvers.add(
         new HandlerMethodArgumentResolver() {
@@ -95,5 +96,25 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
             return new AuthedUser().setId(userId);
           }
         });
+  }
+
+  @Override
+  public void addFormatters(FormatterRegistry registry) {
+    EnumValuesMap.getValuesMap()
+        .forEach(
+            (key, value) ->
+                registry.addFormatterForFieldType(
+                    key,
+                    new Formatter<>() {
+                      @Override
+                      public Object parse(String text, Locale locale) {
+                        return value.get(text);
+                      }
+
+                      @Override
+                      public String print(Object object, Locale locale) {
+                        return object.toString();
+                      }
+                    }));
   }
 }

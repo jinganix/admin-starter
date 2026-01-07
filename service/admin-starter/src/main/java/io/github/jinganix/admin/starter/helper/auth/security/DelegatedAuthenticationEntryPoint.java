@@ -3,7 +3,6 @@ package io.github.jinganix.admin.starter.helper.auth.security;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.jinganix.admin.starter.helper.exception.ApiException;
 import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.service.error.ErrorMessage;
@@ -18,6 +17,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component

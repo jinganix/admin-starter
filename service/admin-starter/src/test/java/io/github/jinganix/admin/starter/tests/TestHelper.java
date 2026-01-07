@@ -2,7 +2,6 @@ package io.github.jinganix.admin.starter.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.jinganix.admin.starter.helper.auth.token.TokenService;
 import io.github.jinganix.admin.starter.helper.data.AbstractEntity;
 import io.github.jinganix.admin.starter.proto.lib.pageable.PagingPb;
@@ -10,6 +9,7 @@ import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.service.error.ErrorMessage;
 import io.github.jinganix.webpb.runtime.WebpbMessage;
 import io.github.jinganix.webpb.runtime.WebpbUtils;
+import io.github.jinganix.webpb.runtime.common.InQuery;
 import java.lang.reflect.ParameterizedType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -26,12 +26,30 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.MapperConfig;
+import tools.jackson.databind.introspect.AnnotatedMember;
+import tools.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import tools.jackson.databind.json.JsonMapper;
 
 @Slf4j
 @Service
 public class TestHelper implements ApplicationContextAware {
 
-  private final ObjectMapper objectMapper = WebpbUtils.createTransportMapper();
+  private final ObjectMapper objectMapper =
+      JsonMapper.builder()
+          .configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
+          .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+          .annotationIntrospector(
+              new JacksonAnnotationIntrospector() {
+                @Override
+                public boolean hasIgnoreMarker(MapperConfig<?> config, AnnotatedMember m) {
+                  return super.hasIgnoreMarker(config, m) || m.hasAnnotation(InQuery.class);
+                }
+              })
+          .build();
 
   @Autowired private MockMvc mockMvc;
 

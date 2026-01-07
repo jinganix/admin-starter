@@ -34,6 +34,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -91,14 +92,14 @@ public class UserController {
   @PreAuthorize(
       "hasAuthority(T(io.github.jinganix.admin.starter.sys.permission.Authority).SYS_USER_LIST)")
   @WebpbRequestMapping
-  public UserListResponse list(Pageable pageable, @Valid UserListRequest request) {
+  public UserListResponse list(Pageable pageable, @Valid @ModelAttribute UserListRequest request) {
     return userListHandler.handle(pageable, request);
   }
 
   @PreAuthorize(
       "hasAuthority(T(io.github.jinganix.admin.starter.sys.permission.Authority).SYS_USER_LIST)")
   @WebpbRequestMapping
-  public UserRetrieveResponse retrieve(@Valid UserRetrieveRequest request) {
+  public UserRetrieveResponse retrieve(@Valid @ModelAttribute UserRetrieveRequest request) {
     return userRetrieveHandler.handle(request);
   }
 

@@ -17,7 +17,9 @@ object Vers {
   lateinit var versionFlyway: String
   lateinit var versionFreemarker: String
   lateinit var versionGradleVersionsPlugin: String
+  lateinit var versionGuava: String
   lateinit var versionJackson: String
+  lateinit var versionJacksonAnnotations: String
   lateinit var versionJacocoAgent: String
   lateinit var versionJwt: String
   lateinit var versionLombok: String
