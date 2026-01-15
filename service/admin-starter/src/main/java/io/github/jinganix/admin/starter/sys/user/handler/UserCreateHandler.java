@@ -25,7 +25,7 @@ public class UserCreateHandler {
   @Transactional
   public UserCreateResponse handle(UserCreateRequest request) {
     String username = request.getUsername();
-    String password = request.getUsername();
+    String password = request.getPassword();
     if (userCredentialRepository.existsByUsername(username)) {
       throw ApiException.of(ErrorCode.USERNAME_EXISTS);
     }
