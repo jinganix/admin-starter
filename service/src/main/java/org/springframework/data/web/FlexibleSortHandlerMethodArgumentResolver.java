@@ -11,7 +11,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.util.UriUtils;
 
-/** Source: {@link org.springframework.data.web.SortHandlerMethodArgumentResolver} */
+/** Supports semicolon-separated sort parameters. */
 public class FlexibleSortHandlerMethodArgumentResolver extends SortHandlerMethodArgumentResolver {
 
   @Override
@@ -22,14 +22,12 @@ public class FlexibleSortHandlerMethodArgumentResolver extends SortHandlerMethod
       WebDataBinderFactory binderFactory) {
 
     String[] values = webRequest.getParameterValues(getSortParameter(parameter));
-    // No parameter
     if (values == null) {
       return getDefaultFromAnnotationOrFallback(parameter);
     }
     String[] directionParameter =
         Arrays.stream(values).map(x -> x.split(";")).flatMap(Stream::of).toArray(String[]::new);
 
-    // Single empty parameter, e.g "sort="
     if (directionParameter.length == 1 && !StringUtils.hasText(directionParameter[0])) {
       return getDefaultFromAnnotationOrFallback(parameter);
     }

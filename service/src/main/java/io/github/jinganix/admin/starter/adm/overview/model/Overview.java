@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "biz_overview")
+@Table(name = "admin_overview")
 public class Overview extends AbstractEntity {
 
   @Id private Long id;

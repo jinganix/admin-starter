@@ -55,7 +55,7 @@ message PermissionPb {
 message PermissionListRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/permission/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&code={code}&status={status}&types={types}"
+    path: "/adm/sys/permission/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&code={code}&status={status}&types={types}"
   };
 
   required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
@@ -73,7 +73,7 @@ message PermissionListResponse {
 message PermissionCreateRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/permission/create"
+    path: "/adm/sys/permission/create"
     extends: 'PermissionEditPb'
   };
 }
@@ -84,7 +84,7 @@ message PermissionCreateResponse {
 message PermissionOptionsRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/permission/options"
+    path: "/adm/sys/permission/options"
   };
 }
 
@@ -95,7 +95,7 @@ message PermissionOptionsResponse {
 message PermissionUpdateRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/permission/update"
+    path: "/adm/sys/permission/update"
     extends: 'PermissionEditPb'
   };
 
@@ -109,7 +109,7 @@ message PermissionUpdateResponse {
 message PermissionDeleteRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/permission/delete"
+    path: "/adm/sys/permission/delete"
   };
 
   repeated int64 ids = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
@@ -121,7 +121,7 @@ message PermissionDeleteResponse {
 message PermissionUpdateStatusRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/permission/status"
+    path: "/adm/sys/permission/status"
   };
 
   required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
@@ -136,7 +136,7 @@ message PermissionUpdateStatusResponse {
 message PermissionRetrieveRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/permission/retrieve?id={id}"
+    path: "/adm/sys/permission/retrieve?id={id}"
   };
 
   required int64 id = 1 [(opts).opt = {in_query: true}, (opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
@@ -149,7 +149,7 @@ message PermissionRetrieveResponse {
 message PermissionUploadRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/permission/upload"
+    path: "/adm/sys/permission/upload"
   };
 
   repeated PermissionEditPb permissions = 1;
@@ -161,7 +161,7 @@ message PermissionUploadResponse {
 message PermissionReloadRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/permission/reload"
+    path: "/adm/sys/permission/reload"
   };
 
   repeated PermissionEditPb permissions = 1;

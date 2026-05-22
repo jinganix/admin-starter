@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.sys.auth.AuthTokenRequest;
 import io.github.jinganix.admin.starter.proto.sys.auth.AuthTokenResponse;
+import io.github.jinganix.admin.starter.sys.auth.repository.AdminUserTokenRepository;
 import io.github.jinganix.admin.starter.tests.SpringBootIntegrationTests;
 import io.github.jinganix.admin.starter.tests.TestHelper;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 class AuthTokenControllerTest extends SpringBootIntegrationTests {
 
   @Autowired TestHelper testHelper;
+
+  @Autowired AdminUserTokenRepository adminUserTokenRepository;
 
   @BeforeEach
   void setup() {
@@ -104,7 +107,7 @@ class AuthTokenControllerTest extends SpringBootIntegrationTests {
       @Test
       @DisplayName("then response USER_NOT_FOUND")
       void thenResponseError() throws Exception {
-        testHelper.insertEntities(userToken(UID_1).setRefreshToken("abc"));
+        adminUserTokenRepository.insert(userToken(UID_1).setRefreshToken("abc"));
 
         testHelper
             .request(UID_1, new AuthTokenRequest("abc"))
@@ -120,7 +123,8 @@ class AuthTokenControllerTest extends SpringBootIntegrationTests {
     @Test
     @DisplayName("then response token")
     void thenResponseToken() throws Exception {
-      testHelper.insertEntities(user(UID_1), userToken(UID_1).setRefreshToken("abc"));
+      testHelper.insertEntities(user(UID_1));
+      adminUserTokenRepository.insert(userToken(UID_1).setRefreshToken("abc"));
 
       when(uidGenerator.nextUid()).thenReturn(UID_1);
       when(utilsService.uuid(anyBoolean())).thenReturn("test_uuid");

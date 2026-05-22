@@ -44,7 +44,7 @@ message RoleTreePb {
 message RoleListRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/role/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&name={name}&status={status}"
+    path: "/adm/sys/role/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&name={name}&status={status}"
   };
 
   required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
@@ -61,7 +61,7 @@ message RoleListResponse {
 message RoleCreateRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/role/create"
+    path: "/adm/sys/role/create"
     extends: 'RoleEditPb'
   };
 }
@@ -72,7 +72,7 @@ message RoleCreateResponse {
 message RoleOptionsRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/role/options"
+    path: "/adm/sys/role/options"
   };
 }
 
@@ -83,7 +83,7 @@ message RoleOptionsResponse {
 message RoleUpdateRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/role/update"
+    path: "/adm/sys/role/update"
     extends: 'RoleEditPb'
   };
 
@@ -97,7 +97,7 @@ message RoleUpdateResponse {
 message RoleDeleteRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/role/delete"
+    path: "/adm/sys/role/delete"
   };
 
   repeated int64 ids = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
@@ -109,7 +109,7 @@ message RoleDeleteResponse {
 message RoleUpdateStatusRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/role/status"
+    path: "/adm/sys/role/status"
   };
 
   required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
@@ -124,7 +124,7 @@ message RoleUpdateStatusResponse {
 message RoleRetrieveRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/role/retrieve?id={id}"
+    path: "/adm/sys/role/retrieve?id={id}"
   };
 
   required int64 id = 1 [(opts).opt = {in_query: true}, (opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];

@@ -3,8 +3,8 @@ package io.github.jinganix.admin.starter.sys.role;
 import io.github.jinganix.admin.starter.helper.exception.ApiException;
 import io.github.jinganix.admin.starter.helper.uid.UidGenerator;
 import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
-import io.github.jinganix.admin.starter.sys.auth.model.UserCredential;
-import io.github.jinganix.admin.starter.sys.auth.repository.UserCredentialRepository;
+import io.github.jinganix.admin.starter.sys.auth.model.AdminUserIdentity;
+import io.github.jinganix.admin.starter.sys.auth.repository.AdminUserIdentityRepository;
 import io.github.jinganix.admin.starter.sys.emitter.Emitter;
 import io.github.jinganix.admin.starter.sys.role.model.Role;
 import io.github.jinganix.admin.starter.sys.role.model.RoleStatus;
@@ -43,7 +43,7 @@ public class AdminService {
 
   private final UidGenerator uidGenerator;
 
-  private final UserCredentialRepository userCredentialRepository;
+  private final AdminUserIdentityRepository adminUserIdentityRepository;
 
   private final UserRoleRepository userRoleRepository;
 
@@ -89,9 +89,9 @@ public class AdminService {
   }
 
   private void initAdminUser(long millis) {
-    UserCredential credential = userCredentialRepository.findByUsername(ADMIN_USERNAME);
-    if (credential != null) {
-      this.adminUserId = credential.getId();
+    AdminUserIdentity identity = adminUserIdentityRepository.findByUsername(ADMIN_USERNAME);
+    if (identity != null) {
+      this.adminUserId = identity.getUserId();
       return;
     }
     User user = userService.createUser(ADMIN_USERNAME, adminPassword, millis);
@@ -109,12 +109,12 @@ public class AdminService {
   }
 
   private void resetAdminPassword(long millis) {
-    UserCredential credential =
-        userCredentialRepository
-            .findById(this.adminUserId)
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
-    if (Objects.equals(credential.getUpdatedAt(), resetPwdWhenUpdatedAt)) {
-      userService.changePassword(credential.getId(), adminPassword, millis);
+    AdminUserIdentity identity = adminUserIdentityRepository.findByUserId(this.adminUserId);
+    if (identity == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
+    if (Objects.equals(identity.getUpdatedAt(), resetPwdWhenUpdatedAt)) {
+      userService.changePassword(identity.getUserId(), adminPassword, millis);
     }
   }
 }

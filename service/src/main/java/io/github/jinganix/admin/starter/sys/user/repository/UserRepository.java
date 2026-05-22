@@ -15,11 +15,11 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query(
-      "SELECT x AS user, u.username AS username FROM User x JOIN UserCredential u ON x.id = u.id WHERE x.id = :userId")
+      "SELECT x AS user, u.username AS username FROM User x JOIN AdminUserIdentity u ON x.id = u.userId WHERE x.id = :userId")
   Optional<UserWithUsername> findByIdWithUsername(@Param("userId") Long userId);
 
   @Query(
-      "SELECT x AS user, u.username AS username FROM User x JOIN UserCredential u ON x.id = u.id "
+      "SELECT x AS user, u.username AS username FROM User x JOIN AdminUserIdentity u ON x.id = u.userId "
           + "WHERE (:userId IS NULL OR x.id = :userId) "
           + "AND (:username IS NULL OR u.username like %:username%) "
           + "AND (:status IS NULL OR x.status = :status)")

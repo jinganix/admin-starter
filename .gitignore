@@ -3,7 +3,7 @@
 .env.local
 .gradle/
 .idea/
-.kotlin
+.kotlin/
 .run/
 .tmp/
 LOG_DIR_IS_UNDEFINED/

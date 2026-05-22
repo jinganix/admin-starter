@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "sys_role_permission")
+@Table(name = "admin_role_permission")
 public class RolePermission extends AbstractEntity {
 
   @Id private Long id;

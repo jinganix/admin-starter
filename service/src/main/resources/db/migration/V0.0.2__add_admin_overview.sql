@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `biz_overview` (
+CREATE TABLE IF NOT EXISTS `admin_overview` (
   `id` bigint NOT NULL,
   `month` date NOT NULL,
   `api_get` int NOT NULL,
@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS `biz_overview` (
   `permission_deleted` int NOT NULL,
   `created_at` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-  CONSTRAINT `biz_overview_pk` PRIMARY KEY (`id`),
-  CONSTRAINT `biz_overview_month_uk` UNIQUE KEY (`month`)
+  CONSTRAINT `admin_overview_pk` PRIMARY KEY (`id`),
+  CONSTRAINT `admin_overview_month_uk` UNIQUE KEY (`month`)
 );

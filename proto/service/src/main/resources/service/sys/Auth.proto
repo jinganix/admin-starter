@@ -14,7 +14,7 @@ enum TokenType {
 message AuthLoginRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/auth/login"
+    path: "/adm/sys/auth/login"
   };
 
   required string username = 1 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 20)'}];
@@ -24,7 +24,7 @@ message AuthLoginRequest {
 message AuthTokenRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/auth/token"
+    path: "/adm/sys/auth/token"
   };
 
   optional string refreshToken = 1 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 1, max = 40)'}];
@@ -33,7 +33,7 @@ message AuthTokenRequest {
 message AuthSignupRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/auth/signup"
+    path: "/adm/sys/auth/signup"
   };
 
   required string username = 1 [(opts).java = {annotation: '@NotNull' annotation: '@Size(min = 3, max = 20)'}];

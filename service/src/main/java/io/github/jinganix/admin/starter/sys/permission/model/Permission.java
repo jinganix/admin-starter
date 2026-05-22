@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "sys_permission")
+@Table(name = "admin_permission")
 public class Permission extends AbstractEntity {
 
   @Id private Long id;

@@ -14,6 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,6 +56,9 @@ public class TestHelper implements ApplicationContextAware {
 
   @Autowired private TokenService tokenService;
 
+  @Autowired(required = false)
+  private CacheManager cacheManager;
+
   private Repositories repositories;
 
   @Override
@@ -79,6 +83,9 @@ public class TestHelper implements ApplicationContextAware {
   }
 
   public void clearAll() {
+    if (cacheManager != null) {
+      cacheManager.getCacheNames().forEach(name -> cacheManager.getCache(name).clear());
+    }
     for (Class<?> type : repositories) {
       JpaRepository<AbstractEntity, ?> repository = getRepository(type);
       if (repository.count() > 0) {

@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "sys_user_role")
+@Table(name = "admin_user_role")
 public class UserRole extends AbstractEntity {
 
   @Id private Long id;

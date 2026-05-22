@@ -56,7 +56,7 @@ message UserCurrentPb {
 message UserCurrentRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/user/current"
+    path: "/adm/sys/user/current"
   };
 }
 
@@ -67,7 +67,7 @@ message UserCurrentResponse {
 message UserListRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/user/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&userId={userId}&username={username}&status={status}"
+    path: "/adm/sys/user/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&userId={userId}&username={username}&status={status}"
   };
 
   required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];
@@ -85,7 +85,7 @@ message UserListResponse {
 message UserCreateRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/user/create"
+    path: "/adm/sys/user/create"
     extends: 'UserCreatePb'
   };
 }
@@ -96,7 +96,7 @@ message UserCreateResponse {
 message UserChangePasswordRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/user/password"
+    path: "/adm/sys/user/password"
   };
 
   required string current = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 6, max = 20)'}];
@@ -109,7 +109,7 @@ message UserChangePasswordResponse {
 message UserDeleteRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/user/delete"
+    path: "/adm/sys/user/delete"
   };
 
   repeated int64 ids = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];
@@ -121,7 +121,7 @@ message UserDeleteResponse {
 message UserUpdateRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/user/update"
+    path: "/adm/sys/user/update"
     extends: 'UserUpdatePb'
   };
 
@@ -135,7 +135,7 @@ message UserUpdateResponse {
 message UserUpdateProfileRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/user/profile"
+    path: "/adm/sys/user/profile"
   };
 
   required string nickname = 1 [(opts).java = {annotation: '@NotNull', annotation: '@Size(min = 3, max = 20)'}];
@@ -148,7 +148,7 @@ message UserUpdateProfileResponse {
 message UserUpdateStatusRequest {
   option (m_opts).opt = {
     method: "POST"
-    path: "/sys/user/status"
+    path: "/adm/sys/user/status"
   };
 
   required int64 id = 1 [(opts).ts = {as_string: true}, (opts).java = {annotation: '@JsonSerialize(using = ToStringSerializer.class)'}];
@@ -162,7 +162,7 @@ message UserUpdateStatusResponse {
 message UserRetrieveRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/user/retrieve?id={id}"
+    path: "/adm/sys/user/retrieve?id={id}"
   };
 
   required int64 id = 1 [(opts).opt = {in_query: true}, (opts).ts = {as_string: true}, (opts).java = {annotation: '@NotNull'}];

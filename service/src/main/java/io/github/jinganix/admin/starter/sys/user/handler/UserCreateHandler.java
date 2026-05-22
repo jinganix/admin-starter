@@ -5,7 +5,7 @@ import io.github.jinganix.admin.starter.helper.utils.UtilsService;
 import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.sys.user.UserCreateRequest;
 import io.github.jinganix.admin.starter.proto.sys.user.UserCreateResponse;
-import io.github.jinganix.admin.starter.sys.auth.repository.UserCredentialRepository;
+import io.github.jinganix.admin.starter.sys.auth.repository.AdminUserIdentityRepository;
 import io.github.jinganix.admin.starter.sys.user.UserService;
 import io.github.jinganix.admin.starter.sys.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserCreateHandler {
 
-  private final UserCredentialRepository userCredentialRepository;
+  private final AdminUserIdentityRepository adminUserIdentityRepository;
 
   private final UserService userService;
 
@@ -26,7 +26,7 @@ public class UserCreateHandler {
   public UserCreateResponse handle(UserCreateRequest request) {
     String username = request.getUsername();
     String password = request.getPassword();
-    if (userCredentialRepository.existsByUsername(username)) {
+    if (adminUserIdentityRepository.existsByUsername(username)) {
       throw ApiException.of(ErrorCode.USERNAME_EXISTS);
     }
     long millis = utilsService.currentTimeMillis();

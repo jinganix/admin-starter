@@ -26,7 +26,7 @@ message AuditDetailsPb {
 message AuditListRequest {
   option (m_opts).opt = {
     method: "GET"
-    path: "/sys/audit/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&userId={userId}&username={username}&method={method}&path={path}"
+    path: "/adm/sys/audit/list?page={pageable.page}&size={pageable.size}&sort={pageable.sort}&userId={userId}&username={username}&method={method}&path={path}"
   };
 
   required PageableProto.PageablePb pageable = 1 [(opts).opt = {in_query: true}, (opts).java = {annotation: '@Valid'}];

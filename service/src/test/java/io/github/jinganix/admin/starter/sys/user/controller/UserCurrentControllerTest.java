@@ -1,7 +1,7 @@
 package io.github.jinganix.admin.starter.sys.user.controller;
 
 import static io.github.jinganix.admin.starter.sys.auth.AuthData.user;
-import static io.github.jinganix.admin.starter.sys.user.UserData.userCredential;
+import static io.github.jinganix.admin.starter.sys.user.UserData.userIdentity;
 import static io.github.jinganix.admin.starter.tests.TestConst.MIN_TIMESTAMP;
 import static io.github.jinganix.admin.starter.tests.TestConst.UID_1;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,7 +56,7 @@ class UserCurrentControllerTest extends SpringBootIntegrationTests {
     @Test
     @DisplayName("then response success")
     void thenResponseSuccess() throws Exception {
-      testHelper.insertEntities(user(UID_1).setNickname("foo"), userCredential(UID_1));
+      testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
 
       testHelper
           .request(UID_1, new UserCurrentRequest())
