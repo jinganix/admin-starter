@@ -1,12 +1,21 @@
 import tailwindcss from "@tailwindcss/vite";
+import legacy from "@vitejs/plugin-legacy";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import checker from "vite-plugin-checker";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    chunkSizeWarningLimit: 2000,
+    rolldownOptions: {
+      checks: {
+        invalidAnnotation: false,
+        pluginTimings: false,
+      },
+    },
+  },
   css: {
     preprocessorOptions: {
       scss: {
@@ -16,9 +25,11 @@ export default defineConfig({
   },
   envDir: "./env",
   plugins: [
-    checker({ typescript: { tsconfigPath: "./tsconfig.app.json" } }),
+    checker({
+      typescript: { buildMode: false, tsconfigPath: "./tsconfig.app.json" },
+    }),
     react(),
-    tsconfigPaths(),
+    legacy({ targets: ["defaults", "not IE 11"] }),
     tailwindcss(),
   ],
   resolve: {
@@ -26,6 +37,7 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
       "@proto": resolve(__dirname, "build/generated/sources/proto/main/ts"),
     },
+    tsconfigPaths: true,
   },
   server: {
     allowedHosts: true,

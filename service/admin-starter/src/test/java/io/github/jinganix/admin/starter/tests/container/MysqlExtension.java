@@ -1,4 +1,4 @@
-package io.github.jinganix.admin.starter.tests;
+package io.github.jinganix.admin.starter.tests.container;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -26,6 +26,7 @@ public class MysqlExtension implements BeforeAllCallback {
         .withPassword("root")
         .withInitScript("init_test_container_database.sql")
         .withReuse(true)
+        .withLabel("class", MysqlExtension.class.getName())
         .start();
     System.setProperty("spring.datasource.url", container.getJdbcUrl());
   }

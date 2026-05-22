@@ -14,6 +14,7 @@ import io.github.jinganix.admin.starter.sys.utils.MappingPaging;
 import java.util.List;
 import java.util.Set;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 
@@ -23,10 +24,20 @@ public abstract class UserMapper {
   public abstract UserStatus status(
       io.github.jinganix.admin.starter.proto.sys.user.UserStatus status);
 
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "status", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   public abstract void fill(@MappingTarget User user, UserUpdateProfileRequest pb);
 
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "nickname", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   public abstract void fill(@MappingTarget User user, UserCreateRequest pb);
 
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   public abstract void fill(@MappingTarget User user, UserUpdateRequest pb);
 
   public abstract UserCurrentPb currentPb(User user, String username, Set<String> authorities);

@@ -11,6 +11,7 @@ import io.github.jinganix.admin.starter.sys.utils.MappingPaging;
 import java.util.List;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 
@@ -20,6 +21,9 @@ public abstract class RoleMapper {
   public abstract RoleStatus status(
       io.github.jinganix.admin.starter.proto.sys.role.RoleStatus status);
 
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   public abstract void fill(@MappingTarget Role role, RoleEditPb pb);
 
   public abstract RolePb rolePb(Role role, List<Long> permissionIds);

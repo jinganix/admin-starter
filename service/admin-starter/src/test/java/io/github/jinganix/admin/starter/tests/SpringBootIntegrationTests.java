@@ -12,6 +12,8 @@ import io.github.jinganix.admin.starter.helper.uid.UidGenerator;
 import io.github.jinganix.admin.starter.helper.utils.UtilsService;
 import io.github.jinganix.admin.starter.sys.auth.authenticator.CredentialsAuthenticator;
 import io.github.jinganix.admin.starter.sys.role.RoleAuthorityService;
+import io.github.jinganix.admin.starter.tests.container.MysqlExtension;
+import io.github.jinganix.admin.starter.tests.container.RedisExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
