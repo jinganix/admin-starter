@@ -16,7 +16,7 @@ export function SettingsContainer({ title, desc, children }: ContentSectionProps
         <p className="text-sm text-muted-foreground">{desc}</p>
       </div>
       <Separator className="my-4 flex-none" />
-      <ScrollArea className="faded-bottom -mx-4 flex-1 scroll-smooth px-4 md:pb-16">
+      <ScrollArea className="-mx-4 flex-1 scroll-smooth px-4 md:pb-16">
         <div className="lg:max-w-xl px-1.5">{children}</div>
       </ScrollArea>
     </div>

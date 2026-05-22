@@ -3,7 +3,9 @@ import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.remove
 import utils.Props
 import utils.Vers
+import utils.jooqTask
 import utils.Vers.versionAuthorizationServer
+import utils.Vers.versionJooq
 import utils.Vers.versionCaffeine
 import utils.Vers.versionCommonsCodec
 import utils.Vers.versionCommonsLang3
@@ -49,6 +51,8 @@ dependencies {
   annotationProcessor("org.projectlombok:lombok:$versionLombok")
   annotationProcessor("org.mapstruct:mapstruct-processor:${versionMapstruct}")
   compileOnly("org.projectlombok:lombok:$versionLombok")
+  developmentOnly("org.jooq:jooq-codegen:${versionJooq}")
+  developmentOnly("org.jooq:jooq-meta-extensions:${versionJooq}")
   implementation("com.auth0:java-jwt:${versionJwt}")
   implementation("com.fasterxml.jackson.core:jackson-annotations:${versionJacksonAnnotations}")
   implementation("com.github.ben-manes.caffeine:caffeine:${versionCaffeine}")
@@ -67,8 +71,9 @@ dependencies {
   implementation("org.redisson:redisson:${versionRedisson}")
   implementation("org.redisson:redisson-spring-cache:${versionRedisson}")
   implementation("org.springframework.boot:spring-boot-configuration-processor")
+  implementation("org.aspectj:aspectjweaver")
   implementation("org.springframework.boot:spring-boot-starter-cache")
-  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -99,6 +104,8 @@ tasks.withType<Test> {
 tasks.bootJar {
   archiveFileName.set("admin-starter-service.jar")
 }
+
+jooqTask("jooq.xml")
 
 tasks.test {
   finalizedBy(tasks.jacocoTestReport)

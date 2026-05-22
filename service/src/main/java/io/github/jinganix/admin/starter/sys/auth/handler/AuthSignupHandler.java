@@ -13,6 +13,7 @@ import io.github.jinganix.admin.starter.sys.user.UserService;
 import io.github.jinganix.admin.starter.sys.user.model.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,6 +28,9 @@ public class AuthSignupHandler {
 
   private final UtilsService utilsService;
 
+  @Value("${config.signup.register-as-admin:true}")
+  private boolean registerAsAdmin;
+
   public AuthTokenResponse handle(AuthSignupRequest request) {
     String username = request.getUsername();
     String password = request.getPassword();
@@ -34,9 +38,15 @@ public class AuthSignupHandler {
       throw ApiException.of(ErrorCode.USERNAME_EXISTS);
     }
     long millis = utilsService.currentTimeMillis();
-    User user =
-        userService.createUser(username, username, password, List.of(RoleCode.ADMIN), millis);
+    User user = createSignupUser(username, password, millis);
     AdminUserToken token = authService.createToken(millis, user.getId());
     return authService.createAuthTokenResponse(user.getId(), token.getRefreshToken());
+  }
+
+  private User createSignupUser(String username, String password, long millis) {
+    if (registerAsAdmin) {
+      return userService.createUser(username, username, password, List.of(RoleCode.ADMIN), millis);
+    }
+    return userService.createUser(username, password, millis);
   }
 }

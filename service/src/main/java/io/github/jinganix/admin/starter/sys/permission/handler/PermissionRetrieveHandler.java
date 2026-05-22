@@ -21,10 +21,10 @@ public class PermissionRetrieveHandler {
 
   @Transactional
   public PermissionRetrieveResponse handle(PermissionRetrieveRequest request) {
-    Permission permission =
-        permissionRepository
-            .findById(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.PERMISSION_NOT_FOUND));
+    Permission permission = permissionRepository.findById(request.getId());
+    if (permission == null) {
+      throw ApiException.of(ErrorCode.PERMISSION_NOT_FOUND);
+    }
     return new PermissionRetrieveResponse(permissionMapper.mapToPb(permission));
   }
 }

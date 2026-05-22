@@ -37,13 +37,13 @@ public class UserUpdateHandler {
     if (adminService.isAdminUser(request.getId())) {
       throw ApiException.of(ErrorCode.ADMIN_IS_IMMUTABLE);
     }
-    UserWithUsername obj =
-        userRepository
-            .findByIdWithUsername(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
+    UserWithUsername obj = userRepository.findByIdWithUsername(request.getId());
+    if (obj == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
     User user = obj.getUser();
     long millis = utilsService.currentTimeMillis();
-    userRepository.save(
+    userRepository.update(
         (User)
             user.setNickname(request.getNickname())
                 .setStatus(userMapper.status(request.getStatus()))

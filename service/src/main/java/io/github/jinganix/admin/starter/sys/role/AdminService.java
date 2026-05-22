@@ -84,7 +84,7 @@ public class AdminService {
                 .setStatus(RoleStatus.ACTIVE)
                 .setCreatedAt(millis)
                 .setUpdatedAt(millis);
-    roleRepository.save(role);
+    roleRepository.insert(role);
     emitter.roleCreated(role);
   }
 
@@ -105,7 +105,7 @@ public class AdminService {
                 .setRoleId(role.getId())
                 .setCreatedAt(millis)
                 .setUpdatedAt(millis);
-    userRoleRepository.save(userRole);
+    userRoleRepository.saveAll(List.of(userRole));
   }
 
   private void resetAdminPassword(long millis) {

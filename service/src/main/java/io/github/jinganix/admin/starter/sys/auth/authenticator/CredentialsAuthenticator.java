@@ -44,10 +44,10 @@ public class CredentialsAuthenticator implements Authenticator {
     if (!passwordEncoder.matches(password, identity.getPassword())) {
       throw new BadCredentialsException("Invalid password");
     }
-    User user =
-        userRepository
-            .findById(identity.getUserId())
-            .orElseThrow(() -> new UsernameNotFoundException(username));
+    User user = userRepository.findById(identity.getUserId());
+    if (user == null) {
+      throw new UsernameNotFoundException(username);
+    }
     if (user.getStatus() != UserStatus.ACTIVE) {
       throw new DisabledException("User is inactive");
     }

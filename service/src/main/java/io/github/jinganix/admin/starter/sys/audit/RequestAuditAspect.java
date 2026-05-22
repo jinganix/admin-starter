@@ -70,7 +70,7 @@ public class RequestAuditAspect {
           }
         }
       }
-      auditRepository.save(audit);
+      auditRepository.insert(audit);
     } catch (Exception e) {
       log.error("", e);
     }

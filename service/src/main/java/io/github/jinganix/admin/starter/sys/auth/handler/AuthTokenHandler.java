@@ -36,10 +36,10 @@ public class AuthTokenHandler {
     if (token == null) {
       throw ApiException.of(HttpStatus.UNAUTHORIZED, ErrorCode.BAD_REFRESH_TOKEN);
     }
-    User user =
-        userRepository
-            .findById(token.getUserId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
+    User user = userRepository.findById(token.getUserId());
+    if (user == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
     long millis = utilsService.currentTimeMillis();
     AdminUserToken newToken = authService.createToken(millis, user.getId());
     userTokenRepository.deleteByToken(refreshToken);

@@ -4,10 +4,7 @@ import io.github.jinganix.admin.starter.helper.AuthedUser;
 import io.github.jinganix.admin.starter.setup.argument.mvc.UserIdArgumentResolver;
 import java.util.List;
 import java.util.Locale;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
@@ -27,24 +24,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /** Configuration for {@link WebMvcConfigurer}. */
 @Configuration
-@RequiredArgsConstructor
-@EnableConfigurationProperties(DataWebProperties.class)
 public class WebMvcConfiguration implements WebMvcConfigurer {
-
-  private final DataWebProperties properties;
 
   @Bean
   @ConditionalOnMissingBean
   PageableHandlerMethodArgumentResolverCustomizer pageableCustomizer() {
-    return (resolver) -> {
-      DataWebProperties.Pageable pageable = this.properties.getPageable();
-      resolver.setPageParameterName(pageable.getPageParameter());
-      resolver.setSizeParameterName(pageable.getSizeParameter());
-      resolver.setOneIndexedParameters(pageable.isOneIndexedParameters());
-      resolver.setPrefix(pageable.getPrefix());
-      resolver.setQualifierDelimiter(pageable.getQualifierDelimiter());
-      resolver.setFallbackPageable(PageRequest.of(0, pageable.getDefaultPageSize()));
-      resolver.setMaxPageSize(pageable.getMaxPageSize());
+    return resolver -> {
+      resolver.setFallbackPageable(PageRequest.of(0, 20));
+      resolver.setMaxPageSize(2000);
     };
   }
 
@@ -58,7 +45,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
   @Bean
   @ConditionalOnMissingBean
   SortHandlerMethodArgumentResolverCustomizer sortCustomizer() {
-    return resolver -> resolver.setSortParameter(this.properties.getSort().getSortParameter());
+    return resolver -> resolver.setSortParameter("sort");
   }
 
   /**

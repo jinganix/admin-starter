@@ -69,8 +69,8 @@ public class UserService {
                 .setStatus(UserStatus.ACTIVE)
                 .setCreatedAt(millis)
                 .setUpdatedAt(millis);
-    adminUserIdentityRepository.save(identity);
-    userRepository.save(user);
+    adminUserIdentityRepository.insert(identity);
+    userRepository.insert(user);
     if (!CollectionUtils.isEmpty(codes)) {
       List<UserRole> userRoles =
           roleRepository.findAllByCodeIn(codes.stream().map(Enum::name).toList()).stream()
@@ -97,7 +97,7 @@ public class UserService {
       throw ApiException.of(ErrorCode.USER_NOT_FOUND);
     }
     identity.setPassword(passwordEncoder.encode(password)).setUpdatedAt(millis);
-    adminUserIdentityRepository.save(identity);
+    adminUserIdentityRepository.update(identity);
   }
 
   public void createUserRoles(Long userId, List<Long> roleIds, long millis) {

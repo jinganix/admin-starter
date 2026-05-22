@@ -15,7 +15,7 @@ public class DatabaseUserInactiveChecker implements UserInactiveChecker {
 
   @Override
   public boolean isInactive(Long userId) {
-    User user = userRepository.findById(userId).orElse(null);
+    User user = userRepository.findById(userId);
     return user == null || user.getStatus() != UserStatus.ACTIVE;
   }
 }

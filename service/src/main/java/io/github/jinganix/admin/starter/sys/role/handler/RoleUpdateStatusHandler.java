@@ -30,13 +30,13 @@ public class RoleUpdateStatusHandler {
     if (adminService.isAdminRole(request.getId())) {
       throw ApiException.of(ErrorCode.ADMIN_IS_IMMUTABLE);
     }
-    Role role =
-        roleRepository
-            .findById(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.ROLE_NOT_FOUND));
+    Role role = roleRepository.findById(request.getId());
+    if (role == null) {
+      throw ApiException.of(ErrorCode.ROLE_NOT_FOUND);
+    }
     long millis = utilsService.currentTimeMillis();
     role.setStatus(roleMapper.status(request.getStatus())).setUpdatedAt(millis);
-    roleRepository.save(role);
+    roleRepository.update(role);
     return roleMapper.updateStatusUpdate(role);
   }
 }

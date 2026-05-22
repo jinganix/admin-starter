@@ -26,10 +26,10 @@ public class RoleRetrieveHandler {
 
   @Transactional
   public RoleRetrieveResponse handle(RoleRetrieveRequest request) {
-    Role role =
-        roleRepository
-            .findById(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.ROLE_NOT_FOUND));
+    Role role = roleRepository.findById(request.getId());
+    if (role == null) {
+      throw ApiException.of(ErrorCode.ROLE_NOT_FOUND);
+    }
     List<RolePermission> rolePermissions = rolePermissionRepository.findByRoleId(role.getId());
     return new RoleRetrieveResponse(
         roleMapper.rolePb(

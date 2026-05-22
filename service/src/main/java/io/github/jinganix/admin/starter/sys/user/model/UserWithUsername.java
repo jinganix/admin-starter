@@ -1,8 +1,13 @@
 package io.github.jinganix.admin.starter.sys.user.model;
 
-public interface UserWithUsername {
+import lombok.Getter;
+import lombok.Setter;
 
-  User getUser();
+@Getter
+@Setter
+public class UserWithUsername {
 
-  String getUsername();
+  private User user;
+
+  private String username;
 }

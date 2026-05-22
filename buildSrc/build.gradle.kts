@@ -39,6 +39,7 @@ val versionDependencyManagementPlugin: String by project
 val versionFreemarker: String by project
 val versionGradleVersionsPlugin: String by project
 val versionJacocoAgent: String by project
+val versionJooq: String by project
 val versionProtobufGradlePlugin: String by project
 val versionSpotlessPluginGradle: String by project
 val versionSpringBootGradlePlugin: String by project
@@ -51,6 +52,8 @@ dependencies {
   implementation("io.spring.gradle:dependency-management-plugin:${versionDependencyManagementPlugin}")
   implementation("org.freemarker:freemarker:${versionFreemarker}")
   implementation("org.jacoco:org.jacoco.agent:${versionJacocoAgent}")
+  implementation("org.jooq:jooq-codegen:${versionJooq}")
+  implementation("org.jooq:jooq-meta-extensions:${versionJooq}")
   implementation("org.springframework.boot:spring-boot-gradle-plugin:${versionSpringBootGradlePlugin}")
   implementation(kotlin("script-runtime"))
 }

@@ -1,13 +1,5 @@
 import { Cond } from "@helpers/condition/cond.types.ts";
-import {
-  always,
-  hasAuthority,
-  isAdmin,
-  isAuthed,
-  never,
-  not,
-  or,
-} from "@helpers/condition/cond.utils.ts";
+import { always, hasAuthority, isAuthed, never, not } from "@helpers/condition/cond.utils.ts";
 import { ReactElement } from "react";
 import { Navigate } from "react-router-dom";
 import { CondRouteDef } from "@/components/condition/cond.route.tsx";
@@ -47,15 +39,11 @@ export const ROUTES: CondRouteDef[] = [
           cond("/settings/credential", isAuthed(), <SettingsCredentialPage />),
         ],
       },
-      cond("/dashboard", or(isAdmin(), hasAuthority(Authority.MENU_DASHBOARD)), <DashboardPage />),
+      cond("/dashboard", hasAuthority(Authority.MENU_DASHBOARD), <DashboardPage />),
       cond("/audits", hasAuthority(Authority.MENU_AUDITS), <AuditsPage />),
       cond("/users", hasAuthority(Authority.MENU_USERS), <UsersPage />),
       cond("/roles", hasAuthority(Authority.MENU_ROLES), <RolesPage />),
-      cond(
-        "/permissions",
-        or(isAdmin(), hasAuthority(Authority.MENU_PERMISSIONS)),
-        <PermissionsPage />,
-      ),
+      cond("/permissions", hasAuthority(Authority.MENU_PERMISSIONS), <PermissionsPage />),
     ],
   },
   {

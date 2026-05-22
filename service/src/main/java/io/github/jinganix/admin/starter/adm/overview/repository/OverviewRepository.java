@@ -1,61 +1,101 @@
 package io.github.jinganix.admin.starter.adm.overview.repository;
 
+import static io.github.jinganix.admin.starter.schema.Tables.ADMIN_OVERVIEW;
+
+import io.github.jinganix.admin.starter.adm.overview.OverviewMapper;
 import io.github.jinganix.admin.starter.adm.overview.model.Overview;
 import java.time.LocalDate;
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface OverviewRepository extends JpaRepository<Overview, Long> {
+@RequiredArgsConstructor
+public class OverviewRepository {
 
-  boolean existsByMonth(LocalDate month);
+  private final DSLContext dsl;
 
-  List<Overview> findAllByMonthBefore(LocalDate month);
+  private final OverviewMapper recordMapper;
 
-  @Modifying
+  public boolean existsByMonth(LocalDate month) {
+    return dsl.fetchExists(ADMIN_OVERVIEW, ADMIN_OVERVIEW.MONTH.eq(month));
+  }
+
+  public List<Overview> findAllByMonthBefore(LocalDate month) {
+    return dsl.selectFrom(ADMIN_OVERVIEW)
+        .where(ADMIN_OVERVIEW.MONTH.lt(month))
+        .orderBy(ADMIN_OVERVIEW.MONTH.desc())
+        .fetch(recordMapper::toEntity);
+  }
+
   @Transactional
-  @Query("UPDATE Overview x SET x.apiGet = x.apiGet + :count WHERE x.month = :month")
-  void incrementApiGet(@Param("month") LocalDate month, @Param("count") int count);
+  public void insert(Overview overview) {
+    dsl.insertInto(ADMIN_OVERVIEW).set(recordMapper.toRecord(overview)).execute();
+  }
 
-  @Modifying
   @Transactional
-  @Query("UPDATE Overview x SET x.apiPost = x.apiPost + :count WHERE x.month = :month")
-  void incrementApiPost(@Param("month") LocalDate month, @Param("count") int count);
+  public void incrementApiGet(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.API_GET, ADMIN_OVERVIEW.API_GET.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
 
-  @Modifying
   @Transactional
-  @Query("UPDATE Overview x SET x.userCreated = x.userCreated + :count WHERE x.month = :month")
-  void incrementUserCreated(@Param("month") LocalDate month, @Param("count") int count);
+  public void incrementApiPost(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.API_POST, ADMIN_OVERVIEW.API_POST.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
 
-  @Modifying
   @Transactional
-  @Query("UPDATE Overview x SET x.userDeleted = x.userDeleted + :count WHERE x.month = :month")
-  void incrementUserDeleted(@Param("month") LocalDate month, @Param("count") int count);
+  public void incrementUserCreated(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.USER_CREATED, ADMIN_OVERVIEW.USER_CREATED.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
 
-  @Modifying
   @Transactional
-  @Query("UPDATE Overview x SET x.roleCreated = x.roleCreated + :count WHERE x.month = :month")
-  void incrementRoleCreated(@Param("month") LocalDate month, @Param("count") int count);
+  public void incrementUserDeleted(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.USER_DELETED, ADMIN_OVERVIEW.USER_DELETED.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
 
-  @Modifying
   @Transactional
-  @Query("UPDATE Overview x SET x.roleDeleted = x.roleDeleted + :count WHERE x.month = :month")
-  void incrementRoleDeleted(@Param("month") LocalDate month, @Param("count") int count);
+  public void incrementRoleCreated(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.ROLE_CREATED, ADMIN_OVERVIEW.ROLE_CREATED.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
 
-  @Modifying
   @Transactional
-  @Query(
-      "UPDATE Overview x SET x.permissionCreated = x.permissionCreated + :count WHERE x.month = :month")
-  void incrementPermissionCreated(@Param("month") LocalDate month, @Param("count") int count);
+  public void incrementRoleDeleted(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.ROLE_DELETED, ADMIN_OVERVIEW.ROLE_DELETED.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
 
-  @Modifying
   @Transactional
-  @Query(
-      "UPDATE Overview x SET x.permissionDeleted = x.permissionDeleted + :count WHERE x.month = :month")
-  void incrementPermissionDeleted(@Param("month") LocalDate month, @Param("count") int count);
+  public void incrementPermissionCreated(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.PERMISSION_CREATED, ADMIN_OVERVIEW.PERMISSION_CREATED.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
+
+  @Transactional
+  public void incrementPermissionDeleted(LocalDate month, int count) {
+    dsl.update(ADMIN_OVERVIEW)
+        .set(ADMIN_OVERVIEW.PERMISSION_DELETED, ADMIN_OVERVIEW.PERMISSION_DELETED.add(count))
+        .where(ADMIN_OVERVIEW.MONTH.eq(month))
+        .execute();
+  }
 }

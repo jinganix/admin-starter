@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.19.0.xsd">
+  <basedir>.</basedir>
+  <generator>
+    <generate>
+      <records>true</records>
+    </generate>
+    <strategy>
+      <name>io.github.jinganix.admin.starter.jooq.strategy.JooqGeneratorStrategy</name>
+    </strategy>
+    <target>
+      <packageName>io.github.jinganix.admin.starter.schema</packageName>
+      <directory>build/generated/sources/jooq/java/main</directory>
+    </target>
+    <database>
+      <name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
+      <properties>
+        <property>
+          <key>scripts</key>
+          <value>src/main/resources/db/migration/*.sql</value>
+        </property>
+      </properties>
+      <forcedTypes>
+        <forcedType>
+          <name>BOOLEAN</name>
+          <includeExpression>admin_user_identity.verified</includeExpression>
+        </forcedType>
+
+        <forcedType>
+          <userType>java.lang.Long</userType>
+          <converter>io.github.jinganix.admin.starter.helper.data.TimeConverter</converter>
+          <includeExpression>
+            | .*\..*_at
+          </includeExpression>
+        </forcedType>
+
+        <forcedType>
+          <userType>io.github.jinganix.admin.starter.sys.user.model.UserStatus</userType>
+          <converter>io.github.jinganix.admin.starter.sys.user.model.UserStatus.DbConverter</converter>
+          <includeExpression>admin_user.status</includeExpression>
+        </forcedType>
+
+        <forcedType>
+          <userType>io.github.jinganix.admin.starter.sys.role.model.RoleStatus</userType>
+          <converter>io.github.jinganix.admin.starter.sys.role.model.RoleStatus.DbConverter</converter>
+          <includeExpression>admin_role.status</includeExpression>
+        </forcedType>
+
+        <forcedType>
+          <userType>io.github.jinganix.admin.starter.sys.permission.model.PermissionStatus</userType>
+          <converter>io.github.jinganix.admin.starter.sys.permission.model.PermissionStatus.DbConverter</converter>
+          <includeExpression>admin_permission.status</includeExpression>
+        </forcedType>
+
+        <forcedType>
+          <userType>io.github.jinganix.admin.starter.sys.permission.model.PermissionType</userType>
+          <converter>io.github.jinganix.admin.starter.sys.permission.model.PermissionType.DbConverter</converter>
+          <includeExpression>admin_permission.type</includeExpression>
+        </forcedType>
+
+        <forcedType>
+          <userType>io.github.jinganix.admin.starter.sys.auth.model.AuthProvider</userType>
+          <converter>io.github.jinganix.admin.starter.sys.auth.model.AuthProvider.DbConverter</converter>
+          <includeExpression>admin_user_identity.provider</includeExpression>
+        </forcedType>
+      </forcedTypes>
+    </database>
+  </generator>
+</configuration>

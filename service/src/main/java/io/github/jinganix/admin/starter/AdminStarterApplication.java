@@ -18,6 +18,8 @@ public class AdminStarterApplication {
    * @param args arguments
    */
   public static void main(String[] args) {
+    System.setProperty("org.jooq.no-logo", "true");
+    System.setProperty("org.jooq.no-tips", "true");
     SpringApplication.run(AdminStarterApplication.class, args);
   }
 }

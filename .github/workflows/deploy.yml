@@ -1,63 +1,68 @@
-name: Deploy to Netlify and ECS
+name: Deploy Frontend
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
-jobs:
-  build:
-    name: Build and Deploy
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 25 ]
-      fail-fast: false
-    steps:
-      - name: Checkout master
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: master
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: true
 
-      - name: Setup JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.jdk }}
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Ensure master branch
+        run: |
+          if [ "${{ github.ref }}" != "refs/heads/master" ]; then
+            echo "::error::Deploy is only allowed from the master branch (current: ${{ github.ref_name }})."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Build
         env:
           VITE_API_HOST: ${{ vars.VITE_API_HOST }}
         working-directory: frontend
-        run: npm install && npm run build
-
-      - name: Deploy to ECS
-        working-directory: frontend
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ECS_IP: ${{ secrets.ECS_IP }}
-          ECS_USER: ${{ secrets.ECS_USER }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > private_key
-          chmod 600 private_key
-          rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" ./dist/ $ECS_USER@$ECS_IP:/var/www/admin-starter
+        run: npm ci && npm run build
 
       - name: Create _redirects
         working-directory: frontend
         run: echo "/* /index.html 200" > dist/_redirects
 
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        env:
+          ECS_IP: ${{ secrets.ECS_IP }}
+        run: ssh-keyscan -H "$ECS_IP" >> ~/.ssh/known_hosts
+
+      - name: Deploy to ECS
+        working-directory: frontend
+        env:
+          ECS_IP: ${{ secrets.ECS_IP }}
+          ECS_USER: ${{ secrets.ECS_USER }}
+        run: rsync -avz --delete -e ssh ./dist/ "${ECS_USER}@${ECS_IP}:/var/www/admin-starter"
+
       - name: Deploy to Netlify
         env:
-          VITE_API_HOST: ${{ vars.VITE_API_HOST }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_API_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         working-directory: frontend
-        run: |
-          npm install -g netlify-cli
-          netlify deploy --no-build --prod --site ${{ secrets.NETLIFY_SITE_ID }} --auth ${{ secrets.NETLIFY_API_TOKEN }} --dir=dist
+        run: npx --yes netlify-cli@26.0.2 deploy --no-build --prod --dir=dist

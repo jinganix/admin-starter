@@ -38,7 +38,7 @@ public class DataInitializer {
   }
 
   private void initPermissionData(long millis) {
-    permissionService.reload(millis);
+    permissionService.reloadApi(millis);
   }
 
   private void initOverviewData(long millis) {
@@ -46,7 +46,7 @@ public class DataInitializer {
     for (int i = -6; i < 12; i++) {
       LocalDate month = today.withDayOfMonth(1).plusMonths(i);
       if (!overviewRepository.existsByMonth(month)) {
-        overviewRepository.save(
+        overviewRepository.insert(
             (Overview)
                 new Overview()
                     .setId(uidGenerator.nextUid())

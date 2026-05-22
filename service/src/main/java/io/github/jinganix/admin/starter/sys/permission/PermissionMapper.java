@@ -4,6 +4,7 @@ import io.github.jinganix.admin.starter.proto.sys.permission.PermissionEditPb;
 import io.github.jinganix.admin.starter.proto.sys.permission.PermissionListResponse;
 import io.github.jinganix.admin.starter.proto.sys.permission.PermissionPb;
 import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUpdateStatusResponse;
+import io.github.jinganix.admin.starter.schema.tables.records.AdminPermissionRecord;
 import io.github.jinganix.admin.starter.sys.permission.model.Permission;
 import io.github.jinganix.admin.starter.sys.permission.model.PermissionStatus;
 import io.github.jinganix.admin.starter.sys.permission.model.PermissionType;
@@ -34,4 +35,8 @@ public interface PermissionMapper {
   PermissionListResponse page(Page<Permission> paging);
 
   PermissionUpdateStatusResponse updateStatusUpdate(Permission permission);
+
+  Permission toEntity(AdminPermissionRecord record);
+
+  AdminPermissionRecord toRecord(Permission entity);
 }
