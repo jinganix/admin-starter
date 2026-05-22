@@ -3,7 +3,8 @@ plugins {
 }
 
 rootProject.name = "admin-starter"
-include(":frontend:admin")
+include(":frontend")
 include(":proto:imports")
-include(":proto:service")
-include(":service:admin-starter")
+include(":proto:api")
+project(":proto:api").projectDir = file("proto/service")
+include(":service")
