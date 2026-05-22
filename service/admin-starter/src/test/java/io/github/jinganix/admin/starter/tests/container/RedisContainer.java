@@ -1,4 +1,4 @@
-package io.github.jinganix.admin.starter.tests;
+package io.github.jinganix.admin.starter.tests.container;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -6,7 +6,7 @@ import org.testcontainers.utility.DockerImageName;
 /** Start a redis docker container. */
 public class RedisContainer extends GenericContainer<RedisContainer> {
 
-  private static final String VERSION = "8.2.1-alpine";
+  private static final String VERSION = "8.6.0-alpine";
 
   /** REDIS_PORT. */
   public static final Integer REDIS_PORT = 6379;

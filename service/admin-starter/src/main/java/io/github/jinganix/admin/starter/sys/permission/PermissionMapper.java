@@ -10,6 +10,7 @@ import io.github.jinganix.admin.starter.sys.permission.model.PermissionType;
 import io.github.jinganix.admin.starter.sys.utils.MappingPaging;
 import java.util.List;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 
@@ -24,6 +25,9 @@ public interface PermissionMapper {
 
   PermissionPb mapToPb(Permission permission);
 
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
   void fill(@MappingTarget Permission permission, PermissionEditPb pb);
 
   @MappingPaging

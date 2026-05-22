@@ -1,4 +1,4 @@
-package io.github.jinganix.admin.starter.tests;
+package io.github.jinganix.admin.starter.tests.container;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -19,7 +19,7 @@ public class RedisExtension implements BeforeAllCallback {
   @Override
   public void beforeAll(ExtensionContext context) {
     if (STARTED.compareAndSet(false, true)) {
-      this.container.withReuse(true).start();
+      this.container.withReuse(true).withLabel("class", RedisExtension.class.getName()).start();
     }
   }
 }

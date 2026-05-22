@@ -18,11 +18,10 @@
     "jsx": "react-jsx",
 
     /* Alias */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@helpers/*": ["./src/helpers/*"],
-      "@proto/*": ["build/generated/sources/proto/main/ts/*"]
+      "@proto/*": ["./build/generated/sources/proto/main/ts/*"]
     },
 
     /* Linting */

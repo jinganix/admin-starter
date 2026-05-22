@@ -40,6 +40,10 @@ java {
   sourceCompatibility = JavaVersion.VERSION_21
 }
 
+tasks.withType<JavaCompile>().configureEach {
+  options.compilerArgs.add("-Xlint:-processing")
+}
+
 dependencies {
   annotationProcessor("io.github.jinganix.webpb:webpb-processor:${versionWebpb}")
   annotationProcessor("org.projectlombok:lombok:$versionLombok")
@@ -54,12 +58,12 @@ dependencies {
   implementation("io.github.jinganix.peashooter:peashooter:${versionPeashooter}")
   implementation("io.github.jinganix.webpb:webpb-proto:${versionWebpb}")
   implementation("io.github.jinganix.webpb:webpb-runtime:${versionWebpb}")
+  implementation("io.github.jinganix.webpb:webpb-commons:${versionWebpb}")
   implementation("io.netty:netty-resolver-dns-native-macos:${versionNetty}:osx-aarch_64")
   implementation("org.apache.commons:commons-lang3:${versionCommonsLang3}")
   implementation("org.flywaydb:flyway-core:${versionFlyway}")
   implementation("org.flywaydb:flyway-mysql:${versionFlyway}")
   implementation("org.mapstruct:mapstruct:${versionMapstruct}")
-//  implementation("org.redisson:redisson-spring-boot-starter:${versionRedisson}")
   implementation("org.redisson:redisson:${versionRedisson}")
   implementation("org.springframework.boot:spring-boot-configuration-processor")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -70,9 +74,6 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.data:spring-data-commons")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:${versionAuthorizationServer}")
-  implementation("org.testcontainers:junit-jupiter:${versionTestContainers}")
-  implementation("org.testcontainers:mysql:${versionTestContainers}")
-  implementation("org.testcontainers:testcontainers:${versionTestContainers}")
   implementation("tools.jackson.core:jackson-core:${versionJackson}")
   implementation("tools.jackson.core:jackson-databind:${versionJackson}")
   protobuf(project(":proto:imports"))
@@ -84,7 +85,8 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("org.testcontainers:junit-jupiter:${versionTestContainers}")
+  testImplementation("org.testcontainers:testcontainers-junit-jupiter:${versionTestContainers}")
+  testImplementation("org.testcontainers:testcontainers-mysql:${versionTestContainers}")
   testImplementation("org.testcontainers:testcontainers:${versionTestContainers}")
 }
 

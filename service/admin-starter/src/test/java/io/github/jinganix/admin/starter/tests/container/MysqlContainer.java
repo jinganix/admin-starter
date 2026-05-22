@@ -1,12 +1,12 @@
-package io.github.jinganix.admin.starter.tests;
+package io.github.jinganix.admin.starter.tests.container;
 
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.mysql.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-/** Start a mysql docker container. */
-public class MysqlContainer extends MySQLContainer<MysqlContainer> {
+/** Start a redis docker container. */
+public class MysqlContainer extends MySQLContainer {
 
-  private static final String VERSION = "9.1.0";
+  private static final String VERSION = "9.6.0";
 
   /** Constructor. */
   public MysqlContainer() {
