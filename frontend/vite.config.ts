@@ -53,8 +53,8 @@ export default defineConfig({
     globals: true,
     resolveSnapshotPath: (testPath, snapExtension) => {
       return (testPath + snapExtension).replace(
-        "frontend/admin/src/",
-        "frontend/admin/tests/__snapshots__/",
+        "frontend/src/",
+        "frontend/tests/__snapshots__/",
       );
     },
     setupFiles: "./tests/setup.ts",

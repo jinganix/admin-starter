@@ -22,7 +22,7 @@ services:
       retries: 10
 
   admin-starter-service:
-    build: service/admin-starter
+    build: service
     image: admin-starter/service
     depends_on:
       admin-starter-mysql:

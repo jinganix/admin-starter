@@ -8,7 +8,7 @@
     "build": "npm run proto && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "proto": "../../gradlew generateProto",
+    "proto": "../gradlew :frontend:generateProto",
     "start": "npm run proto && npm run dev",
     "test": "vitest run",
     "coverage": "vitest run --coverage"
