@@ -13,7 +13,7 @@ plugins {
 dependencies {
   implementation("io.github.jinganix.webpb:webpb-proto:$versionWebpb")
   protobuf(project(":proto:imports"))
-  protobuf(project(":proto:api"))
+  protobuf(project(":proto:admin"))
 }
 
 tasks.clean {

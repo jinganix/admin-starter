@@ -12,9 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.web.FlexibleSortHandlerMethodArgumentResolver;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.data.web.SortHandlerMethodArgumentResolver;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 import org.springframework.data.web.config.SortHandlerMethodArgumentResolverCustomizer;
 import org.springframework.format.Formatter;
@@ -36,11 +34,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
   private final DataWebProperties properties;
 
   @Bean
-  SortHandlerMethodArgumentResolver sortHandlerMethodArgumentResolver() {
-    return new FlexibleSortHandlerMethodArgumentResolver();
-  }
-
-  @Bean
   @ConditionalOnMissingBean
   PageableHandlerMethodArgumentResolverCustomizer pageableCustomizer() {
     return (resolver) -> {
@@ -57,8 +50,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
   @Bean
   PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver() {
-    PageableHandlerMethodArgumentResolver resolver =
-        new PageableHandlerMethodArgumentResolver(sortHandlerMethodArgumentResolver());
+    PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver();
     pageableCustomizer().customize(resolver);
     return resolver;
   }

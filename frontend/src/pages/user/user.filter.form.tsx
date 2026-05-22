@@ -42,6 +42,7 @@ export const UserFilterForm: FC = () => {
                 <FormControl>
                   <div className="relative w-full max-w-sm">
                     <Input
+                      autoComplete="off"
                       type="number"
                       className="h-8 placeholder:text-sm"
                       placeholder={t("audit.filter.userId")}
@@ -69,6 +70,7 @@ export const UserFilterForm: FC = () => {
                 <FormControl>
                   <div className="relative w-full max-w-sm">
                     <Input
+                      autoComplete="off"
                       autoFocus={false}
                       className="h-8 placeholder:text-sm"
                       placeholder={t("user.filter.username.placeholder")}

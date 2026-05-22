@@ -59,6 +59,7 @@ export function SettingsProfilePage(): ReactNode {
                 <FormLabel>{t("settings.profile.nickname.")}</FormLabel>
                 <FormControl>
                   <Input
+                    autoComplete="off"
                     className="placeholder:text-sm"
                     placeholder={t("settings.profile.nickname.min")}
                     {...field}

@@ -24,6 +24,7 @@ export function TablePageGoto(): ReactNode {
   return (
     <div className="flex items-center justify-between space-x-1 md:space-x-2">
       <Input
+        autoComplete="off"
         value={goto}
         className="h-8 w-12 md:w-16 px-1"
         type="number"

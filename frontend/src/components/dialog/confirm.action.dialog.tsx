@@ -13,26 +13,34 @@ import {
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
 
-export type DeleteDialogProps = {
+export type ConfirmDialogProps = {
+  titleKey?: string;
+  descriptionKey?: string;
   open: boolean;
   onCancel: () => void;
   onContinue: () => Promise<boolean>;
 };
 
-export const DeleteDialog: FC<DeleteDialogProps> = ({ open, onCancel, onContinue }) => {
+export const ConfirmActionDialog: FC<ConfirmDialogProps> = ({
+  titleKey = "dialog.confirm.title",
+  descriptionKey = "dialog.confirm.description",
+  open,
+  onCancel,
+  onContinue,
+}) => {
   const { t } = useTranslation();
-  const [loading, onDelete] = useLoading(() => onContinue());
+  const [loading, onConfirm] = useLoading(() => onContinue());
 
   return (
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("dialog.delete.title")}</AlertDialogTitle>
-          <AlertDialogDescription>{t("dialog.delete.description")}</AlertDialogDescription>
+          <AlertDialogTitle>{t(titleKey)}</AlertDialogTitle>
+          <AlertDialogDescription>{t(descriptionKey)}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={() => onCancel()}>{t("action.cancel")}</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onDelete()} disabled={loading}>
+          <AlertDialogAction onClick={() => onConfirm()} disabled={loading}>
             <Spinner loading={loading} />
             {t("action.continue")}
           </AlertDialogAction>

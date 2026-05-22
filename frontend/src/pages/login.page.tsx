@@ -61,7 +61,7 @@ export const LoginPage: FC = () => {
                   <FormItem>
                     <FormLabel>{t("auth.username.")}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t("auth.username.")} {...field} />
+                      <Input autoComplete="off" placeholder={t("auth.username.")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -74,7 +74,12 @@ export const LoginPage: FC = () => {
                   <FormItem>
                     <FormLabel>{t("auth.password.")}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder={t("auth.password.")} {...field} />
+                      <Input
+                        autoComplete="off"
+                        type="password"
+                        placeholder={t("auth.password.")}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -79,7 +79,7 @@ dependencies {
   implementation("tools.jackson.core:jackson-core:${versionJackson}")
   implementation("tools.jackson.core:jackson-databind:${versionJackson}")
   protobuf(project(":proto:imports"))
-  protobuf(project(":proto:api"))
+  protobuf(project(":proto:admin"))
   runtimeOnly("com.mysql:mysql-connector-j:${versionMysqlConnector}")
   testAnnotationProcessor("org.mapstruct:mapstruct-processor:${versionMapstruct}")
   testAnnotationProcessor("org.projectlombok:lombok:$versionLombok")

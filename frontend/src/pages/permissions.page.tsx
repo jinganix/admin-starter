@@ -10,7 +10,7 @@ import { PlusIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CondComponent } from "@/components/condition/cond.component.tsx";
-import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
+import { ConfirmActionDialog } from "@/components/dialog/confirm.action.dialog.tsx";
 import { LayoutContent } from "@/components/layout/layout.content.tsx";
 import { TableTitle } from "@/components/layout/table.title.tsx";
 import { Button } from "@/components/shadcn/button.tsx";
@@ -147,7 +147,7 @@ export const PermissionsComponent: FC = () => {
 
       <TableFooter />
 
-      <DeleteDialog
+      <ConfirmActionDialog
         open={action?.type === "delete"}
         onCancel={() => setAction(null)}
         onContinue={() => onDelete([action?.item?.id])}

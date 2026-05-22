@@ -65,6 +65,7 @@ export const SettingsCredentialPage: FC = () => {
                 <FormLabel>{t("settings.credential.current.")}</FormLabel>
                 <FormControl>
                   <Input
+                    autoComplete="off"
                     type="password"
                     placeholder={t("settings.credential.current.placeholder")}
                     {...field}
@@ -82,6 +83,7 @@ export const SettingsCredentialPage: FC = () => {
                 <FormLabel>{t("settings.credential.password")}</FormLabel>
                 <FormControl>
                   <Input
+                    autoComplete="off"
                     type="password"
                     placeholder={t("settings.credential.password")}
                     {...field}
@@ -99,6 +101,7 @@ export const SettingsCredentialPage: FC = () => {
                 <FormLabel>{t("settings.credential.confirm")}</FormLabel>
                 <FormControl>
                   <Input
+                    autoComplete="off"
                     type="password"
                     placeholder={t("settings.credential.confirm")}
                     {...field}

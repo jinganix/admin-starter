@@ -51,6 +51,7 @@ export function TreeView<T>({
       <div ref={detector.ref} className="w-full flex items-center space-x-2 p-1">
         <div className="relative flex-1">
           <Input
+            autoComplete="off"
             className=""
             placeholder={title}
             value={keyword}
