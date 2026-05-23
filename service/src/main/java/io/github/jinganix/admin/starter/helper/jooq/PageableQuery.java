@@ -106,12 +106,10 @@ public class PageableQuery<R extends Record, U> {
         return field;
       }
     }
-    if (query.$from() != null) {
-      for (Table<?> table : query.$from()) {
-        Field<?> field = lookupTableField(table.getName(), property);
-        if (field != null) {
-          return field;
-        }
+    for (Table<?> table : query.$from()) {
+      Field<?> field = lookupTableField(table.getName(), property);
+      if (field != null) {
+        return field;
       }
     }
     throw new IllegalArgumentException("Cannot find field: " + property);

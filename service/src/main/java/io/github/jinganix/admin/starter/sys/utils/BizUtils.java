@@ -9,6 +9,8 @@ import java.util.HashSet;
 
 public class BizUtils {
 
+  private BizUtils() {}
+
   private static final ZoneId SHANGHAI = ZoneId.of("Asia/Shanghai");
 
   private static final DateTimeFormatter formatter =

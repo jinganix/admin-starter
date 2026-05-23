@@ -107,32 +107,40 @@ tasks.bootJar {
 
 jooqTask("jooq.xml")
 
-tasks.test {
-  finalizedBy(tasks.jacocoTestReport)
-}
+val jacocoClassDirs =
+  sourceSets.main.get().output.asFileTree.matching {
+    exclude("io/github/jinganix/admin/starter/proto/**")
+    exclude("io/github/jinganix/admin/starter/generated/**")
+    exclude("io/github/jinganix/admin/starter/schema/**")
+    exclude("io/github/jinganix/admin/starter/tests/schema/**")
+    exclude("**/*MapperImpl.class")
+  }
 
 tasks.jacocoTestReport {
+  enabled = true
   dependsOn(tasks.test)
-
+  classDirectories.setFrom(jacocoClassDirs)
   reports {
-    html.required.set(true)
     xml.required.set(true)
+    html.required.set(true)
   }
 }
 
 tasks.jacocoTestCoverageVerification {
   enabled = Props.verifyCoverage
   dependsOn(tasks.jacocoTestReport)
+  classDirectories.setFrom(jacocoClassDirs)
   violationRules {
     rule {
       limit {
-        minimum = Props.jacocoMinCoverage.toBigDecimal()
+        minimum = BigDecimal.valueOf(Props.jacocoMinCoverage)
       }
     }
   }
 }
 
 tasks.check {
+  dependsOn(tasks.jacocoTestReport)
   dependsOn(tasks.jacocoTestCoverageVerification)
 }
 

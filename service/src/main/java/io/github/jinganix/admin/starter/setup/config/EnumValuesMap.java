@@ -8,6 +8,8 @@ import lombok.Getter;
 
 public class EnumValuesMap {
 
+  private EnumValuesMap() {}
+
   @Getter
   private static final Map<Class<?>, Map<Object, Enumeration<?>>> valuesMap = createValuesMap();
 

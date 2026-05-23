@@ -1,32 +1,32 @@
 package io.github.jinganix.admin.starter.helper.utils;
 
 import com.google.common.reflect.ClassPath;
-import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Strings;
 import org.springframework.util.ClassUtils;
 
-@Slf4j
 public class ReflectionUtils {
+
+  ReflectionUtils() {}
 
   public static Set<Class<?>> findAllClasses(String packageName) {
     try {
       return ClassPath.from(ClassLoader.getSystemClassLoader()).getAllClasses().stream()
           .filter(clazz -> clazz.getPackageName().contains(packageName))
-          .map(
-              x -> {
-                try {
-                  String name = Strings.CS.removeStart(x.getName(), "BOOT-INF.classes.");
-                  return ClassUtils.forName(name, ReflectionUtils.class.getClassLoader());
-                } catch (ClassNotFoundException e) {
-                  throw new RuntimeException(e);
-                }
-              })
+          .map(info -> loadClass(info.getName(), ClassLoader.getSystemClassLoader()))
           .collect(Collectors.toSet());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    } catch (java.io.IOException e) {
+      throw new IllegalStateException("Failed to read classpath", e);
+    }
+  }
+
+  static Class<?> loadClass(String className, ClassLoader classLoader) {
+    try {
+      String name = Strings.CS.removeStart(className, "BOOT-INF.classes.");
+      return ClassUtils.forName(name, classLoader);
+    } catch (ClassNotFoundException e) {
+      throw new IllegalStateException("Failed to load class: " + className, e);
     }
   }
 }
