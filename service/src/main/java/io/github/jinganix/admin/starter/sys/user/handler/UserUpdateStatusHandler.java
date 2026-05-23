@@ -31,14 +31,14 @@ public class UserUpdateStatusHandler {
     if (adminService.isAdminUser(request.getId())) {
       throw ApiException.of(ErrorCode.ADMIN_IS_IMMUTABLE);
     }
-    UserWithUsername obj =
-        userRepository
-            .findByIdWithUsername(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
+    UserWithUsername obj = userRepository.findByIdWithUsername(request.getId());
+    if (obj == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
     User user = obj.getUser();
     long millis = utilsService.currentTimeMillis();
     user.setStatus(userMapper.status(request.getStatus())).setUpdatedAt(millis);
-    userRepository.save(user);
+    userRepository.update(user);
     return new UserUpdateStatusResponse(userMapper.userPb(obj));
   }
 }

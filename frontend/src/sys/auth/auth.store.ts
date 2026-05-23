@@ -73,7 +73,7 @@ export class AuthStore {
   }
 
   hasAuthority(authority: string): boolean {
-    return this.authorities.has(authority);
+    return this.hasRole("ADMIN") || this.authorities.has(authority);
   }
 }
 

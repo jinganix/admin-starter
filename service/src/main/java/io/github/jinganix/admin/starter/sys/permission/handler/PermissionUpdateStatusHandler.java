@@ -24,13 +24,13 @@ public class PermissionUpdateStatusHandler {
 
   @Transactional
   public PermissionUpdateStatusResponse handle(PermissionUpdateStatusRequest request) {
-    Permission permission =
-        permissionRepository
-            .findById(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.PERMISSION_NOT_FOUND));
+    Permission permission = permissionRepository.findById(request.getId());
+    if (permission == null) {
+      throw ApiException.of(ErrorCode.PERMISSION_NOT_FOUND);
+    }
     long millis = utilsService.currentTimeMillis();
     permission.setStatus(permissionMapper.status(request.getStatus())).setUpdatedAt(millis);
-    permissionRepository.save(permission);
+    permissionRepository.update(permission);
     return permissionMapper.updateStatusUpdate(permission);
   }
 }

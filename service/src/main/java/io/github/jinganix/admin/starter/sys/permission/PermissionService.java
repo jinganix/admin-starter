@@ -23,7 +23,7 @@ public class PermissionService {
   private final UidGenerator uidGenerator;
 
   @Transactional
-  public void reload(long millis) {
+  public void reloadApi(long millis) {
     List<Permission> permissions = new ArrayList<>();
     for (Authority authority : Authority.values()) {
       String code = authority.getValue();

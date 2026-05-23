@@ -317,6 +317,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">): Re
 function SidebarInput({ className, ...props }: React.ComponentProps<typeof Input>): ReactNode {
   return (
     <Input
+      autoComplete="off"
       data-slot="sidebar-input"
       data-sidebar="input"
       className={cn("bg-background h-8 w-full shadow-none", className)}

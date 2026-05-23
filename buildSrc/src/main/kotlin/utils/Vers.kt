@@ -21,6 +21,7 @@ object Vers {
   lateinit var versionJackson: String
   lateinit var versionJacksonAnnotations: String
   lateinit var versionJacocoAgent: String
+  lateinit var versionJooq: String
   lateinit var versionJwt: String
   lateinit var versionLombok: String
   lateinit var versionMapstruct: String

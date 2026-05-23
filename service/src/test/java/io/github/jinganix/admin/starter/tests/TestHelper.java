@@ -2,22 +2,35 @@ package io.github.jinganix.admin.starter.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.jinganix.admin.starter.adm.overview.OverviewMapper;
+import io.github.jinganix.admin.starter.adm.overview.model.Overview;
 import io.github.jinganix.admin.starter.helper.auth.token.TokenService;
 import io.github.jinganix.admin.starter.helper.data.AbstractEntity;
 import io.github.jinganix.admin.starter.proto.lib.pageable.PagingPb;
 import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.service.error.ErrorMessage;
+import io.github.jinganix.admin.starter.schema.Tables;
+import io.github.jinganix.admin.starter.sys.audit.AuditMapper;
+import io.github.jinganix.admin.starter.sys.audit.model.Audit;
+import io.github.jinganix.admin.starter.sys.auth.model.AdminUserIdentity;
+import io.github.jinganix.admin.starter.sys.permission.PermissionMapper;
+import io.github.jinganix.admin.starter.sys.permission.model.Permission;
+import io.github.jinganix.admin.starter.sys.role.RoleMapper;
+import io.github.jinganix.admin.starter.sys.role.model.Role;
+import io.github.jinganix.admin.starter.sys.role.model.RolePermission;
+import io.github.jinganix.admin.starter.sys.user.UserMapper;
+import io.github.jinganix.admin.starter.sys.user.model.User;
+import io.github.jinganix.admin.starter.sys.user.model.UserRole;
 import io.github.jinganix.webpb.runtime.WebpbMessage;
 import io.github.jinganix.webpb.runtime.WebpbUtils;
 import io.github.jinganix.webpb.runtime.common.InQuery;
-import java.lang.reflect.ParameterizedType;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
+import org.jooq.DSLContext;
+import org.jooq.Table;
+import org.jooq.TableRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.support.Repositories;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -36,7 +49,9 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Slf4j
 @Service
-public class TestHelper implements ApplicationContextAware {
+public class TestHelper {
+
+  private static final Set<Table<?>> TABLES = TestDataUtils.resolveTables(Tables.class);
 
   private final ObjectMapper objectMapper =
       JsonMapper.builder()
@@ -55,43 +70,76 @@ public class TestHelper implements ApplicationContextAware {
 
   @Autowired private TokenService tokenService;
 
-  private Repositories repositories;
+  @Autowired(required = false)
+  private CacheManager cacheManager;
 
-  @Override
-  public void setApplicationContext(ApplicationContext context) throws BeansException {
-    repositories = new Repositories(context);
-  }
+  @Autowired private DSLContext dsl;
 
-  @SuppressWarnings("unchecked")
-  private static <T> T getFirstActualTypeInstance(Object obj) {
-    try {
-      ParameterizedType type = ((ParameterizedType) obj.getClass().getGenericSuperclass());
-      Class<T> clazz = (Class<T>) type.getActualTypeArguments()[0];
-      return clazz.getDeclaredConstructor().newInstance();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
+  @Autowired private UserMapper userMapper;
 
-  @SuppressWarnings("unchecked")
-  private JpaRepository<AbstractEntity, ?> getRepository(Class<?> type) {
-    return (JpaRepository<AbstractEntity, ?>) repositories.getRepositoryFor(type).orElse(null);
-  }
+  @Autowired private RoleMapper roleMapper;
+
+  @Autowired private PermissionMapper permissionMapper;
+
+  @Autowired private AuditMapper auditMapper;
+
+  @Autowired private OverviewMapper overviewMapper;
 
   public void clearAll() {
-    for (Class<?> type : repositories) {
-      JpaRepository<AbstractEntity, ?> repository = getRepository(type);
-      if (repository.count() > 0) {
-        repository.deleteAllInBatch();
-      }
+    if (cacheManager != null) {
+      cacheManager.getCacheNames().forEach(name -> cacheManager.getCache(name).clear());
+    }
+    truncateTables();
+  }
+
+  public void truncateTables() {
+    dsl.batch(
+            TABLES.stream()
+                .filter(table -> dsl.fetchCount(table) > 0)
+                .map(table -> dsl.truncate(table))
+                .toList())
+        .execute();
+  }
+
+  public void insertRecords(TableRecord<?>... records) {
+    for (TableRecord<?> record : records) {
+      dsl.insertInto(record.getTable()).set(record).execute();
     }
   }
 
   public void insertEntities(AbstractEntity... entities) {
     for (AbstractEntity entity : entities) {
-      JpaRepository<AbstractEntity, ?> repository = getRepository(entity.getClass());
-      repository.saveAndFlush(entity);
+      TableRecord<?> record = toRecord(entity);
+      dsl.insertInto(record.getTable()).set(record).execute();
     }
+  }
+
+  private TableRecord<?> toRecord(AbstractEntity entity) {
+    if (entity instanceof User user) {
+      return userMapper.toRecord(user);
+    }
+    if (entity instanceof AdminUserIdentity identity) {
+      return userMapper.toRecord(identity);
+    }
+    if (entity instanceof UserRole userRole) {
+      return userMapper.toRecord(userRole);
+    }
+    if (entity instanceof Role role) {
+      return roleMapper.toRecord(role);
+    }
+    if (entity instanceof RolePermission rolePermission) {
+      return roleMapper.toRecord(rolePermission);
+    }
+    if (entity instanceof Permission permission) {
+      return permissionMapper.toRecord(permission);
+    }
+    if (entity instanceof Audit audit) {
+      return auditMapper.toRecord(audit);
+    }
+    if (entity instanceof Overview overview) {
+      return overviewMapper.toRecord(overview);
+    }
+    throw new IllegalArgumentException("Unsupported entity type: " + entity.getClass());
   }
 
   public ResultActions request(WebpbMessage message) throws Exception {

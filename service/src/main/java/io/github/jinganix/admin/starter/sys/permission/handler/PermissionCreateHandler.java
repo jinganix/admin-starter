@@ -44,7 +44,7 @@ public class PermissionCreateHandler {
                 .setCreatedAt(millis)
                 .setUpdatedAt(millis);
     permissionMapper.fill(permission, request);
-    permissionRepository.save(permission);
+    permissionRepository.insert(permission);
     emitter.permissionsCreated(List.of(permission));
     return new PermissionCreateResponse();
   }

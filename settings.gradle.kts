@@ -4,7 +4,6 @@ plugins {
 
 rootProject.name = "admin-starter"
 include(":frontend")
+include(":proto:admin")
 include(":proto:imports")
-include(":proto:api")
-project(":proto:api").projectDir = file("proto/service")
 include(":service")

@@ -1,12 +1,13 @@
 package io.github.jinganix.admin.starter.sys.auth.handler;
 
 import io.github.jinganix.admin.starter.helper.exception.ApiException;
+import io.github.jinganix.admin.starter.helper.utils.UtilsService;
 import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.sys.auth.AuthTokenRequest;
 import io.github.jinganix.admin.starter.proto.sys.auth.AuthTokenResponse;
 import io.github.jinganix.admin.starter.sys.auth.AuthService;
-import io.github.jinganix.admin.starter.sys.auth.model.UserToken;
-import io.github.jinganix.admin.starter.sys.auth.repository.UserTokenRepository;
+import io.github.jinganix.admin.starter.sys.auth.model.AdminUserToken;
+import io.github.jinganix.admin.starter.sys.auth.repository.AdminUserTokenRepository;
 import io.github.jinganix.admin.starter.sys.user.model.User;
 import io.github.jinganix.admin.starter.sys.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,25 +21,28 @@ public class AuthTokenHandler {
 
   private final AuthService authService;
 
-  private final UserTokenRepository userTokenRepository;
+  private final AdminUserTokenRepository userTokenRepository;
 
   private final UserRepository userRepository;
+
+  private final UtilsService utilsService;
 
   public AuthTokenResponse handle(AuthTokenRequest request) {
     String refreshToken = request.getRefreshToken();
     if (StringUtils.isEmpty(refreshToken)) {
       return new AuthTokenResponse();
     }
-    UserToken token =
-        userTokenRepository
-            .findByRefreshToken(refreshToken)
-            .orElseThrow(
-                () -> ApiException.of(HttpStatus.UNAUTHORIZED, ErrorCode.BAD_REFRESH_TOKEN));
-    userTokenRepository.deleteById(token.getId());
-    User user =
-        userRepository
-            .findById(token.getUserId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
-    return authService.createAuthTokenResponse(user.getId());
+    AdminUserToken token = userTokenRepository.findByRefreshToken(refreshToken);
+    if (token == null) {
+      throw ApiException.of(HttpStatus.UNAUTHORIZED, ErrorCode.BAD_REFRESH_TOKEN);
+    }
+    User user = userRepository.findById(token.getUserId());
+    if (user == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
+    long millis = utilsService.currentTimeMillis();
+    AdminUserToken newToken = authService.createToken(millis, user.getId());
+    userTokenRepository.deleteByToken(refreshToken);
+    return authService.createAuthTokenResponse(user.getId(), newToken.getRefreshToken());
   }
 }

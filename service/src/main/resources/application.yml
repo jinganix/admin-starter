@@ -2,6 +2,9 @@ config:
   admin:
     password: aaaaaa
     reset-pwd-when-updated-at: 1235
+  signup:
+    # true: assign administrator role on registration (demo default)
+    register-as-admin: true
   issuer: io.github.jinganix.admin.starter
   jwt-secret: test-jwt-secret
 
@@ -25,13 +28,6 @@ spring:
       getter: any
       is-getter: any
       setter: any
-  jpa:
-    open-in-view: false
-    properties:
-      hibernate:
-        auto_quote_keyword: true
-        jdbc:
-          batch_size: 100
   data:
     redis:
       url: redis://127.0.0.1:6379

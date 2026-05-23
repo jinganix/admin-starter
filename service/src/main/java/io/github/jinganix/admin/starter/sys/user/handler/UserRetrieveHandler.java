@@ -26,10 +26,10 @@ public class UserRetrieveHandler {
 
   @Transactional
   public UserRetrieveResponse handle(UserRetrieveRequest request) {
-    UserWithUsername user =
-        userRepository
-            .findByIdWithUsername(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
+    UserWithUsername user = userRepository.findByIdWithUsername(request.getId());
+    if (user == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
     List<UserRole> userRoles = userRoleRepository.findAllByUserId(user.getUser().getId());
     return new UserRetrieveResponse(
         userMapper.detailsPb(user, userRoles.stream().map(UserRole::getRoleId).toList()));

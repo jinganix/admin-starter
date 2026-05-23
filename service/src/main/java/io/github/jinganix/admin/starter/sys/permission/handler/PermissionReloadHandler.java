@@ -17,7 +17,7 @@ public class PermissionReloadHandler {
 
   @Transactional
   public PermissionReloadResponse handle() {
-    permissionService.reload(utilsService.currentTimeMillis());
+    permissionService.reloadApi(utilsService.currentTimeMillis());
     return new PermissionReloadResponse();
   }
 }

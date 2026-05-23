@@ -114,6 +114,10 @@
     }
   },
   "dialog": {
+    "confirm": {
+      "description": "This will permanently affect data on the server. This action cannot be undone.",
+      "title": "Are you sure you want to continue?"
+    },
     "delete": {
       "description": "This action cannot be undone. This will permanently delete the data from our servers.",
       "title": "Are you absolutely sure?"

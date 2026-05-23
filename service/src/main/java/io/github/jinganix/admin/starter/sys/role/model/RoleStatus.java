@@ -4,6 +4,7 @@ import io.github.jinganix.admin.starter.helper.enumeration.IntegerEnumMapper;
 import io.github.jinganix.admin.starter.helper.jackson.enumeration.EnumerationDeserializer;
 import io.github.jinganix.admin.starter.helper.jackson.enumeration.EnumerationSerializer;
 import io.github.jinganix.webpb.runtime.enumeration.Enumeration;
+import org.jooq.Converter;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonSerialize;
 
@@ -32,5 +33,28 @@ public enum RoleStatus implements Enumeration<Integer> {
   @Override
   public Integer getValue() {
     return this.value;
+  }
+
+  public static class DbConverter implements Converter<Byte, RoleStatus> {
+
+    @Override
+    public RoleStatus from(Byte databaseObject) {
+      return databaseObject == null ? null : RoleStatus.fromValue(databaseObject.intValue());
+    }
+
+    @Override
+    public Byte to(RoleStatus userObject) {
+      return userObject == null ? null : userObject.getValue().byteValue();
+    }
+
+    @Override
+    public Class<Byte> fromType() {
+      return Byte.class;
+    }
+
+    @Override
+    public Class<RoleStatus> toType() {
+      return RoleStatus.class;
+    }
   }
 }

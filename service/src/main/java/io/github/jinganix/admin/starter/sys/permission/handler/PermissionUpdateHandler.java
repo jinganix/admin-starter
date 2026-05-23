@@ -24,13 +24,13 @@ public class PermissionUpdateHandler {
 
   @Transactional
   public PermissionUpdateResponse handle(PermissionUpdateRequest request) {
-    Permission permission =
-        permissionRepository
-            .findById(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.PERMISSION_NOT_FOUND));
+    Permission permission = permissionRepository.findById(request.getId());
+    if (permission == null) {
+      throw ApiException.of(ErrorCode.PERMISSION_NOT_FOUND);
+    }
     permissionMapper.fill(permission, request);
     long millis = utilsService.currentTimeMillis();
-    permissionRepository.save((Permission) permission.setUpdatedAt(millis));
+    permissionRepository.update((Permission) permission.setUpdatedAt(millis));
     return new PermissionUpdateResponse(permissionMapper.mapToPb(permission));
   }
 }

@@ -21,10 +21,10 @@ public class UserCurrentHandler {
   private final UserRepository userRepository;
 
   public UserCurrentResponse handle(Long userId) {
-    UserWithUsername user =
-        userRepository
-            .findByIdWithUsername(userId)
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
+    UserWithUsername user = userRepository.findByIdWithUsername(userId);
+    if (user == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
     return new UserCurrentResponse(
         userMapper.currentPb(
             user.getUser(), user.getUsername(), authorityService.getUiAuthorities(userId)));

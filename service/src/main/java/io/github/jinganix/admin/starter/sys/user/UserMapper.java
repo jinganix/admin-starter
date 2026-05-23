@@ -7,7 +7,12 @@ import io.github.jinganix.admin.starter.proto.sys.user.UserListResponse;
 import io.github.jinganix.admin.starter.proto.sys.user.UserPb;
 import io.github.jinganix.admin.starter.proto.sys.user.UserUpdateProfileRequest;
 import io.github.jinganix.admin.starter.proto.sys.user.UserUpdateRequest;
+import io.github.jinganix.admin.starter.schema.tables.records.AdminUserIdentityRecord;
+import io.github.jinganix.admin.starter.schema.tables.records.AdminUserRecord;
+import io.github.jinganix.admin.starter.schema.tables.records.AdminUserRoleRecord;
+import io.github.jinganix.admin.starter.sys.auth.model.AdminUserIdentity;
 import io.github.jinganix.admin.starter.sys.user.model.User;
+import io.github.jinganix.admin.starter.sys.user.model.UserRole;
 import io.github.jinganix.admin.starter.sys.user.model.UserStatus;
 import io.github.jinganix.admin.starter.sys.user.model.UserWithUsername;
 import io.github.jinganix.admin.starter.sys.utils.MappingPaging;
@@ -60,4 +65,16 @@ public abstract class UserMapper {
 
   @MappingPaging
   public abstract UserListResponse page(Page<UserWithUsername> paging);
+
+  public abstract User toEntity(AdminUserRecord record);
+
+  public abstract AdminUserRecord toRecord(User entity);
+
+  public abstract AdminUserIdentity toEntity(AdminUserIdentityRecord record);
+
+  public abstract AdminUserIdentityRecord toRecord(AdminUserIdentity entity);
+
+  public abstract UserRole toEntity(AdminUserRoleRecord record);
+
+  public abstract AdminUserRoleRecord toRecord(UserRole entity);
 }

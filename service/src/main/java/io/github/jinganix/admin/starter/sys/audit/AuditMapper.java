@@ -2,6 +2,7 @@ package io.github.jinganix.admin.starter.sys.audit;
 
 import io.github.jinganix.admin.starter.proto.sys.audit.AuditListResponse;
 import io.github.jinganix.admin.starter.proto.sys.audit.AuditPb;
+import io.github.jinganix.admin.starter.schema.tables.records.AdminAuditRecord;
 import io.github.jinganix.admin.starter.sys.audit.model.Audit;
 import io.github.jinganix.admin.starter.sys.audit.model.AuditWithUsername;
 import io.github.jinganix.admin.starter.sys.utils.MappingPaging;
@@ -24,4 +25,8 @@ public abstract class AuditMapper {
 
   @MappingPaging
   public abstract AuditListResponse page(Page<AuditWithUsername> paging);
+
+  public abstract Audit toEntity(AdminAuditRecord record);
+
+  public abstract AdminAuditRecord toRecord(Audit entity);
 }

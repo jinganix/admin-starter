@@ -1,8 +1,13 @@
 package io.github.jinganix.admin.starter.sys.audit.model;
 
-public interface AuditWithUsername {
+import lombok.Getter;
+import lombok.Setter;
 
-  Audit getAudit();
+@Getter
+@Setter
+public class AuditWithUsername {
 
-  String getUsername();
+  private Audit audit;
+
+  private String username;
 }

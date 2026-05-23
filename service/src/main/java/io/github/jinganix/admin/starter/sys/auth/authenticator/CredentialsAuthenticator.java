@@ -2,8 +2,8 @@ package io.github.jinganix.admin.starter.sys.auth.authenticator;
 
 import io.github.jinganix.admin.starter.helper.auth.authenticator.Authenticator;
 import io.github.jinganix.admin.starter.helper.auth.token.AuthUserToken;
-import io.github.jinganix.admin.starter.sys.auth.model.UserCredential;
-import io.github.jinganix.admin.starter.sys.auth.repository.UserCredentialRepository;
+import io.github.jinganix.admin.starter.sys.auth.model.AdminUserIdentity;
+import io.github.jinganix.admin.starter.sys.auth.repository.AdminUserIdentityRepository;
 import io.github.jinganix.admin.starter.sys.user.model.User;
 import io.github.jinganix.admin.starter.sys.user.model.UserStatus;
 import io.github.jinganix.admin.starter.sys.user.repository.UserRepository;
@@ -22,7 +22,7 @@ public class CredentialsAuthenticator implements Authenticator {
 
   private final PasswordEncoder passwordEncoder;
 
-  private final UserCredentialRepository userCredentialRepository;
+  private final AdminUserIdentityRepository adminUserIdentityRepository;
 
   private final UserRepository userRepository;
 
@@ -37,17 +37,17 @@ public class CredentialsAuthenticator implements Authenticator {
     String username = (String) token.getPrincipal();
     String password = (String) token.getCredentials();
 
-    UserCredential credential = userCredentialRepository.findByUsername(username);
-    if (credential == null) {
+    AdminUserIdentity identity = adminUserIdentityRepository.findByUsername(username);
+    if (identity == null) {
       throw new UsernameNotFoundException(username);
     }
-    if (!passwordEncoder.matches(password, credential.getPassword())) {
+    if (!passwordEncoder.matches(password, identity.getPassword())) {
       throw new BadCredentialsException("Invalid password");
     }
-    User user =
-        userRepository
-            .findById(credential.getId())
-            .orElseThrow(() -> new UsernameNotFoundException(username));
+    User user = userRepository.findById(identity.getUserId());
+    if (user == null) {
+      throw new UsernameNotFoundException(username);
+    }
     if (user.getStatus() != UserStatus.ACTIVE) {
       throw new DisabledException("User is inactive");
     }

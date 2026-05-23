@@ -25,15 +25,15 @@ public class UserUpdateProfileHandler {
 
   @Transactional
   public UserUpdateProfileResponse handle(Long userId, UserUpdateProfileRequest request) {
-    UserWithUsername obj =
-        userRepository
-            .findByIdWithUsername(userId)
-            .orElseThrow(() -> ApiException.of(ErrorCode.USER_NOT_FOUND));
+    UserWithUsername obj = userRepository.findByIdWithUsername(userId);
+    if (obj == null) {
+      throw ApiException.of(ErrorCode.USER_NOT_FOUND);
+    }
     User user = obj.getUser();
     long millis = utilsService.currentTimeMillis();
     userMapper.fill(user, request);
     user.setUpdatedAt(millis);
-    userRepository.save(user);
+    userRepository.update(user);
     return new UserUpdateProfileResponse(userMapper.userPb(obj));
   }
 }

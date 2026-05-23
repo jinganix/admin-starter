@@ -9,6 +9,9 @@ jobs:
   commitlint:
     name: Check Commit Message
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,6 +25,8 @@ jobs:
     name: Build
     needs: [ commitlint ]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [ ubuntu-latest ]

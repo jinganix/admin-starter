@@ -11,6 +11,7 @@ A full-stack admin dashboard starter with role-based access control (RBAC). Use 
 
 - [Demo](#demo)
 - [Guided tour](#guided-tour)
+- [Configuration](#configuration)
 - [Getting started](#getting-started)
 - [Contributing](#contributing)
 
@@ -30,12 +31,14 @@ Walk through these steps to try core RBAC features. Other accounts may be using 
 ### 1. Register and sign in
 
 - Register an account (e.g. username `username`). You are logged in automatically after registration.
-- New accounts have the administrator role by default.
+- By default, new accounts receive the **administrator** role and can perform all operations (see [Configuration](#configuration) to change this).
+- Alternatively, sign in with the bootstrap account: username `admin`, password `aaaaaa`.
 
 ### 2. Sync permissions
 
 - Open **System → Permissions** in the left sidebar.
-- Click **Sync UI** (syncs frontend permissions to the database) and **Reload API** (loads backend API permissions into the database).
+- Click **Sync UI** to upload frontend permission definitions to the database.
+- Click **Reload API** to load backend API permissions from code into the database.
 
 ### 3. Create a restricted role
 
@@ -45,15 +48,15 @@ Walk through these steps to try core RBAC features. Other accounts may be using 
   - **Menu → System → Audits**
   - **System → User → Update user status**
 
-### 4. Assign the role to your user
+### 4. Assign the restricted role to your user
 
 - Open **System → Users**, search for `username`.
 - Click **··· → Edit**, select only the new role `role`, and save.
 - Your user now has every permission in `role`, minus the three excluded above.
 
-### 5. Refresh and verify restrictions
+### 5. Verify restrictions
 
-- Click your avatar (top right) → **Refresh** to reload user and permission data.
+- Sign in as `username` (or click your avatar → **Refresh** if already logged in).
 - Expected changes:
   - The **+ Add** button disappears (`role` lacks **Button → Add User**).
   - **System → Audit** no longer appears in the sidebar (`role` lacks **Menu → System → Audit**).
@@ -62,6 +65,27 @@ Walk through these steps to try core RBAC features. Other accounts may be using 
 ### 6. Restore full access
 
 - On **System → Roles**, grant all permissions to `role`, then refresh your user data again to see the UI return to normal.
+
+## Configuration
+
+Signup role assignment is controlled in [service/src/main/resources/application.yml](service/src/main/resources/application.yml):
+
+```yaml
+config:
+  signup:
+    register-as-admin: true
+```
+
+| Value | Behavior |
+|-------|----------|
+| `true` | **Default.** New registrations receive the administrator role and can access all features. Suitable for demos and local development. |
+| `false` | New registrations receive no database role. Users can only access self-service endpoints (profile, password) until an administrator assigns a business role. Suitable for production. |
+
+Override at runtime, for example:
+
+```shell
+./gradlew service:bootRun --args='--config.signup.register-as-admin=false'
+```
 
 ## Getting started
 

@@ -4,8 +4,11 @@ import io.github.jinganix.admin.starter.proto.sys.role.RoleEditPb;
 import io.github.jinganix.admin.starter.proto.sys.role.RoleListResponse;
 import io.github.jinganix.admin.starter.proto.sys.role.RolePb;
 import io.github.jinganix.admin.starter.proto.sys.role.RoleUpdateStatusResponse;
+import io.github.jinganix.admin.starter.schema.tables.records.AdminRolePermissionRecord;
+import io.github.jinganix.admin.starter.schema.tables.records.AdminRoleRecord;
 import io.github.jinganix.admin.starter.sys.role.model.Role;
 import io.github.jinganix.admin.starter.sys.role.model.RoleMappingContext;
+import io.github.jinganix.admin.starter.sys.role.model.RolePermission;
 import io.github.jinganix.admin.starter.sys.role.model.RoleStatus;
 import io.github.jinganix.admin.starter.sys.utils.MappingPaging;
 import java.util.List;
@@ -36,4 +39,12 @@ public abstract class RoleMapper {
   public abstract RoleListResponse page(Page<Role> paging, @Context RoleMappingContext context);
 
   public abstract RoleUpdateStatusResponse updateStatusUpdate(Role role);
+
+  public abstract Role toEntity(AdminRoleRecord record);
+
+  public abstract AdminRoleRecord toRecord(Role entity);
+
+  public abstract RolePermission toEntity(AdminRolePermissionRecord record);
+
+  public abstract AdminRolePermissionRecord toRecord(RolePermission entity);
 }

@@ -1,7 +1,7 @@
 import { Trash2Icon } from "lucide-react";
 import { ComponentProps, FC, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
+import { ConfirmActionDialog } from "@/components/dialog/confirm.action.dialog.tsx";
 import { Button } from "@/components/shadcn/button.tsx";
 
 type Props = {
@@ -32,7 +32,7 @@ export const DeleteButton: FC<Props> = ({ onDelete, ...props }) => {
         <span className="hidden lg:block">{t("action.delete")}</span>
       </Button>
 
-      <DeleteDialog open={open} onCancel={() => setOpen(false)} onContinue={onContinue} />
+      <ConfirmActionDialog open={open} onCancel={() => setOpen(false)} onContinue={onContinue} />
     </>
   );
 };

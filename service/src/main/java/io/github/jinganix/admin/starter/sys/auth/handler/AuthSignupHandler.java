@@ -6,12 +6,14 @@ import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.sys.auth.AuthSignupRequest;
 import io.github.jinganix.admin.starter.proto.sys.auth.AuthTokenResponse;
 import io.github.jinganix.admin.starter.sys.auth.AuthService;
-import io.github.jinganix.admin.starter.sys.auth.repository.UserCredentialRepository;
+import io.github.jinganix.admin.starter.sys.auth.model.AdminUserToken;
+import io.github.jinganix.admin.starter.sys.auth.repository.AdminUserIdentityRepository;
 import io.github.jinganix.admin.starter.sys.role.RoleCode;
 import io.github.jinganix.admin.starter.sys.user.UserService;
 import io.github.jinganix.admin.starter.sys.user.model.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,21 +22,31 @@ public class AuthSignupHandler {
 
   private final AuthService authService;
 
-  private final UserCredentialRepository userCredentialRepository;
+  private final AdminUserIdentityRepository adminUserIdentityRepository;
 
   private final UserService userService;
 
   private final UtilsService utilsService;
 
+  @Value("${config.signup.register-as-admin:true}")
+  private boolean registerAsAdmin;
+
   public AuthTokenResponse handle(AuthSignupRequest request) {
     String username = request.getUsername();
     String password = request.getPassword();
-    if (userCredentialRepository.existsByUsername(username)) {
+    if (adminUserIdentityRepository.existsByUsername(username)) {
       throw ApiException.of(ErrorCode.USERNAME_EXISTS);
     }
     long millis = utilsService.currentTimeMillis();
-    User user =
-        userService.createUser(username, username, password, List.of(RoleCode.ADMIN), millis);
-    return authService.createAuthTokenResponse(user.getId());
+    User user = createSignupUser(username, password, millis);
+    AdminUserToken token = authService.createToken(millis, user.getId());
+    return authService.createAuthTokenResponse(user.getId(), token.getRefreshToken());
+  }
+
+  private User createSignupUser(String username, String password, long millis) {
+    if (registerAsAdmin) {
+      return userService.createUser(username, username, password, List.of(RoleCode.ADMIN), millis);
+    }
+    return userService.createUser(username, password, millis);
   }
 }

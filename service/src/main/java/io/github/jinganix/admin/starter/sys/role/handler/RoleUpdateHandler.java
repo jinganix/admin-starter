@@ -36,13 +36,13 @@ public class RoleUpdateHandler {
     if (adminService.isAdminRole(request.getId())) {
       throw ApiException.of(ErrorCode.ADMIN_IS_IMMUTABLE);
     }
-    Role role =
-        roleRepository
-            .findById(request.getId())
-            .orElseThrow(() -> ApiException.of(ErrorCode.ROLE_NOT_FOUND));
+    Role role = roleRepository.findById(request.getId());
+    if (role == null) {
+      throw ApiException.of(ErrorCode.ROLE_NOT_FOUND);
+    }
     roleMapper.fill(role, request);
     long millis = utilsService.currentTimeMillis();
-    roleRepository.save((Role) role.setUpdatedAt(millis));
+    roleRepository.update((Role) role.setUpdatedAt(millis));
     rolePermissionRepository.deleteAllByRoleId(role.getId());
     roleService.createRolePermissions(role.getId(), request.getPermissionIds(), millis);
     return new RoleUpdateResponse(roleMapper.rolePb(role, request.getPermissionIds()));

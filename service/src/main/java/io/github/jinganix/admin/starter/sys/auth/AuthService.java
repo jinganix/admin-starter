@@ -1,11 +1,10 @@
 package io.github.jinganix.admin.starter.sys.auth;
 
 import io.github.jinganix.admin.starter.helper.auth.token.TokenService;
-import io.github.jinganix.admin.starter.helper.uid.UidGenerator;
 import io.github.jinganix.admin.starter.helper.utils.UtilsService;
 import io.github.jinganix.admin.starter.proto.sys.auth.AuthTokenResponse;
-import io.github.jinganix.admin.starter.sys.auth.model.UserToken;
-import io.github.jinganix.admin.starter.sys.auth.repository.UserTokenRepository;
+import io.github.jinganix.admin.starter.sys.auth.model.AdminUserToken;
+import io.github.jinganix.admin.starter.sys.auth.repository.AdminUserTokenRepository;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,27 +16,23 @@ public class AuthService {
 
   private final TokenService tokenService;
 
-  private final UserTokenRepository userTokenRepository;
-
-  private final UidGenerator uidGenerator;
+  private final AdminUserTokenRepository userTokenRepository;
 
   private final UtilsService utilsService;
 
-  public AuthTokenResponse createAuthTokenResponse(Long userId) {
-    String accessToken = tokenService.generate(userId);
-    String refreshToken = utilsService.uuid(true);
+  public AdminUserToken createToken(long millis, Long userId) {
+    AdminUserToken token =
+        new AdminUserToken()
+            .setRefreshToken(utilsService.uuid(true))
+            .setUserId(userId)
+            .setCreatedAt(millis);
+    userTokenRepository.insert(token);
+    return token;
+  }
 
-    long millis = utilsService.currentTimeMillis();
-    UserToken token =
-        (UserToken)
-            new UserToken()
-                .setId(uidGenerator.nextUid())
-                .setRefreshToken(refreshToken)
-                .setUserId(userId)
-                .setCreatedAt(millis)
-                .setUpdatedAt(millis);
-    userTokenRepository.save(token);
-    Long expiresIn = millis + TimeUnit.MINUTES.toMillis(5);
+  public AuthTokenResponse createAuthTokenResponse(Long userId, String refreshToken) {
+    String accessToken = tokenService.generate(userId);
+    Long expiresIn = utilsService.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5);
     return new AuthTokenResponse(accessToken, expiresIn, refreshToken);
   }
 }

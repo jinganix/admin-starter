@@ -72,7 +72,7 @@ public class RoleAuthorityService implements AuthorityService {
             .toList();
     Set<GrantedAuthority> authorities = new HashSet<>();
     authorities.addAll(getApiRoleAuthorities(roles));
-    authorities.addAll(getApiAuthorities(roles));
+    authorities.addAll(getApiPermissionAuthorities(roles));
     return authorities;
   }
 
@@ -86,7 +86,7 @@ public class RoleAuthorityService implements AuthorityService {
     return authorities;
   }
 
-  private Set<GrantedAuthority> getApiAuthorities(List<Role> roles) {
+  private Set<GrantedAuthority> getApiPermissionAuthorities(List<Role> roles) {
     List<Permission> permissions = getPermissions(roles, PermissionType.API);
     return permissions.stream()
         .map(x -> apiAuthorities.get(x.getCode()))

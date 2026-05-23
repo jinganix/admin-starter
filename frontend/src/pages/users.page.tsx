@@ -10,8 +10,9 @@ import { PlusIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CondComponent } from "@/components/condition/cond.component";
-import { DeleteDialog } from "@/components/dialog/delete.dialog.tsx";
+import { ConfirmActionDialog } from "@/components/dialog/confirm.action.dialog.tsx";
 import { LayoutContent } from "@/components/layout/layout.content.tsx";
+import { TableTitle } from "@/components/layout/table.title.tsx";
 import { Button } from "@/components/shadcn/button.tsx";
 import { DataTable } from "@/components/table/data.table.tsx";
 import { TableColumnHeader } from "@/components/table/table.column.header.tsx";
@@ -104,12 +105,7 @@ export const UsersComponent: FC = () => {
 
   return (
     <div className="p-4 md:px-8 space-y-2 md:space-y-4 h-full flex flex-col">
-      <div className="flex items-center justify-between space-y-2 flex-wrap">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">{t("user.title.")}</h2>
-          <p className="text-muted-foreground">{t("user.title.sub")}</p>
-        </div>
-      </div>
+      <TableTitle title={t("user.title.")} sub={t("user.title.sub")} />
 
       <div className="flex items-center justify-end xl:justify-between space-x-4">
         <UserFilterForm />
@@ -135,7 +131,7 @@ export const UsersComponent: FC = () => {
 
       <TableFooter />
 
-      <DeleteDialog
+      <ConfirmActionDialog
         open={action?.type === "delete"}
         onCancel={() => setAction(null)}
         onContinue={() => onDelete([action?.item?.id])}
