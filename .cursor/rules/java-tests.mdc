@@ -1,0 +1,51 @@
+---
+description: Java backend test structure and style (admin-starter)
+globs: service/**/src/test/**/*.java
+alwaysApply: false
+---
+
+# Java tests (required)
+
+Full spec: [ai-kit/JAVA_TEST_CONVENTIONS.md](../../ai-kit/JAVA_TEST_CONVENTIONS.md)
+
+## Hard rules
+
+1. Read the doc above before editing `service/src/test/**`.
+2. **Test only classes with logic** (`*Handler`, branching `*Service`, controllers with validation). Do not test models, mappers, or branchless config services.
+3. **Single-entry Handler** (only `handle`): `@Test` on the outer class; no `@Nested`; `@DisplayName("Given ... -> ...")`; method names `given{Scenario}`.
+4. **Multiple public methods**: one `@Nested` per method; `@DisplayName` = Java method name.
+5. **Controllers (MockMvc)**: one `@Nested` per controller method, flat tests inside; `testHelper.request(...)`.
+6. **Request validation coverage**: for request DTO constraints (e.g. `@NotNull`, `@Size(min/max)`, `@Pattern`), include invalid boundary cases per constrained field in controller tests; do not place request validation cases in handler tests.
+7. **Controller parameterized invalid cases**: prefer `@ParameterizedTest` + `@MethodSource` with request objects; place the source right above the test.
+8. **Controller authorization checks**: add authorization checks after request validation cases.
+9. **Controller success cases**: keep one success scenario per controller method; move extra business branches to handler tests.
+10. Extend `SpringBootIntegrationTests`; call `testHelper.clearAll()` in `@BeforeEach`.
+11. Test data: `AuthData` / `UserData` + `TestConst.UID_*`; encode passwords with `PasswordEncoder.encode`.
+12. Use AssertJ; handler business logic via `@Autowired Handler` + `handle(...)`; HTTP validation via MockMvc.
+13. **`@MockitoSpyBean` only on `SpringBootIntegrationTests`**; never on subclasses.
+14. Section comments in each `@Test`: `// Given`, `// When`, `// Then` (or `// When / Then`).
+15. Run from repo root: `./gradlew :service:test`.
+
+## Handler template (single `handle`)
+
+```java
+@DisplayName("FooHandler")
+class FooHandlerTest extends SpringBootIntegrationTests {
+
+  @Autowired TestHelper testHelper;
+  @Autowired FooHandler fooHandler;
+
+  @BeforeEach
+  void setup() {
+    testHelper.clearAll();
+  }
+
+  @Test
+  @DisplayName("Given invalid input -> throw ApiException")
+  void givenInvalidInput() {
+    // Given
+    // When / Then
+    assertThatThrownBy(() -> fooHandler.handle(request)).isInstanceOf(ApiException.class);
+  }
+}
+```
