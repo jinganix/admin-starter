@@ -1,6 +1,7 @@
 package io.github.jinganix.admin.starter.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.github.jinganix.admin.starter.adm.overview.OverviewMapper;
 import io.github.jinganix.admin.starter.adm.overview.model.Overview;
@@ -181,6 +182,10 @@ public class TestHelper {
       ErrorMessage message = deserialize(result, ErrorMessage.class);
       assertThat(message.getCode()).isEqualTo(errorCode);
     };
+  }
+
+  public ResultActions expectError(ResultActions actions, ErrorCode errorCode) throws Exception {
+    return actions.andExpect(status().isBadRequest()).andExpect(isError(errorCode));
   }
 
   public PagingPb paging(PagingPb pb) {
