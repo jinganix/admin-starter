@@ -1,12 +1,7 @@
-import { makeAutoObservable } from "mobx";
 import { Cond, CondAnd, CondOr, CondType } from "@/helpers/condition/cond.types.ts";
 import { authStore } from "@/sys/auth/auth.store.ts";
 
 export class CondStore {
-  constructor() {
-    makeAutoObservable(this);
-  }
-
   checkAnd(cond: CondAnd): boolean {
     for (const sub of cond.conds) {
       if (!this.satisfy(sub)) {

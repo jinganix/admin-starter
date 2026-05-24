@@ -6,9 +6,10 @@ import { AppRouter } from "@/components/routes/app.router.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { Toaster } from "@/components/ui/toaster.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
-import { authStore } from "@/sys/auth/auth.store.ts";
+import { useAuthStore } from "@/sys/store.context.tsx";
 
 export const App: FC = () => {
+  const authStore = useAuthStore();
   const [loading, loadUser] = useLoading(
     () => authStore.initialize(async () => await container.resolve(TokenService).deleteToken()),
     true,

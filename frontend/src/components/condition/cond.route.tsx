@@ -1,4 +1,3 @@
-import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import {
   IndexRouteProps,
@@ -9,7 +8,7 @@ import {
 } from "react-router";
 import { Navigate } from "react-router-dom";
 import { Cond } from "@/helpers/condition/cond.types.ts";
-import { condStore } from "@/sys/cond.store.ts";
+import { useCondStore } from "@/sys/store.context.tsx";
 
 export type CondPath = {
   cond: Cond;
@@ -34,7 +33,8 @@ export type CondPathRouteDef = PathRouteProps & CondRedirect;
 
 export type CondRouteDef = CondIndexRouteDef | CondLayoutRouteDef | CondPathRouteDef;
 
-export const CondRoute: FC<CondRouteProps> = observer(({ cond, redirects, element, path }) => {
+export const CondRoute: FC<CondRouteProps> = ({ cond, redirects, element, path }) => {
+  const condStore = useCondStore();
   const location = useLocation();
   if (location.pathname !== path) {
     return element;
@@ -48,4 +48,4 @@ export const CondRoute: FC<CondRouteProps> = observer(({ cond, redirects, elemen
     }
   }
   return <Navigate to="/403" replace />;
-});
+};

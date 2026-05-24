@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "@/app.tsx";
 import { ConfigProvider } from "@/hooks/use.config.tsx";
+import { StoreProvider } from "@/sys/store.context.tsx";
 import "./index.css";
 import "./themes.css";
 
@@ -12,7 +13,9 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ConfigProvider>
-        <App />
+        <StoreProvider>
+          <App />
+        </StoreProvider>
       </ConfigProvider>
     </StrictMode>,
   );

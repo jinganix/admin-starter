@@ -1,5 +1,4 @@
 import { IOverviewPb } from "@proto/AdmOverviewProto.ts";
-import { makeAutoObservable } from "mobx";
 
 export class Overview {
   month = "";
@@ -11,10 +10,6 @@ export class Overview {
   roleDeleted = 0;
   permissionCreated = 0;
   permissionDeleted = 0;
-
-  constructor() {
-    makeAutoObservable(this);
-  }
 
   static ofPb(pb: IOverviewPb): Overview {
     const v = new Overview();
