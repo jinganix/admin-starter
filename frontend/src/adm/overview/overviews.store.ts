@@ -3,7 +3,6 @@ import { IOverviewPb, OverviewListRequest, OverviewListResponse } from "@proto/A
 import dayjs from "dayjs";
 import i18next from "i18next";
 import { gt, sum } from "lodash";
-import { makeAutoObservable } from "mobx";
 import { container } from "tsyringe";
 import { Overview } from "@/adm/overview/overview.ts";
 import { ChartData, ChartConfigProvider } from "@/helpers/chart.data";
@@ -32,6 +31,8 @@ const entityConfig: ChartConfigProvider = (t) => ({
 });
 
 export class OverviewsStore {
+  private readonly listeners = new Set<() => void>();
+  private version = 0;
   records: Overview[] = [];
   apiGet = 0;
   apiPost = 0;
@@ -67,8 +68,20 @@ export class OverviewsStore {
     },
   }));
 
-  constructor() {
-    makeAutoObservable(this);
+  getVersion(): number {
+    return this.version;
+  }
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notify(): void {
+    this.version += 1;
+    this.listeners.forEach((listener) => listener());
   }
 
   async load(): Promise<void> {
@@ -119,6 +132,7 @@ export class OverviewsStore {
         month: i18next.t(`month.abbr.${dayjs(x.month).month() + 1}`),
       }))
       .slice(-12);
+    this.notify();
   }
 }
 

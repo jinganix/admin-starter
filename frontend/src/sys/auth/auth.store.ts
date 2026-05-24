@@ -4,10 +4,11 @@ import { Replay } from "@helpers/network/replay.ts";
 import { TokenService } from "@helpers/network/token.service.ts";
 import { IUserPb, UserCurrentRequest, UserCurrentResponse, UserStatus } from "@proto/SysUserProto";
 import { startsWith } from "lodash";
-import { makeAutoObservable } from "mobx";
 import { container } from "tsyringe";
 
 export class AuthStore {
+  private readonly listeners = new Set<() => void>();
+  private version = 0;
   replay = new Replay<void>();
   id = "";
   username = "";
@@ -16,17 +17,31 @@ export class AuthStore {
   roles = new Set<string>();
   authorities = new Set<string>();
 
-  constructor() {
-    makeAutoObservable(this);
+  getVersion(): number {
+    return this.version;
+  }
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
+  private notify(): void {
+    this.version += 1;
+    this.listeners.forEach((listener) => listener());
   }
 
   dispose(): void {
     this.replay = new Replay<void>();
     this.id = "";
+    this.username = "";
     this.nickname = "";
     this.status = null;
     this.roles = new Set<string>();
     this.authorities = new Set<string>();
+    this.notify();
   }
 
   async initialize(errorHandler?: NetErrorHandler): Promise<void> {
@@ -56,6 +71,7 @@ export class AuthStore {
     this.username = user.username;
     this.nickname = user.nickname;
     this.status = user.status;
+    this.notify();
   }
 
   updateAuthorities(authorities: string[]): void {
@@ -66,6 +82,7 @@ export class AuthStore {
     );
     this.roles = roles;
     this.authorities = permissions;
+    this.notify();
   }
 
   hasRole(role: string): boolean {

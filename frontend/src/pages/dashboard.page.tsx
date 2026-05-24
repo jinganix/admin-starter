@@ -1,16 +1,16 @@
 import { motion } from "framer-motion";
 import { ArrowRightLeftIcon, LockIcon, UserRoundCheckIcon, UsersIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
 import { FC, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { overviewsStore } from "@/adm/overview/overviews.store.ts";
 import { LayoutContent } from "@/components/layout/layout.content.tsx";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { OverviewAreaChart } from "@/pages/dashboard/overview.area.chart.tsx";
 import { OverviewBarChart } from "@/pages/dashboard/overview.bar.chart.tsx";
 import { OverviewLineChat } from "@/pages/dashboard/overview.line.chart.tsx";
+import { useOverviewsStore } from "@/sys/store.context.tsx";
 
-const DashboardComponent: FC = observer(() => {
+const DashboardComponent: FC = () => {
+  const overviewsStore = useOverviewsStore();
   const { t } = useTranslation();
 
   useEffect(() => void overviewsStore.load(), []);
@@ -73,7 +73,7 @@ const DashboardComponent: FC = observer(() => {
       </div>
     </div>
   );
-});
+};
 
 export const DashboardPage: FC = () => {
   return (

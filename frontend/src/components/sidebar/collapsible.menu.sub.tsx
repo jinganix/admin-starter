@@ -1,4 +1,3 @@
-import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink, useMatch } from "react-router";
@@ -8,13 +7,14 @@ import {
   useSidebar,
 } from "@/components/shadcn/sidebar.tsx";
 import { MenuDef } from "@/components/sidebar/menus.tsx";
-import { condStore } from "@/sys/cond.store.ts";
+import { useCondStore } from "@/sys/store.context.tsx";
 
 type Props = {
   menu: MenuDef;
 };
 
-export const CollapsibleMenuSub: FC<Props> = observer(({ menu }) => {
+export const CollapsibleMenuSub: FC<Props> = ({ menu }) => {
+  const condStore = useCondStore();
   const { t } = useTranslation();
   const active = !!useMatch(menu.url);
   const { setOpenMobile } = useSidebar();
@@ -33,4 +33,4 @@ export const CollapsibleMenuSub: FC<Props> = observer(({ menu }) => {
       </SidebarMenuSubButton>
     </SidebarMenuSubItem>
   );
-});
+};

@@ -1,7 +1,6 @@
 import { emitter } from "@helpers/event/emitter.ts";
 import { ErrorCode } from "@proto/ErrorCodeEnum.ts";
 import { LogOutIcon, RefreshCwIcon, SettingsIcon } from "lucide-react";
-import { observer } from "mobx-react-lite";
 import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -18,10 +17,11 @@ import {
 } from "@/components/shadcn/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLoading } from "@/hooks/use.loading.ts";
-import { authStore } from "@/sys/auth/auth.store.ts";
+import { useAuthStore } from "@/sys/store.context.tsx";
 import { logout } from "@/sys/user/user.utils.ts";
 
-export const UserNav: FC = observer(() => {
+export const UserNav: FC = () => {
+  const authStore = useAuthStore();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [loadingUser, onLoadUser] = useLoading(async () => {
@@ -80,4 +80,4 @@ export const UserNav: FC = observer(() => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-});
+};
