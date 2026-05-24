@@ -79,7 +79,7 @@ public class Snowflake {
         | sequence;
   }
 
-  private long getNextMillis() {
+  long getNextMillis() {
     long millis = getMillis();
     while (millis <= lastStamp) {
       millis = getMillis();

@@ -23,7 +23,7 @@ Run all `./gradlew` commands from repository root:
 - Single-entry handler (`handle` only): flat outer `@Test`, no `@Nested`, method names `givenXxx`.
 - Handler tests cover business logic only; request validation belongs to controller tests.
 - Controller tests: one `@Nested` per controller method, flat tests inside.
-- Request validation: parameterized with request objects (`@MethodSource`), boundary coverage required.
+- Request validation: parameterized with `InvalidRequestCase` (error + request + description), boundary coverage required.
 - Put authorization checks after validation cases.
 - Keep one success case per controller method; extra business branches go to handler tests.
 

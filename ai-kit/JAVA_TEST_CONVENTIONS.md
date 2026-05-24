@@ -81,26 +81,29 @@ class FooHandlerTest extends SpringBootIntegrationTests {
   - above max
   - pattern mismatch (if present)
 
+Each invalid case is an `InvalidRequestCase` with **expected error**, **request**, and **description** (shown as the parameterized test name).
+
 Example:
 
 ```java
+import static io.github.jinganix.admin.starter.tests.InvalidRequestCase.badRequest;
+
 @Nested
 @DisplayName("create")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class Create {
 
-  private Stream<FooCreateRequest> invalidRequests() {
+  private Stream<InvalidRequestCase<FooCreateRequest>> invalidRequests() {
     return Stream.of(
-        new FooCreateRequest(null, "bar"),
-        new FooCreateRequest("ab", "bar"),
-        new FooCreateRequest("foo", ""));
+        badRequest(new FooCreateRequest(null, "bar"), "name is null"),
+        badRequest(new FooCreateRequest("ab", "bar"), "name below min length (3)"),
+        badRequest(new FooCreateRequest("foo", ""), "code is blank"));
   }
 
   @ParameterizedTest
   @MethodSource("invalidRequests")
-  @DisplayName("Given invalid request -> response BAD_REQUEST")
-  void givenInvalidRequest(FooCreateRequest request) throws Exception {
-    testHelper.expectError(testHelper.request(request), ErrorCode.BAD_REQUEST);
+  void givenInvalidRequest(InvalidRequestCase<FooCreateRequest> testCase) throws Exception {
+    testHelper.expectError(testHelper.request(testCase.request()), testCase.errorCode());
   }
 }
 ```
@@ -137,6 +140,6 @@ class Create {
 - Handler tests: business logic only, no request validation checks.
 - Single-entry handler: flat outer tests, no `@Nested`.
 - Controller tests: method-level `@Nested`, flat inner tests.
-- Invalid requests: parameterized with request objects.
+- Invalid requests: parameterized with `InvalidRequestCase` (error + request + description).
 - Authorization checks follow validation checks.
 - One success case per controller method.

@@ -16,7 +16,7 @@ Full spec: [ai-kit/JAVA_TEST_CONVENTIONS.md](../../ai-kit/JAVA_TEST_CONVENTIONS.
 4. **Multiple public methods**: one `@Nested` per method; `@DisplayName` = Java method name.
 5. **Controllers (MockMvc)**: one `@Nested` per controller method, flat tests inside; `testHelper.request(...)`.
 6. **Request validation coverage**: for request DTO constraints (e.g. `@NotNull`, `@Size(min/max)`, `@Pattern`), include invalid boundary cases per constrained field in controller tests; do not place request validation cases in handler tests.
-7. **Controller parameterized invalid cases**: prefer `@ParameterizedTest` + `@MethodSource` with request objects; place the source right above the test.
+7. **Controller parameterized invalid cases**: prefer `@ParameterizedTest` + `@MethodSource` with `InvalidRequestCase` (expected `ErrorCode`, request, description); place the source right above the test.
 8. **Controller authorization checks**: add authorization checks after request validation cases.
 9. **Controller success cases**: keep one success scenario per controller method; move extra business branches to handler tests.
 10. Extend `SpringBootIntegrationTests`; call `testHelper.clearAll()` in `@BeforeEach`.

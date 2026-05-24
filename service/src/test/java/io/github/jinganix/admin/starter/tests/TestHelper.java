@@ -25,6 +25,7 @@ import io.github.jinganix.admin.starter.sys.user.model.UserRole;
 import io.github.jinganix.webpb.runtime.WebpbMessage;
 import io.github.jinganix.webpb.runtime.WebpbUtils;
 import io.github.jinganix.webpb.runtime.common.InQuery;
+import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
@@ -154,11 +155,29 @@ public class TestHelper {
   public ResultActions request(Long userId, WebpbMessage message) throws Exception {
     HttpMethod method = HttpMethod.valueOf(message.webpbMeta().getMethod());
     String token = tokenService.generate(userId);
+    return request(token, message);
+  }
+
+  public ResultActions request(String token, WebpbMessage message) throws Exception {
+    HttpMethod method = HttpMethod.valueOf(message.webpbMeta().getMethod());
     return mockMvc.perform(
         MockMvcRequestBuilders.request(method, WebpbUtils.formatUrl(message))
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
             .content(WebpbUtils.serialize(message)));
+  }
+
+  public ResultActions request(Long userId, WebpbMessage message, Map<String, String> queryParams)
+      throws Exception {
+    HttpMethod method = HttpMethod.valueOf(message.webpbMeta().getMethod());
+    String token = tokenService.generate(userId);
+    var requestBuilder =
+        MockMvcRequestBuilders.request(method, WebpbUtils.formatUrl(message))
+            .header("Authorization", "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(WebpbUtils.serialize(message));
+    queryParams.forEach((key, value) -> requestBuilder.queryParam(key, value));
+    return mockMvc.perform(requestBuilder);
   }
 
   public <T extends WebpbMessage> T deserialize(MvcResult result, Class<T> type) {

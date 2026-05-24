@@ -6,10 +6,12 @@ import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.json.JsonMapper;
 
 public class PathVariableMapDeserializer<K, V> extends ValueDeserializer<Map<K, V>> {
+
+  private static final JsonMapper JSON_MAPPER = JsonMapper.builder().build();
 
   private JavaType javaType;
 
@@ -38,17 +40,20 @@ public class PathVariableMapDeserializer<K, V> extends ValueDeserializer<Map<K, 
     String rawValue = p.getString();
     String json = convertToArrayJson(p, rawValue);
 
-    ObjectReader mapper = (ObjectReader) p.objectReadContext();
-    return mapper.forType(targetType).readValue(json);
+    return JSON_MAPPER.readerFor(targetType).readValue(json);
   }
 
-  private String convertToArrayJson(JsonParser p, String rawValue) throws DatabindException {
+  String convertToArrayJson(JsonParser p, String rawValue) throws DatabindException {
     if (rawValue.startsWith("{") && rawValue.endsWith("}")) {
       return rawValue;
     }
     StringBuilder builder = new StringBuilder("{");
-    for (String s : rawValue.split(";")) {
-      String[] parts = s.split(",");
+    String[] pairs = rawValue.split(";");
+    for (int pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
+      if (pairIndex > 0) {
+        builder.append(",");
+      }
+      String[] parts = pairs[pairIndex].split(",");
       if (parts.length != 2) {
         throw DatabindException.from(p, "Bad value: " + rawValue);
       }
@@ -63,10 +68,6 @@ public class PathVariableMapDeserializer<K, V> extends ValueDeserializer<Map<K, 
           builder.append(":");
         }
       }
-      builder.append(",");
-    }
-    if (builder.charAt(builder.length() - 1) == ',') {
-      builder.deleteCharAt(builder.length() - 1);
     }
     builder.append("}");
     return builder.toString();

@@ -5,10 +5,12 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.json.JsonMapper;
 
 public class PathVariableArrayDeserializer<T> extends ValueDeserializer<List<T>> {
+
+  private static final JsonMapper JSON_MAPPER = JsonMapper.builder().build();
 
   private JavaType javaType;
 
@@ -37,24 +39,25 @@ public class PathVariableArrayDeserializer<T> extends ValueDeserializer<List<T>>
     String rawValue = p.getString();
     String json = convertToArrayJson(rawValue);
 
-    ObjectReader mapper = (ObjectReader) p.objectReadContext();
-    return mapper.forType(targetType).readValue(json);
+    return JSON_MAPPER.readerFor(targetType).readValue(json);
   }
 
-  private String convertToArrayJson(String rawValue) {
+  String convertToArrayJson(String rawValue) {
     if (rawValue.startsWith("[") && rawValue.endsWith("]")) {
       return rawValue;
     }
     StringBuilder builder = new StringBuilder("[");
-    for (String str : rawValue.split(",")) {
+    String[] parts = rawValue.split(",");
+    for (int i = 0; i < parts.length; i++) {
+      if (i > 0) {
+        builder.append(",");
+      }
+      String str = parts[i];
       if (str.startsWith("\"")) {
         builder.append(str);
       } else {
-        builder.append('"').append(str).append("\",");
+        builder.append('"').append(str).append('"');
       }
-    }
-    if (builder.charAt(builder.length() - 1) == ',') {
-      builder.deleteCharAt(builder.length() - 1);
     }
     builder.append("]");
     return builder.toString();
