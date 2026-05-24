@@ -123,6 +123,14 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 @layer base {
@@ -179,5 +187,32 @@
   }
   to {
     height: 0;
+  }
+}
+
+/* shadcn sidebar: registry uses w-[--sidebar-width] which Tailwind v4 compiles to invalid CSS */
+@layer components {
+  .group.peer[data-state] > div:first-child:not([data-sidebar]) {
+    width: var(--sidebar-width);
+  }
+
+  .group.peer[data-collapsible="icon"] > div:first-child:not([data-sidebar]) {
+    width: var(--sidebar-width-icon);
+  }
+
+  .group.peer[data-collapsible="offcanvas"] > div:first-child:not([data-sidebar]) {
+    width: 0;
+  }
+
+  .group.peer[data-state] > div:nth-child(2):has([data-sidebar="sidebar"]) {
+    width: var(--sidebar-width);
+  }
+
+  .group.peer[data-collapsible="icon"] > div:nth-child(2):has([data-sidebar="sidebar"]) {
+    width: var(--sidebar-width-icon);
+  }
+
+  [data-sidebar="sidebar"][data-mobile="true"] {
+    width: var(--sidebar-width);
   }
 }

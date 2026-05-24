@@ -13,7 +13,7 @@ export const LabeledFormItem: FC<Props> = ({ label, children, controlled = true 
       <div className="table-cell w-[1%] pr-4 whitespace-nowrap text-right">
         <FormLabel className="text-right">{label}</FormLabel>
       </div>
-      <div className="space-y-1">
+      <div className="table-cell w-full max-w-0 space-y-1">
         {controlled && <FormControl>{children}</FormControl>}
         {!controlled && children}
         <FormMessage />
