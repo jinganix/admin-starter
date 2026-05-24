@@ -1,7 +1,6 @@
 import { includes } from "lodash";
 import { MinusIcon, PlusIcon, XIcon } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
-import { useResizeDetector } from "react-resize-detector";
 import { Button } from "@/components/shadcn/button.tsx";
 import { Input } from "@/components/shadcn/input.tsx";
 import { TreeItem, TreeViewItem } from "@/components/tree/tree.view.item.tsx";
@@ -41,18 +40,16 @@ export function TreeView<T>({
   const [keyword, setKeyword] = useState("");
   const [treeItems, setTreeItems] = useState(items);
   const [_, setState] = useTreeState();
-  const detector = useResizeDetector();
 
   useEffect(() => setTreeItems(items), [items]);
   useEffect(() => setTreeItems(filter(items, keyword)), [keyword]);
 
   return (
-    <div className={cn("space-y-2", className)}>
-      <div ref={detector.ref} className="w-full flex items-center space-x-2 p-1">
+    <div className={cn("flex w-full min-w-0 flex-col gap-2", className)}>
+      <div className="flex w-full shrink-0 items-center space-x-2">
         <div className="relative flex-1">
           <Input
             autoComplete="off"
-            className=""
             placeholder={title}
             value={keyword}
             onChange={(x) => setKeyword(x.target.value)}
@@ -76,15 +73,17 @@ export function TreeView<T>({
           <PlusIcon />
         </Button>
       </div>
-      <div className="space-y-2 px-2 overflow-x-scroll" style={{ width: detector.width }}>
-        {treeItems.map((x) => (
-          <TreeViewItem
-            key={String(x.value)}
-            item={x}
-            selected={selected}
-            setSelected={setSelected}
-          />
-        ))}
+      <div className="max-h-[30vh] w-full min-w-0 overflow-auto rounded-md border">
+        <div className="w-max min-w-full space-y-2 px-2 py-2">
+          {treeItems.map((x) => (
+            <TreeViewItem
+              key={String(x.value)}
+              item={x}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

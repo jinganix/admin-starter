@@ -28,7 +28,9 @@ export const CollapsibleMenuItem: FC<Props> = ({ menu }) => {
       </CollapsibleTrigger>
       <CollapsibleContent>
         <SidebarMenuSub>
-          {menu.items?.map((sub) => <CollapsibleMenuSub key={sub.title} menu={sub} />)}
+          {menu.items?.map((sub) => (
+            <CollapsibleMenuSub key={sub.title} menu={sub} />
+          ))}
         </SidebarMenuSub>
       </CollapsibleContent>
     </SidebarMenuItem>

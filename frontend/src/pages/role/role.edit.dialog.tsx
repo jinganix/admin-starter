@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/shadcn/dialog";
-import { Form, FormField, FormItem, FormLabel } from "@/components/shadcn/form";
+import { Form, FormField } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input.tsx";
 import { Separator } from "@/components/shadcn/separator.tsx";
 import { Switch } from "@/components/shadcn/switch.tsx";
@@ -119,7 +119,7 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
 
   return (
     <Dialog open={open} onOpenChange={(state) => changeOpen(state)}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="overflow-hidden sm:max-w-lg">
         <DialogHeader className="text-left">
           <DialogTitle>{role ? t("role.dialog.update") : t("role.dialog.create")}</DialogTitle>
         </DialogHeader>
@@ -180,25 +180,17 @@ export function RoleEditDialog({ role, open, onOpenChange }: Props): ReactNode {
               control={form.control}
               name="permissions"
               render={() => (
-                <>
-                  <div className="table-row space-x-4">
-                    <div className="table-cell w-[1%] pr-4 whitespace-nowrap text-right">
-                      <FormLabel className="text-right">{t("role.dialog.permissions")}</FormLabel>
-                    </div>
-                    <div />
-                  </div>
-                  <FormItem className="max-w-full space-y-0">
-                    <TreeStateProvider>
-                      <TreeView
-                        items={treeItems}
-                        title={t("role.dialog.filter")}
-                        className="w-full max-h-[30vh] overflow-y-auto"
-                        setSelected={(values) => form.setValue("permissions", values)}
-                        selected={form.getValues("permissions")}
-                      />
-                    </TreeStateProvider>
-                  </FormItem>
-                </>
+                <LabeledFormItem label={t("role.dialog.permissions")} controlled={false}>
+                  <TreeStateProvider>
+                    <TreeView
+                      items={treeItems}
+                      title={t("role.dialog.filter")}
+                      className="w-full"
+                      setSelected={(values) => form.setValue("permissions", values)}
+                      selected={form.getValues("permissions")}
+                    />
+                  </TreeStateProvider>
+                </LabeledFormItem>
               )}
             />
           </form>
