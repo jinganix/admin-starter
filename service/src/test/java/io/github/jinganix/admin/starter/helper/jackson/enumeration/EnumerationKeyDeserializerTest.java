@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import io.github.jinganix.admin.starter.sys.permission.model.PermissionType;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
@@ -19,41 +18,31 @@ class EnumerationKeyDeserializerTest {
 
   private final JsonMapper jsonMapper = new JsonMapper();
 
-  @Nested
-  @DisplayName("deserializeKey")
-  class DeserializeKey {
+  @Test
+  @DisplayName("should should resolve enumeration when known key")
+  void shouldShouldResolveEnumerationWhenKnownKey() throws Exception {
+    EnumerationKeyDeserializer deserializer = contextual(PermissionType.class);
 
-    @Test
-    @DisplayName("Given known key -> should resolve enumeration")
-    void givenKnownKeyShouldResolveEnumeration() throws Exception {
-      EnumerationKeyDeserializer deserializer = contextual(PermissionType.class);
+    Object result = deserializer.deserializeKey("1", mock(DeserializationContext.class));
 
-      Object result = deserializer.deserializeKey("1", mock(DeserializationContext.class));
-
-      assertThat(result).isEqualTo(PermissionType.API);
-    }
+    assertThat(result).isEqualTo(PermissionType.API);
   }
 
-  @Nested
-  @DisplayName("createContextual")
-  class CreateContextual {
+  @Test
+  @DisplayName("should should resolve key from enum map when contextual type")
+  void shouldShouldResolveKeyFromEnumMapWhenContextualType() throws Exception {
+    EnumerationKeyDeserializer deserializer = new EnumerationKeyDeserializer();
+    DeserializationContext context = mock(DeserializationContext.class);
+    JavaType mapKeyType = mock(JavaType.class);
+    JavaType contextualType = mock(JavaType.class);
+    when(context.getContextualType()).thenReturn(contextualType);
+    when(contextualType.getKeyType()).thenReturn(mapKeyType);
+    when(mapKeyType.getRawClass()).thenReturn((Class) PermissionType.class);
 
-    @Test
-    @DisplayName("Given contextual type -> should resolve key from enum map")
-    void givenContextualTypeShouldResolveKeyFromEnumMap() throws Exception {
-      EnumerationKeyDeserializer deserializer = new EnumerationKeyDeserializer();
-      DeserializationContext context = mock(DeserializationContext.class);
-      JavaType mapKeyType = mock(JavaType.class);
-      JavaType contextualType = mock(JavaType.class);
-      when(context.getContextualType()).thenReturn(contextualType);
-      when(contextualType.getKeyType()).thenReturn(mapKeyType);
-      when(mapKeyType.getRawClass()).thenReturn((Class) PermissionType.class);
+    KeyDeserializer contextual = deserializer.createContextual(context, mock(BeanProperty.class));
 
-      KeyDeserializer contextual = deserializer.createContextual(context, mock(BeanProperty.class));
-
-      assertThat(contextual).isSameAs(deserializer);
-      assertThat(contextual.deserializeKey("2", context)).isEqualTo(PermissionType.UI);
-    }
+    assertThat(contextual).isSameAs(deserializer);
+    assertThat(contextual.deserializeKey("2", context)).isEqualTo(PermissionType.UI);
   }
 
   private EnumerationKeyDeserializer contextual(Class<?> enumClass) throws Exception {

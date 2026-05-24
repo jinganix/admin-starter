@@ -34,8 +34,8 @@ class RoleRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given role not found -> throw ApiException")
-  void givenRoleNotFound() {
+  @DisplayName("should throw ApiException when role not found")
+  void shouldThrowApiExceptionWhenRoleNotFound() {
     // Given
     RoleRetrieveRequest request = new RoleRetrieveRequest(UID_1);
 
@@ -48,8 +48,8 @@ class RoleRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing role -> return role response")
-  void givenExistingRole() {
+  @DisplayName("should return role response when existing role")
+  void shouldReturnRoleResponseWhenExistingRole() {
     // Given
     testHelper.insertEntities(role(UID_1), rolePermission(UID_2, UID_1, UID_3));
     RoleRetrieveRequest request = new RoleRetrieveRequest(UID_1);

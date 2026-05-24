@@ -37,8 +37,8 @@ class PermissionCreateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given duplicate code -> throw ApiException")
-  void givenDuplicateCode() {
+  @DisplayName("should throw ApiException when duplicate code")
+  void shouldThrowApiExceptionWhenDuplicateCode() {
     // Given
     String code = "/test/duplicate";
     testHelper.insertEntities(permission(UID_1).setCode(code));
@@ -61,8 +61,8 @@ class PermissionCreateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given valid request -> create permission")
-  void givenValidRequest() {
+  @DisplayName("should create permission when valid request")
+  void shouldCreatePermissionWhenValidRequest() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1);
     PermissionCreateRequest request =

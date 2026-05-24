@@ -27,24 +27,24 @@ class DatabaseUserInactiveCheckerTest {
   }
 
   @Test
-  @DisplayName("Given missing user -> returns true")
-  void givenMissingUser() {
+  @DisplayName("should return true when missing user")
+  void shouldReturnTrueWhenMissingUser() {
     when(userRepository.findById(1L)).thenReturn(null);
 
     assertThat(databaseUserInactiveChecker.isInactive(1L)).isTrue();
   }
 
   @Test
-  @DisplayName("Given inactive user -> returns true")
-  void givenInactiveUser() {
+  @DisplayName("should return true when inactive user")
+  void shouldReturnTrueWhenInactiveUser() {
     when(userRepository.findById(1L)).thenReturn(new User().setStatus(UserStatus.INACTIVE));
 
     assertThat(databaseUserInactiveChecker.isInactive(1L)).isTrue();
   }
 
   @Test
-  @DisplayName("Given active user -> returns false")
-  void givenActiveUser() {
+  @DisplayName("should return false when active user")
+  void shouldReturnFalseWhenActiveUser() {
     when(userRepository.findById(1L)).thenReturn(new User().setStatus(UserStatus.ACTIVE));
 
     assertThat(databaseUserInactiveChecker.isInactive(1L)).isFalse();

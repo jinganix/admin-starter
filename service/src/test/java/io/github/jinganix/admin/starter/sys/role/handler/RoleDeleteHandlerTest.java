@@ -44,8 +44,8 @@ class RoleDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given role not found -> throw ApiException")
-  void givenRoleNotFound() {
+  @DisplayName("should throw ApiException when role not found")
+  void shouldThrowApiExceptionWhenRoleNotFound() {
     // Given
     RoleDeleteRequest request = new RoleDeleteRequest(List.of(UID_5));
 
@@ -58,8 +58,8 @@ class RoleDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given partial existing roles -> throw ApiException")
-  void givenPartialExistingRoles() {
+  @DisplayName("should throw ApiException when partial existing roles")
+  void shouldThrowApiExceptionWhenPartialExistingRoles() {
     // Given
     testHelper.insertEntities(role(UID_4));
     RoleDeleteRequest request = new RoleDeleteRequest(List.of(UID_4, UID_5));
@@ -73,8 +73,8 @@ class RoleDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given admin role -> throw ApiException")
-  void givenAdminRole() {
+  @DisplayName("should throw ApiException when admin role")
+  void shouldThrowApiExceptionWhenAdminRole() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
     adminService.initAdminData(MILLIS);
@@ -91,8 +91,8 @@ class RoleDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing role -> delete role")
-  void givenExistingRole() {
+  @DisplayName("should delete role when existing role")
+  void shouldDeleteRoleWhenExistingRole() {
     // Given
     testHelper.insertEntities(role(UID_4));
     RoleDeleteRequest request = new RoleDeleteRequest(List.of(UID_4));

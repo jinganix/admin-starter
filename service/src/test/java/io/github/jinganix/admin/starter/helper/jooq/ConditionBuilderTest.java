@@ -15,28 +15,23 @@ class ConditionBuilderTest {
   private static final Field<Long> ID_FIELD = DSL.field("id", Long.class);
   private static final Field<String> NAME_FIELD = DSL.field("name", String.class);
 
-  @Nested
-  @DisplayName("builder")
-  class Builder {
+  @Test
+  @DisplayName("should should return new instance when builder call")
+  void shouldShouldReturnNewInstanceWhenBuilderCall() {
+    ConditionBuilder builder = ConditionBuilder.builder();
 
-    @Test
-    @DisplayName("Given builder call -> should return new instance")
-    void givenBuilderCallShouldReturnNewInstance() {
-      ConditionBuilder builder = ConditionBuilder.builder();
-
-      assertThat(builder).isNotNull();
-      assertThat(builder.build()).isEqualTo(DSL.noCondition());
-      assertThat(builder.nullable()).isNull();
-    }
+    assertThat(builder).isNotNull();
+    assertThat(builder.build()).isEqualTo(DSL.noCondition());
+    assertThat(builder.nullable()).isNull();
   }
 
   @Nested
-  @DisplayName("and")
-  class And {
+  @DisplayName("when combining conditions with and")
+  class WhenCombiningConditionsWithAnd {
 
     @Test
-    @DisplayName("Given null condition -> should ignore and return self")
-    void givenNullConditionShouldIgnoreAndReturnSelf() {
+    @DisplayName("should should ignore and return self when null condition")
+    void shouldShouldIgnoreAndReturnSelfWhenNullCondition() {
       ConditionBuilder builder = ConditionBuilder.builder();
 
       ConditionBuilder result = builder.and(null);
@@ -46,8 +41,8 @@ class ConditionBuilderTest {
     }
 
     @Test
-    @DisplayName("Given first condition -> should set condition")
-    void givenFirstConditionShouldSetCondition() {
+    @DisplayName("should should set condition when first condition")
+    void shouldShouldSetConditionWhenFirstCondition() {
       Condition condition = ID_FIELD.eq(1L);
 
       Condition built = ConditionBuilder.builder().and(condition).build();
@@ -56,8 +51,8 @@ class ConditionBuilderTest {
     }
 
     @Test
-    @DisplayName("Given multiple conditions -> should combine with and")
-    void givenMultipleConditionsShouldCombineWithAnd() {
+    @DisplayName("should should combine with and when multiple conditions")
+    void shouldShouldCombineWithAndWhenMultipleConditions() {
       Condition first = ID_FIELD.eq(1L);
       Condition second = NAME_FIELD.eq("admin");
 
@@ -68,12 +63,12 @@ class ConditionBuilderTest {
   }
 
   @Nested
-  @DisplayName("or")
-  class Or {
+  @DisplayName("when combining conditions with or")
+  class WhenCombiningConditionsWithOr {
 
     @Test
-    @DisplayName("Given null condition -> should ignore and return self")
-    void givenNullConditionShouldIgnoreAndReturnSelf() {
+    @DisplayName("should should ignore and return self when null condition")
+    void shouldShouldIgnoreAndReturnSelfWhenNullCondition() {
       ConditionBuilder builder = ConditionBuilder.builder();
 
       ConditionBuilder result = builder.or(null);
@@ -83,8 +78,8 @@ class ConditionBuilderTest {
     }
 
     @Test
-    @DisplayName("Given first condition -> should set condition")
-    void givenFirstConditionShouldSetCondition() {
+    @DisplayName("should should set condition when first condition")
+    void shouldShouldSetConditionWhenFirstCondition() {
       Condition condition = ID_FIELD.eq(1L);
 
       Condition built = ConditionBuilder.builder().or(condition).build();
@@ -93,8 +88,8 @@ class ConditionBuilderTest {
     }
 
     @Test
-    @DisplayName("Given multiple conditions -> should combine with or")
-    void givenMultipleConditionsShouldCombineWithOr() {
+    @DisplayName("should should combine with or when multiple conditions")
+    void shouldShouldCombineWithOrWhenMultipleConditions() {
       Condition first = ID_FIELD.eq(1L);
       Condition second = NAME_FIELD.eq("admin");
 
@@ -104,49 +99,39 @@ class ConditionBuilderTest {
     }
   }
 
-  @Nested
-  @DisplayName("build")
-  class Build {
+  @Test
+  @DisplayName("should should return noCondition when no conditions")
+  void shouldShouldReturnNoConditionWhenNoConditions() {
+    Condition built = ConditionBuilder.builder().build();
 
-    @Test
-    @DisplayName("Given no conditions -> should return noCondition")
-    void givenNoConditionsShouldReturnNoCondition() {
-      Condition built = ConditionBuilder.builder().build();
-
-      assertThat(built).isEqualTo(DSL.noCondition());
-    }
-
-    @Test
-    @DisplayName("Given conditions -> should return built condition")
-    void givenConditionsShouldReturnBuiltCondition() {
-      Condition condition = ID_FIELD.gt(0L);
-
-      Condition built = ConditionBuilder.builder().and(condition).build();
-
-      assertThat(built).isEqualTo(condition);
-    }
+    assertThat(built).isEqualTo(DSL.noCondition());
   }
 
-  @Nested
-  @DisplayName("nullable")
-  class Nullable {
+  @Test
+  @DisplayName("should should return built condition when conditions")
+  void shouldShouldReturnBuiltConditionWhenConditions() {
+    Condition condition = ID_FIELD.gt(0L);
 
-    @Test
-    @DisplayName("Given no conditions -> should return null")
-    void givenNoConditionsShouldReturnNull() {
-      Condition nullable = ConditionBuilder.builder().nullable();
+    Condition built = ConditionBuilder.builder().and(condition).build();
 
-      assertThat(nullable).isNull();
-    }
+    assertThat(built).isEqualTo(condition);
+  }
 
-    @Test
-    @DisplayName("Given conditions -> should return built condition")
-    void givenConditionsShouldReturnBuiltCondition() {
-      Condition condition = ID_FIELD.eq(42L);
+  @Test
+  @DisplayName("should should return null when no conditions")
+  void shouldShouldReturnNullWhenNoConditions() {
+    Condition nullable = ConditionBuilder.builder().nullable();
 
-      Condition nullable = ConditionBuilder.builder().and(condition).nullable();
+    assertThat(nullable).isNull();
+  }
 
-      assertThat(nullable).isEqualTo(condition);
-    }
+  @Test
+  @DisplayName("should should return built condition when nullable with conditions")
+  void shouldShouldReturnBuiltConditionWhenNullableWithConditions() {
+    Condition condition = ID_FIELD.eq(42L);
+
+    Condition nullable = ConditionBuilder.builder().and(condition).nullable();
+
+    assertThat(nullable).isEqualTo(condition);
   }
 }

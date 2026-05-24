@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,102 +32,82 @@ class UserRoleRepositoryTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("findAllByUserId")
-  class FindAllByUserId {
+  @Test
+  @DisplayName("should return user roles only when multiple users and roles")
+  void shouldReturnUserRolesOnlyWhenMultipleUsersAndRoles() {
+    // Given
+    testHelper.insertEntities(
+        user(UID_1),
+        user(UID_2),
+        role(UID_3),
+        role(UID_4),
+        userRole(UID_1, UID_1, UID_3),
+        userRole(UID_2, UID_1, UID_4),
+        userRole(UID_3, UID_2, UID_3));
 
-    @Test
-    @DisplayName("Given multiple users and roles -> return user roles only")
-    void givenMultipleUsersAndRoles() {
-      // Given
-      testHelper.insertEntities(
-          user(UID_1),
-          user(UID_2),
-          role(UID_3),
-          role(UID_4),
-          userRole(UID_1, UID_1, UID_3),
-          userRole(UID_2, UID_1, UID_4),
-          userRole(UID_3, UID_2, UID_3));
+    // When
+    List<UserRole> roles = userRoleRepository.findAllByUserId(UID_1);
 
-      // When
-      List<UserRole> roles = userRoleRepository.findAllByUserId(UID_1);
-
-      // Then
-      assertThat(roles).extracting(UserRole::getRoleId).containsExactlyInAnyOrder(UID_3, UID_4);
-    }
+    // Then
+    assertThat(roles).extracting(UserRole::getRoleId).containsExactlyInAnyOrder(UID_3, UID_4);
   }
 
-  @Nested
-  @DisplayName("findAllByUserIdIn")
-  class FindAllByUserIdIn {
+  @Test
+  @DisplayName("should return roles for selected users when user ids filter")
+  void shouldReturnRolesForSelectedUsersWhenUserIdsFilter() {
+    // Given
+    testHelper.insertEntities(
+        user(UID_1),
+        user(UID_2),
+        user(UID_3),
+        role(UID_4),
+        role(UID_5),
+        userRole(UID_1, UID_1, UID_4),
+        userRole(UID_2, UID_2, UID_4),
+        userRole(UID_3, UID_3, UID_5));
 
-    @Test
-    @DisplayName("Given user ids filter -> return roles for selected users")
-    void givenUserIdsFilter() {
-      // Given
-      testHelper.insertEntities(
-          user(UID_1),
-          user(UID_2),
-          user(UID_3),
-          role(UID_4),
-          role(UID_5),
-          userRole(UID_1, UID_1, UID_4),
-          userRole(UID_2, UID_2, UID_4),
-          userRole(UID_3, UID_3, UID_5));
+    // When
+    List<UserRole> roles = userRoleRepository.findAllByUserIdIn(Set.of(UID_1, UID_3));
 
-      // When
-      List<UserRole> roles = userRoleRepository.findAllByUserIdIn(Set.of(UID_1, UID_3));
-
-      // Then
-      assertThat(roles).extracting(UserRole::getUserId).containsExactlyInAnyOrder(UID_1, UID_3);
-      assertThat(roles).extracting(UserRole::getRoleId).containsExactlyInAnyOrder(UID_4, UID_5);
-    }
+    // Then
+    assertThat(roles).extracting(UserRole::getUserId).containsExactlyInAnyOrder(UID_1, UID_3);
+    assertThat(roles).extracting(UserRole::getRoleId).containsExactlyInAnyOrder(UID_4, UID_5);
   }
 
-  @Nested
-  @DisplayName("deleteAllByUserId")
-  class DeleteAllByUserId {
+  @Test
+  @DisplayName("should delete only target user roles when existing roles")
+  void shouldDeleteOnlyTargetUserRolesWhenExistingRoles() {
+    // Given
+    testHelper.insertEntities(
+        user(UID_1),
+        user(UID_2),
+        role(UID_3),
+        userRole(UID_1, UID_1, UID_3),
+        userRole(UID_2, UID_2, UID_3));
 
-    @Test
-    @DisplayName("Given existing roles -> delete only target user roles")
-    void givenExistingRoles() {
-      // Given
-      testHelper.insertEntities(
-          user(UID_1),
-          user(UID_2),
-          role(UID_3),
-          userRole(UID_1, UID_1, UID_3),
-          userRole(UID_2, UID_2, UID_3));
+    // When
+    userRoleRepository.deleteAllByUserId(UID_1);
 
-      // When
-      userRoleRepository.deleteAllByUserId(UID_1);
-
-      // Then
-      assertThat(userRoleRepository.findAllByUserId(UID_1)).isEmpty();
-      assertThat(userRoleRepository.findAllByUserId(UID_2)).hasSize(1);
-    }
+    // Then
+    assertThat(userRoleRepository.findAllByUserId(UID_1)).isEmpty();
+    assertThat(userRoleRepository.findAllByUserId(UID_2)).hasSize(1);
   }
 
-  @Nested
-  @DisplayName("saveAll")
-  class SaveAll {
+  @Test
+  @DisplayName("should save all records when user roles")
+  void shouldSaveAllRecordsWhenUserRoles() {
+    // Given
+    testHelper.insertEntities(user(UID_1), role(UID_2), role(UID_3));
+    List<UserRole> userRoles =
+        List.of(userRole(UID_4, UID_1, UID_2), userRole(UID_5, UID_1, UID_3));
 
-    @Test
-    @DisplayName("Given user roles -> save all records")
-    void givenUserRoles() {
-      // Given
-      testHelper.insertEntities(user(UID_1), role(UID_2), role(UID_3));
-      List<UserRole> userRoles =
-          List.of(userRole(UID_4, UID_1, UID_2), userRole(UID_5, UID_1, UID_3));
+    // When
+    userRoleRepository.saveAll(userRoles);
 
-      // When
-      userRoleRepository.saveAll(userRoles);
-
-      // Then
-      assertThat(userRoleRepository.findAllByUserId(UID_1))
-          .extracting(UserRole::getRoleId)
-          .containsExactlyInAnyOrder(UID_2, UID_3);
-    }
+    // Then
+    assertThat(userRoleRepository.findAllByUserId(UID_1))
+        .extracting(UserRole::getRoleId)
+        .containsExactlyInAnyOrder(UID_2, UID_3);
   }
 
   private UserRole userRole(long id, long userId, long roleId) {

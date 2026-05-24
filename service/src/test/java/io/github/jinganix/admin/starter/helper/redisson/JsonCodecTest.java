@@ -14,12 +14,12 @@ import tools.jackson.core.type.TypeReference;
 class JsonCodecTest {
 
   @Nested
-  @DisplayName("getValueEncoder")
-  class GetValueEncoder {
+  @DisplayName("when encoding values")
+  class WhenEncodingValues {
 
     @Test
-    @DisplayName("Given class constructor -> should round-trip value")
-    void givenClassConstructorShouldRoundTripValue() throws Exception {
+    @DisplayName("should should round-trip value when class constructor")
+    void shouldShouldRoundTripValueWhenClassConstructor() throws Exception {
       JsonCodec codec = new JsonCodec(String.class);
       ByteBuf encoded = codec.getValueEncoder().encode("hello");
 
@@ -33,8 +33,8 @@ class JsonCodecTest {
     }
 
     @Test
-    @DisplayName("Given type reference constructor -> should round-trip value")
-    void givenTypeReferenceConstructorShouldRoundTripValue() throws Exception {
+    @DisplayName("should should round-trip value when type reference constructor")
+    void shouldShouldRoundTripValueWhenTypeReferenceConstructor() throws Exception {
       JsonCodec codec = new JsonCodec(new TypeReference<List<String>>() {});
       List<String> value = List.of("a", "b");
       ByteBuf encoded = codec.getValueEncoder().encode(value);
@@ -50,8 +50,8 @@ class JsonCodecTest {
     }
 
     @Test
-    @DisplayName("Given non-serializable value -> should throw")
-    void givenNonSerializableValueShouldThrow() {
+    @DisplayName("should should throw when non-serializable value")
+    void shouldShouldThrowWhenNonSerializableValue() {
       JsonCodec codec = new JsonCodec(BadBean.class);
 
       assertThatThrownBy(() -> codec.getValueEncoder().encode(new BadBean()))
@@ -60,23 +60,18 @@ class JsonCodecTest {
     }
   }
 
-  @Nested
-  @DisplayName("getValueDecoder")
-  class GetValueDecoder {
+  @Test
+  @DisplayName("should should decode to typed value when encoded json bytes")
+  void shouldShouldDecodeToTypedValueWhenEncodedJsonBytes() throws Exception {
+    JsonCodec codec = new JsonCodec(Integer.class);
+    ByteBuf encoded = codec.getValueEncoder().encode(42);
 
-    @Test
-    @DisplayName("Given encoded json bytes -> should decode to typed value")
-    void givenEncodedJsonBytesShouldDecodeToTypedValue() throws Exception {
-      JsonCodec codec = new JsonCodec(Integer.class);
-      ByteBuf encoded = codec.getValueEncoder().encode(42);
+    try {
+      Object decoded = codec.getValueDecoder().decode(encoded, null);
 
-      try {
-        Object decoded = codec.getValueDecoder().decode(encoded, null);
-
-        assertThat(decoded).isEqualTo(42);
-      } finally {
-        encoded.release();
-      }
+      assertThat(decoded).isEqualTo(42);
+    } finally {
+      encoded.release();
     }
   }
 

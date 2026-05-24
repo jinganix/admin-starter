@@ -31,8 +31,8 @@ class PermissionReloadHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given all authorities already exist -> skip duplicates")
-  void givenAllAuthoritiesAlreadyExist() {
+  @DisplayName("should skip duplicates when all authorities already exist")
+  void shouldSkipDuplicatesWhenAllAuthoritiesAlreadyExist() {
     // Given
     long id = UID_1;
     for (Authority authority : Authority.values()) {
@@ -55,8 +55,8 @@ class PermissionReloadHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given empty database -> reload all authorities")
-  void givenEmptyDatabase() {
+  @DisplayName("should reload all authorities when empty database")
+  void shouldReloadAllAuthoritiesWhenEmptyDatabase() {
     // Given
 
     // When

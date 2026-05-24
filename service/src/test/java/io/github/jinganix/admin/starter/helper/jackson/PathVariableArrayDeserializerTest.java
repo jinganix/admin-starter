@@ -35,28 +35,28 @@ class PathVariableArrayDeserializerTest {
   }
 
   @Nested
-  @DisplayName("deserialize")
-  class Deserialize {
+  @DisplayName("when deserializing path variable array")
+  class WhenDeserializingPathVariableArray {
 
     @Test
-    @DisplayName("Given comma-separated values -> should parse list")
-    void givenCommaSeparatedValuesShouldParseList() throws Exception {
+    @DisplayName("should should parse list when comma-separated values")
+    void shouldShouldParseListWhenCommaSeparatedValues() throws Exception {
       List<String> result = deserialize("\"one,two,three\"");
 
       assertThat(result).containsExactly("one", "two", "three");
     }
 
     @Test
-    @DisplayName("Given json array string -> should parse list directly")
-    void givenJsonArrayStringShouldParseListDirectly() throws Exception {
+    @DisplayName("should should parse list directly when json array string")
+    void shouldShouldParseListDirectlyWhenJsonArrayString() throws Exception {
       List<String> result = deserialize("\"[\\\"a\\\",\\\"b\\\"]\"");
 
       assertThat(result).containsExactly("a", "b");
     }
 
     @Test
-    @DisplayName("Given quoted tokens -> should preserve quotes in output")
-    void givenQuotedTokensShouldPreserveQuotesInOutput() throws Exception {
+    @DisplayName("should should preserve quotes in output when quoted tokens")
+    void shouldShouldPreserveQuotesInOutputWhenQuotedTokens() throws Exception {
       List<String> result = deserialize("\"\\\"x\\\",y\"");
 
       assertThat(result).hasSize(2);
@@ -64,8 +64,8 @@ class PathVariableArrayDeserializerTest {
     }
 
     @Test
-    @DisplayName("Given missing target type -> should throw illegal state")
-    void givenMissingTargetTypeShouldThrowIllegalState() {
+    @DisplayName("should should throw illegal state when missing target type")
+    void shouldShouldThrowIllegalStateWhenMissingTargetType() {
       PathVariableArrayDeserializer<String> untyped = new PathVariableArrayDeserializer<>();
 
       assertThatThrownBy(() -> deserialize(untyped, "\"a,b\""))
@@ -74,34 +74,34 @@ class PathVariableArrayDeserializerTest {
     }
 
     @Test
-    @DisplayName("Given single value -> should parse singleton list")
-    void givenSingleValueShouldParseSingletonList() throws Exception {
+    @DisplayName("should should parse singleton list when single value")
+    void shouldShouldParseSingletonListWhenSingleValue() throws Exception {
       List<String> result = deserialize("\"only\"");
 
       assertThat(result).containsExactly("only");
     }
 
     @Test
-    @DisplayName("Given raw comma separated values -> should build array json")
-    void givenRawCommaSeparatedValuesShouldBuildArrayJson() {
+    @DisplayName("should should build array json when raw comma separated values")
+    void shouldShouldBuildArrayJsonWhenRawCommaSeparatedValues() {
       assertThat(deserializer.convertToArrayJson("a,b")).isEqualTo("[\"a\",\"b\"]");
     }
 
     @Test
-    @DisplayName("Given json array literal -> should return unchanged")
-    void givenJsonArrayLiteralShouldReturnUnchanged() {
+    @DisplayName("should should return unchanged when json array literal")
+    void shouldShouldReturnUnchangedWhenJsonArrayLiteral() {
       assertThat(deserializer.convertToArrayJson("[\"a\",\"b\"]")).isEqualTo("[\"a\",\"b\"]");
     }
 
     @Test
-    @DisplayName("Given partial array prefix -> should build array json")
-    void givenPartialArrayPrefixShouldBuildArrayJson() {
+    @DisplayName("should should build array json when partial array prefix")
+    void shouldShouldBuildArrayJsonWhenPartialArrayPrefix() {
       assertThat(deserializer.convertToArrayJson("[a,b")).contains("a").contains("b");
     }
 
     @Test
-    @DisplayName("Given comma-separated integers -> should parse integer list")
-    void givenCommaSeparatedIntegersShouldParseIntegerList() throws Exception {
+    @DisplayName("should should parse integer list when comma-separated integers")
+    void shouldShouldParseIntegerListWhenCommaSeparatedIntegers() throws Exception {
       JavaType integerListType =
           jsonMapper.getTypeFactory().constructCollectionType(List.class, Integer.class);
       PathVariableArrayDeserializer<Integer> integerDeserializer =
@@ -114,12 +114,12 @@ class PathVariableArrayDeserializerTest {
   }
 
   @Nested
-  @DisplayName("createContextual")
-  class CreateContextual {
+  @DisplayName("when creating contextual deserializer")
+  class WhenCreatingContextualDeserializer {
 
     @Test
-    @DisplayName("Given bean property -> should return typed deserializer")
-    void givenBeanPropertyShouldReturnTypedDeserializer() throws Exception {
+    @DisplayName("should should return typed deserializer when bean property")
+    void shouldShouldReturnTypedDeserializerWhenBeanProperty() throws Exception {
       BeanProperty property = mock(BeanProperty.class);
       when(property.getType()).thenReturn(listType);
       PathVariableArrayDeserializer<String> untyped = new PathVariableArrayDeserializer<>();
@@ -135,8 +135,8 @@ class PathVariableArrayDeserializerTest {
     }
 
     @Test
-    @DisplayName("Given null property -> should return same instance")
-    void givenNullPropertyShouldReturnSameInstance() {
+    @DisplayName("should should return same instance when null property")
+    void shouldShouldReturnSameInstanceWhenNullProperty() {
       PathVariableArrayDeserializer<String> typed = new PathVariableArrayDeserializer<>(listType);
 
       ValueDeserializer<?> contextual =

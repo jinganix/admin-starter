@@ -30,8 +30,8 @@ class PermissionRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given permission not found -> throw ApiException")
-  void givenPermissionNotFound() {
+  @DisplayName("should throw ApiException when permission not found")
+  void shouldThrowApiExceptionWhenPermissionNotFound() {
     // Given
     PermissionRetrieveRequest request = new PermissionRetrieveRequest(UID_3);
 
@@ -45,8 +45,8 @@ class PermissionRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing permission -> return permission response")
-  void givenExistingPermission() {
+  @DisplayName("should return permission response when existing permission")
+  void shouldReturnPermissionResponseWhenExistingPermission() {
     // Given
     testHelper.insertEntities(permission(UID_3));
     PermissionRetrieveRequest request = new PermissionRetrieveRequest(UID_3);

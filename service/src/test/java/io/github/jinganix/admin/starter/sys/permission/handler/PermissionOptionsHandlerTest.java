@@ -29,8 +29,8 @@ class PermissionOptionsHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given only inactive permissions -> return empty options")
-  void givenOnlyInactivePermissions() {
+  @DisplayName("should return empty options when only inactive permissions")
+  void shouldReturnEmptyOptionsWhenOnlyInactivePermissions() {
     // Given
     testHelper.insertEntities(
         permission(UID_1).setStatus(PermissionStatus.INACTIVE),
@@ -46,8 +46,8 @@ class PermissionOptionsHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given active permissions -> return options")
-  void givenActivePermissions() {
+  @DisplayName("should return options when active permissions")
+  void shouldReturnOptionsWhenActivePermissions() {
     // Given
     testHelper.insertEntities(
         permission(UID_1).setName("perm-one").setCode("/test/one"),

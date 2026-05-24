@@ -55,8 +55,8 @@ class UserListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given no users -> return empty list")
-  void givenNoUsers() {
+  @DisplayName("should return empty list when no users")
+  void shouldReturnEmptyListWhenNoUsers() {
     // Given
     Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id"));
     UserListRequest request =
@@ -73,8 +73,8 @@ class UserListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given users order by id asc -> return UID_1 first")
-  void givenOrderByIdAsc() {
+  @DisplayName("should return UID_1 first when users order by id asc")
+  void shouldReturnUid1FirstWhenUsersOrderByIdAsc() {
     // Given
     testHelper.insertEntities(
         user(UID_1).setNickname("foo"),
@@ -101,8 +101,8 @@ class UserListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given users order by id desc -> return UID_2 first")
-  void givenOrderByIdDesc() {
+  @DisplayName("should return UID_2 first when users order by id desc")
+  void shouldReturnUid2FirstWhenUsersOrderByIdDesc() {
     // Given
     testHelper.insertEntities(
         user(UID_1).setNickname("foo"),

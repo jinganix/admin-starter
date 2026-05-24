@@ -52,8 +52,8 @@ class RequestAuditAspectUnitTest {
   }
 
   @Test
-  @DisplayName("Given null join point args -> skips params serialization")
-  void givenNullJoinPointArgs() {
+  @DisplayName("should skips params serialization when null join point args")
+  void shouldSkipsParamsSerializationWhenNullJoinPointArgs() {
     JoinPoint joinPoint = mock(JoinPoint.class);
     when(joinPoint.getArgs()).thenReturn(null);
 
@@ -63,8 +63,8 @@ class RequestAuditAspectUnitTest {
   }
 
   @Test
-  @DisplayName("Given GET request -> skips audit insert")
-  void givenGetRequest() {
+  @DisplayName("should skips audit insert when GET request")
+  void shouldSkipsAuditInsertWhenGetRequest() {
     when(httpServletRequest.getMethod()).thenReturn("GET");
     JoinPoint joinPoint = mock(JoinPoint.class);
 

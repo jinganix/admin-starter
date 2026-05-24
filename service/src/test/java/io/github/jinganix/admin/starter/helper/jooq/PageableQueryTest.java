@@ -51,8 +51,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given pageable -> returns page with content and total count")
-  void givenPageable() {
+  @DisplayName("should return page with content and total count when pageable")
+  void shouldReturnPageWithContentAndTotalCountWhenPageable() {
     // Given
     Pageable pageable = PageRequest.of(0, 2);
 
@@ -70,8 +70,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given sort by id ascending -> returns rows in order")
-  void givenSortByIdAsc() {
+  @DisplayName("should return rows in order when sort by id ascending")
+  void shouldReturnRowsInOrderWhenSortByIdAscending() {
     // Given
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "id"));
 
@@ -86,8 +86,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given sort by data descending -> returns rows in order")
-  void givenSortByDataDesc() {
+  @DisplayName("should return rows in order when sort by data descending")
+  void shouldReturnRowsInOrderWhenSortByDataDescending() {
     // Given
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "data"));
 
@@ -104,8 +104,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unpaged -> applies default limit")
-  void givenUnpaged() {
+  @DisplayName("should applies default limit when unpaged")
+  void shouldAppliesDefaultLimitWhenUnpaged() {
     // Given
     insertRows(20);
     Pageable pageable = Pageable.unpaged();
@@ -122,8 +122,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given offset beyond total count -> adjusts to last page")
-  void givenOffsetBeyondCount() {
+  @DisplayName("should adjusts to last page when offset beyond total count")
+  void shouldAdjustsToLastPageWhenOffsetBeyondTotalCount() {
     // Given
     Pageable pageable = PageRequest.of(10, 2);
 
@@ -140,8 +140,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given second page without sort -> returns correct slice")
-  void givenSecondPageWithoutSort() {
+  @DisplayName("should return correct slice when second page without sort")
+  void shouldReturnCorrectSliceWhenSecondPageWithoutSort() {
     // Given
     Pageable pageable = PageRequest.of(1, 2);
 
@@ -158,8 +158,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given empty table and offset beyond total -> returns page zero")
-  void givenEmptyTableAndOffsetBeyondShouldReturnPageZero() {
+  @DisplayName("should return page zero when empty table and offset beyond total")
+  void shouldReturnPageZeroWhenEmptyTableAndOffsetBeyondTotal() {
     // Given
     dsl.truncate(TestTable.TEST).execute();
     Pageable pageable = PageRequest.of(3, 2);
@@ -177,8 +177,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given multiple sort orders -> returns rows in order")
-  void givenMultipleSortOrders() {
+  @DisplayName("should return rows in order when multiple sort orders")
+  void shouldReturnRowsInOrderWhenMultipleSortOrders() {
     // Given
     insertRows(1);
     dsl.update(TestTable.TEST)
@@ -204,8 +204,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given partial select and sort by column from table -> resolves via from clause")
-  void givenPartialSelectAndSortByColumnFromTable() {
+  @DisplayName("should resolves via from clause when partial select and sort by column from table")
+  void shouldResolvesViaFromClauseWhenPartialSelectAndSortByColumnFromTable() {
     // Given
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "groupId"));
 
@@ -220,8 +220,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given select with explicit fields -> sorts via select field list")
-  void givenSelectWithExplicitFields() {
+  @DisplayName("should sorts via select field list when select with explicit fields")
+  void shouldSortsViaSelectFieldListWhenSelectWithExplicitFields() {
     // Given
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -243,8 +243,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given select with row projection -> sorts via row fields")
-  void givenSelectWithRowProjection() {
+  @DisplayName("should sorts via row fields when select with row projection")
+  void shouldSortsViaRowFieldsWhenSelectWithRowProjection() {
     // Given
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "data"));
 
@@ -270,8 +270,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given select with table projection -> sorts via table fields")
-  void givenSelectWithTableProjection() {
+  @DisplayName("should sorts via table fields when select with table projection")
+  void shouldSortsViaTableFieldsWhenSelectWithTableProjection() {
     // Given
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -286,8 +286,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unqualified select field -> resolves sort via from clause")
-  void givenUnqualifiedSelectField() {
+  @DisplayName("should resolves sort via from clause when unqualified select field")
+  void shouldResolvesSortViaFromClauseWhenUnqualifiedSelectField() {
     // Given
     Field<Long> bareId = field(name("id"), Long.class);
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "id"));
@@ -303,8 +303,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unqualified field in select -> matchTableField returns null")
-  void givenUnqualifiedFieldInSelectMatchTableFieldReturnsNull() {
+  @DisplayName("should matchTableField returns null when unqualified field in select")
+  void shouldMatchTableFieldReturnsNullWhenUnqualifiedFieldInSelect() {
     Field<Long> bareId = field(name("id"), Long.class);
     PageableQuery<TestRecord, TestEntity> query = PageableQuery.of(dsl, Pageable.unpaged());
 
@@ -314,8 +314,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unknown table name -> lookupTableField returns null")
-  void givenUnknownTableNameLookupTableFieldReturnsNull() {
+  @DisplayName("should lookupTableField returns null when unknown table name")
+  void shouldLookupTableFieldReturnsNullWhenUnknownTableName() {
     Field<?> field =
         ReflectionTestUtils.invokeMethod(
             PageableQuery.class, "lookupTableField", "unknown_table", "id");
@@ -324,8 +324,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given row projection without matching field -> falls back to from clause")
-  void givenRowProjectionWithoutMatchingField() {
+  @DisplayName("should falls back to from clause when row projection without matching field")
+  void shouldFallsBackToFromClauseWhenRowProjectionWithoutMatchingField() {
     Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "groupId"));
 
     Page<TestEntity> page =
@@ -346,8 +346,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given asterisk select item -> resolveFromSelectItem returns null")
-  void givenAsteriskSelectItemResolveFromSelectItemReturnsNull() {
+  @DisplayName("should resolveFromSelectItem returns null when asterisk select item")
+  void shouldResolveFromSelectItemReturnsNullWhenAsteriskSelectItem() {
     PageableQuery<TestRecord, TestEntity> query = PageableQuery.of(dsl, Pageable.unpaged());
 
     Field<?> matched =
@@ -358,8 +358,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given row item without matching field -> returns null from helper")
-  void givenRowItemWithoutMatchingField() {
+  @DisplayName("should return null from helper when row item without matching field")
+  void shouldReturnNullFromHelperWhenRowItemWithoutMatchingField() {
     PageableQuery<TestRecord, TestEntity> query = PageableQuery.of(dsl, Pageable.unpaged());
     org.jooq.Row row = row(field(name("unknown"), Long.class));
 
@@ -371,8 +371,8 @@ class PageableQueryTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unknown sort field -> throws IllegalArgumentException")
-  void givenUnknownSortField() {
+  @DisplayName("should throws IllegalArgumentException when unknown sort field")
+  void shouldThrowsIllegalArgumentExceptionWhenUnknownSortField() {
     // Given
     Pageable pageable = PageRequest.of(0, 2, Sort.by("unknownField"));
 

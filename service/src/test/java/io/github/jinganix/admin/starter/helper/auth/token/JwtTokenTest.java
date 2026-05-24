@@ -4,43 +4,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("JwtToken")
 class JwtTokenTest {
 
-  @Nested
-  @DisplayName("isValid")
-  class IsValid {
+  @Test
+  @DisplayName("should return true when token with uuid")
+  void shouldReturnTrueWhenTokenWithUuid() {
+    JwtToken token = JwtToken.of(1L, "uuid", List.of("ROLE_USER"));
 
-    @Test
-    @DisplayName("Given token with uuid -> returns true")
-    void givenTokenWithUuid() {
-      JwtToken token = JwtToken.of(1L, "uuid", List.of("ROLE_USER"));
-
-      assertThat(token.isValid()).isTrue();
-    }
-
-    @Test
-    @DisplayName("Given invalid token -> returns false")
-    void givenInvalidToken() {
-      assertThat(JwtToken.INVALID_TOKEN.isValid()).isFalse();
-    }
+    assertThat(token.isValid()).isTrue();
   }
 
-  @Nested
-  @DisplayName("of")
-  class Of {
+  @Test
+  @DisplayName("should return false when invalid token")
+  void shouldReturnFalseWhenInvalidToken() {
+    assertThat(JwtToken.INVALID_TOKEN.isValid()).isFalse();
+  }
 
-    @Test
-    @DisplayName("Given values -> exposes fields")
-    void givenValues() {
-      JwtToken token = JwtToken.of(2L, "token-uuid", List.of("ROLE_ADMIN"));
+  @Test
+  @DisplayName("should exposes fields when values")
+  void shouldExposesFieldsWhenValues() {
+    JwtToken token = JwtToken.of(2L, "token-uuid", List.of("ROLE_ADMIN"));
 
-      assertThat(token.getUserId()).isEqualTo(2L);
-      assertThat(token.getUuid()).isEqualTo("token-uuid");
-      assertThat(token.getAuthorities()).containsExactly("ROLE_ADMIN");
-    }
+    assertThat(token.getUserId()).isEqualTo(2L);
+    assertThat(token.getUuid()).isEqualTo("token-uuid");
+    assertThat(token.getAuthorities()).containsExactly("ROLE_ADMIN");
   }
 }

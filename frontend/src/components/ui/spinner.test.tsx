@@ -1,21 +1,18 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Spinner } from "@/components/ui/spinner.tsx";
 
 describe("<Spinner />", () => {
-  describe("when loading is true", () => {
-    it("should match snapshot", () => {
-      const { container } = render(<Spinner loading />);
+  it("should show loading overlay when loading is true", () => {
+    const { container } = render(<Spinner loading />);
 
-      expect(container).toMatchSnapshot();
-    });
+    expect(container.querySelector(".animate-spin")).toBeInTheDocument();
   });
 
-  describe("when loading is false", () => {
-    it("should be empty", () => {
-      const { container } = render(<Spinner loading={false} />);
+  it("should render empty when loading is false", () => {
+    const { container } = render(<Spinner loading={false} />);
 
-      expect(container).toBeEmptyDOMElement();
-    });
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 });

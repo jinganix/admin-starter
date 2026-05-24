@@ -13,18 +13,18 @@ class TimeConverterTest {
   private final TimeConverter converter = new TimeConverter();
 
   @Nested
-  @DisplayName("from")
-  class From {
+  @DisplayName("when converting to database column")
+  class WhenConvertingToDatabaseColumn {
 
     @Test
-    @DisplayName("Given null date time -> returns null")
-    void givenNullDateTime() {
+    @DisplayName("should return null when null date time")
+    void shouldReturnNullWhenNullDateTime() {
       assertThat(converter.from(null)).isNull();
     }
 
     @Test
-    @DisplayName("Given date time -> returns epoch millis")
-    void givenDateTime() {
+    @DisplayName("should return epoch millis when date time")
+    void shouldReturnEpochMillisWhenDateTime() {
       LocalDateTime dateTime = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
 
       assertThat(converter.from(dateTime)).isEqualTo(1704038400000L);
@@ -32,31 +32,26 @@ class TimeConverterTest {
   }
 
   @Nested
-  @DisplayName("to")
-  class To {
+  @DisplayName("when converting to entity attribute")
+  class WhenConvertingToEntityAttribute {
 
     @Test
-    @DisplayName("Given null timestamp -> returns null")
-    void givenNullTimestamp() {
+    @DisplayName("should return null when null timestamp")
+    void shouldReturnNullWhenNullTimestamp() {
       assertThat(converter.to(null)).isNull();
     }
 
     @Test
-    @DisplayName("Given timestamp -> returns local date time")
-    void givenTimestamp() {
+    @DisplayName("should return local date time when timestamp")
+    void shouldReturnLocalDateTimeWhenTimestamp() {
       assertThat(converter.to(1704038400000L)).isEqualTo(LocalDateTime.of(2024, 1, 1, 0, 0, 0));
     }
   }
 
-  @Nested
-  @DisplayName("types")
-  class Types {
-
-    @Test
-    @DisplayName("Given converter -> exposes supported types")
-    void givenConverter() {
-      assertThat(converter.fromType()).isEqualTo(LocalDateTime.class);
-      assertThat(converter.toType()).isEqualTo(Long.class);
-    }
+  @Test
+  @DisplayName("should exposes supported types when converter")
+  void shouldExposesSupportedTypesWhenConverter() {
+    assertThat(converter.fromType()).isEqualTo(LocalDateTime.class);
+    assertThat(converter.toType()).isEqualTo(Long.class);
   }
 }

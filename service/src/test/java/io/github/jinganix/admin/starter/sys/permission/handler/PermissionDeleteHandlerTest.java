@@ -34,8 +34,8 @@ class PermissionDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given missing permission ids -> throw ApiException")
-  void givenMissingPermissionIds() {
+  @DisplayName("should throw ApiException when missing permission ids")
+  void shouldThrowApiExceptionWhenMissingPermissionIds() {
     // Given
     PermissionDeleteRequest request = new PermissionDeleteRequest(List.of(UID_1));
 
@@ -49,8 +49,8 @@ class PermissionDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing permission ids -> delete permissions")
-  void givenExistingPermissionIds() {
+  @DisplayName("should delete permissions when existing permission ids")
+  void shouldDeletePermissionsWhenExistingPermissionIds() {
     // Given
     testHelper.insertEntities(permission(UID_1), permission(UID_2).setCode("/test/code-2"));
     PermissionDeleteRequest request = new PermissionDeleteRequest(List.of(UID_1, UID_2));

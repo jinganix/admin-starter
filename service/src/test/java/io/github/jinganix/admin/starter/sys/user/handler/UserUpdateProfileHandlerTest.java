@@ -33,8 +33,8 @@ class UserUpdateProfileHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found -> throw ApiException")
-  void givenUserNotFound() {
+  @DisplayName("should throw ApiException when user not found")
+  void shouldThrowApiExceptionWhenUserNotFound() {
     // Given
     UserUpdateProfileRequest request = new UserUpdateProfileRequest().setNickname("updated");
 
@@ -47,8 +47,8 @@ class UserUpdateProfileHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing user -> return updated profile")
-  void givenExistingUser() {
+  @DisplayName("should return updated profile when existing user")
+  void shouldReturnUpdatedProfileWhenExistingUser() {
     // Given
     testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
     UserUpdateProfileRequest request = new UserUpdateProfileRequest().setNickname("updated");

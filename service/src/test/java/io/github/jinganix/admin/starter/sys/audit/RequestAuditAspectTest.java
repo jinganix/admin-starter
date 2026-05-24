@@ -39,8 +39,8 @@ class RequestAuditAspectTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given authenticated GET request -> skip writing audit")
-  void givenGetRequest() throws Exception {
+  @DisplayName("should skip writing audit when authenticated GET request")
+  void shouldSkipWritingAuditWhenAuthenticatedGetRequest() throws Exception {
     // Given
     when(roleAuthorityService.getApiAuthorities(UID_1))
         .thenReturn(PermissionUtils.permissions(Authority.ADM_OVERVIEW_LIST));
@@ -53,8 +53,8 @@ class RequestAuditAspectTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unauthenticated POST request -> skip writing audit")
-  void givenPostRequestWithoutPrincipal() throws Exception {
+  @DisplayName("should skip writing audit when unauthenticated POST request")
+  void shouldSkipWritingAuditWhenUnauthenticatedPostRequest() throws Exception {
     // Given
     when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(Set.of());
     when(uidGenerator.nextUid()).thenReturn(UID_1);
@@ -69,8 +69,8 @@ class RequestAuditAspectTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given authenticated POST request -> create audit record")
-  void givenPostRequestWithPrincipal() throws Exception {
+  @DisplayName("should create audit record when authenticated POST request")
+  void shouldCreateAuditRecordWhenAuthenticatedPostRequest() throws Exception {
     // Given
     AuthTokenRequest request = new AuthTokenRequest("missing-refresh-token");
 
@@ -90,8 +90,8 @@ class RequestAuditAspectTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given audit creation throws exception -> swallow and skip audit")
-  void givenAuditCreationThrowsException() throws Exception {
+  @DisplayName("should swallow and skip audit when audit creation throws exception")
+  void shouldSwallowAndSkipAuditWhenAuditCreationThrowsException() throws Exception {
     // Given
     AuthTokenRequest request = new AuthTokenRequest("missing-refresh-token");
     when(uidGenerator.nextUid()).thenThrow(new RuntimeException("test"));

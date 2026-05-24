@@ -1,0 +1,27 @@
+---
+description: Frontend test structure and style (admin-starter)
+globs: frontend/src/**/*.test.{ts,tsx}
+alwaysApply: false
+---
+
+# Frontend tests (required)
+
+Full spec: [ai-kit/FRONTEND_TEST_CONVENTIONS.md](../../ai-kit/FRONTEND_TEST_CONVENTIONS.md)
+
+## Hard rules
+
+1. Read the doc above before editing `frontend/src/**/*.test.tsx` or `frontend/src/**/*.test.ts`.
+2. **Behavior-first**: organize by user-observable outcome/condition. Do not require nested groups per source method, export, or page action.
+3. **Test only behavior-rich units** (components with interaction/state, pages/forms, hooks/helpers with branches). Skip branchless pass-through code.
+4. Keep one outer `describe` per component/function/module under test.
+5. Keep tests flat by default; allow one nested `describe` only when it removes duplicated setup or scopes one behavior slice.
+6. At most one nested `describe` level (no deep nesting).
+7. Use concise BDD wording in descriptions. Prefer `it("should ... when ...")` and `describe("when ...")`.
+8. Keep description strings lowercase at the start (for example: `should return BAD_TOKEN when token is malformed`).
+9. **Validation coverage**: use `it.each` for invalid input/request cases and include boundary cases (empty/null, below min, above max, pattern mismatch when applicable).
+10. **Ordering**: validation checks first, then permission/auth checks, then side-effect assertions.
+11. One happy-path success per behavior under test; move extra branch permutations to component/hook tests.
+12. Shared setup belongs in `frontend/tests/setup.ts`; avoid per-file duplicate global setup/cleanup.
+13. Prefer Testing Library behavior queries (`getByRole`, `findByRole`, `waitFor`) over implementation details.
+14. Reset or restore mocks in `afterEach` when shared mocks are mutated.
+15. Run from `frontend/`: `npm run test`.

@@ -37,34 +37,34 @@ class PathVariableMapDeserializerTest {
   }
 
   @Nested
-  @DisplayName("deserialize")
-  class Deserialize {
+  @DisplayName("when deserializing path variable map")
+  class WhenDeserializingPathVariableMap {
 
     @Test
-    @DisplayName("Given semicolon-separated pairs -> should parse map")
-    void givenSemicolonSeparatedPairsShouldParseMap() throws Exception {
+    @DisplayName("should should parse map when semicolon-separated pairs")
+    void shouldShouldParseMapWhenSemicolonSeparatedPairs() throws Exception {
       Map<String, String> result = deserialize("\"a,1;b,2\"");
 
       assertThat(result).containsEntry("a", "1").containsEntry("b", "2");
     }
 
     @Test
-    @DisplayName("Given json object string -> should parse map directly")
-    void givenJsonObjectStringShouldParseMapDirectly() throws Exception {
+    @DisplayName("should should parse map directly when json object string")
+    void shouldShouldParseMapDirectlyWhenJsonObjectString() throws Exception {
       Map<String, String> result = deserialize("\"{\\\"x\\\":\\\"y\\\"}\"");
 
       assertThat(result).containsEntry("x", "y");
     }
 
     @Test
-    @DisplayName("Given malformed pair -> should throw")
-    void givenMalformedPairShouldThrow() {
+    @DisplayName("should should throw when malformed pair")
+    void shouldShouldThrowWhenMalformedPair() {
       assertThatThrownBy(() -> deserialize("\"a,1;b\"")).hasMessageContaining("Bad value");
     }
 
     @Test
-    @DisplayName("Given missing target type -> should throw illegal state")
-    void givenMissingTargetTypeShouldThrowIllegalState() {
+    @DisplayName("should should throw illegal state when missing target type")
+    void shouldShouldThrowIllegalStateWhenMissingTargetType() {
       PathVariableMapDeserializer<String, String> untyped = new PathVariableMapDeserializer<>();
 
       assertThatThrownBy(() -> deserialize(untyped, "\"a,1\""))
@@ -73,30 +73,30 @@ class PathVariableMapDeserializerTest {
     }
 
     @Test
-    @DisplayName("Given single pair -> should parse map")
-    void givenSinglePairShouldParseMap() throws Exception {
+    @DisplayName("should should parse map when single pair")
+    void shouldShouldParseMapWhenSinglePair() throws Exception {
       Map<String, String> result = deserialize("\"a,1\"");
 
       assertThat(result).containsEntry("a", "1");
     }
 
     @Test
-    @DisplayName("Given quoted key and value -> should preserve quotes in output")
-    void givenQuotedKeyAndValueShouldPreserveQuotesInOutput() throws Exception {
+    @DisplayName("should should preserve quotes in output when quoted key and value")
+    void shouldShouldPreserveQuotesInOutputWhenQuotedKeyAndValue() throws Exception {
       Map<String, String> result = deserialize("\"\\\"k\\\",\\\"v\\\"\"");
 
       assertThat(result).containsEntry("k", "v");
     }
 
     @Test
-    @DisplayName("Given pair with extra comma -> should throw")
-    void givenPairWithExtraCommaShouldThrow() {
+    @DisplayName("should should throw when pair with extra comma")
+    void shouldShouldThrowWhenPairWithExtraComma() {
       assertThatThrownBy(() -> deserialize("\"a,1,2\"")).hasMessageContaining("Bad value");
     }
 
     @Test
-    @DisplayName("Given raw pair -> should build object json")
-    void givenRawPairShouldBuildObjectJson() throws Exception {
+    @DisplayName("should should build object json when raw pair")
+    void shouldShouldBuildObjectJsonWhenRawPair() throws Exception {
       ObjectReader reader = jsonMapper.readerFor(mapType);
       try (JsonParser parser = reader.createParser("\"x\"")) {
         parser.nextToken();
@@ -106,8 +106,8 @@ class PathVariableMapDeserializerTest {
     }
 
     @Test
-    @DisplayName("Given json object literal -> should return unchanged")
-    void givenJsonObjectLiteralShouldReturnUnchanged() throws Exception {
+    @DisplayName("should should return unchanged when json object literal")
+    void shouldShouldReturnUnchangedWhenJsonObjectLiteral() throws Exception {
       ObjectReader reader = jsonMapper.readerFor(mapType);
       try (JsonParser parser = reader.createParser("\"x\"")) {
         parser.nextToken();
@@ -118,8 +118,8 @@ class PathVariableMapDeserializerTest {
     }
 
     @Test
-    @DisplayName("Given partial object prefix -> should build object json")
-    void givenPartialObjectPrefixShouldBuildObjectJson() throws Exception {
+    @DisplayName("should should build object json when partial object prefix")
+    void shouldShouldBuildObjectJsonWhenPartialObjectPrefix() throws Exception {
       ObjectReader reader = jsonMapper.readerFor(mapType);
       try (JsonParser parser = reader.createParser("\"x\"")) {
         parser.nextToken();
@@ -130,12 +130,12 @@ class PathVariableMapDeserializerTest {
   }
 
   @Nested
-  @DisplayName("createContextual")
-  class CreateContextual {
+  @DisplayName("when creating contextual deserializer")
+  class WhenCreatingContextualDeserializer {
 
     @Test
-    @DisplayName("Given bean property -> should return typed deserializer")
-    void givenBeanPropertyShouldReturnTypedDeserializer() throws Exception {
+    @DisplayName("should should return typed deserializer when bean property")
+    void shouldShouldReturnTypedDeserializerWhenBeanProperty() throws Exception {
       BeanProperty property = mock(BeanProperty.class);
       when(property.getType()).thenReturn(mapType);
       PathVariableMapDeserializer<String, String> untyped = new PathVariableMapDeserializer<>();
@@ -151,8 +151,8 @@ class PathVariableMapDeserializerTest {
     }
 
     @Test
-    @DisplayName("Given null property -> should return same instance")
-    void givenNullPropertyShouldReturnSameInstance() {
+    @DisplayName("should should return same instance when null property")
+    void shouldShouldReturnSameInstanceWhenNullProperty() {
       PathVariableMapDeserializer<String, String> typed =
           new PathVariableMapDeserializer<>(mapType);
 

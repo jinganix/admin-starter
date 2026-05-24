@@ -35,8 +35,8 @@ class PermissionUploadHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given new permissions -> save permissions")
-  void givenNewPermissions() {
+  @DisplayName("should save permissions when new permissions")
+  void shouldSavePermissionsWhenNewPermissions() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_3);
     PermissionEditPb pb = editPb().setCode("upload-code").setName("upload-name");
@@ -53,8 +53,8 @@ class PermissionUploadHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing code -> skip duplicate permission")
-  void givenExistingCode() {
+  @DisplayName("should skip duplicate permission when existing code")
+  void shouldSkipDuplicatePermissionWhenExistingCode() {
     // Given
     testHelper.insertEntities(permission(UID_3));
     PermissionUploadRequest request = new PermissionUploadRequest(List.of(editPb()));

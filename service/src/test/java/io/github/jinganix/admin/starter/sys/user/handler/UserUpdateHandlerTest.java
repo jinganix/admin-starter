@@ -53,8 +53,8 @@ class UserUpdateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found -> throw ApiException")
-  void givenUserNotFound() {
+  @DisplayName("should throw ApiException when user not found")
+  void shouldThrowApiExceptionWhenUserNotFound() {
     // Given
     UserUpdateRequest request =
         (UserUpdateRequest)
@@ -73,8 +73,8 @@ class UserUpdateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given target user not found -> keep other user roles unchanged")
-  void givenTargetUserNotFound() {
+  @DisplayName("should keep other user roles unchanged when target user not found")
+  void shouldKeepOtherUserRolesUnchangedWhenTargetUserNotFound() {
     // Given
     testHelper.insertEntities(
         user(UID_2).setNickname("foo"),
@@ -107,8 +107,8 @@ class UserUpdateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given admin user -> throw ApiException")
-  void givenAdminUser() {
+  @DisplayName("should throw ApiException when admin user")
+  void shouldThrowApiExceptionWhenAdminUser() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
     adminService.initAdminData(MILLIS);
@@ -137,8 +137,8 @@ class UserUpdateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing user -> return updated user")
-  void givenExistingUser() {
+  @DisplayName("should return updated user when existing user")
+  void shouldReturnUpdatedUserWhenExistingUser() {
     // Given
     testHelper.insertEntities(
         user(UID_1).setNickname("foo"),

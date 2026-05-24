@@ -32,8 +32,8 @@ class GlobalExceptionHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given invalid request body -> response BAD_REQUEST")
-  void givenValidationError() throws Exception {
+  @DisplayName("should return BAD_REQUEST when invalid request body")
+  void shouldReturnBadRequestWhenInvalidRequestBody() throws Exception {
     // Given / When / Then
     testHelper
         .request(new AuthLoginRequest(null, null))
@@ -42,8 +42,8 @@ class GlobalExceptionHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given invalid refresh token -> response BAD_REFRESH_TOKEN")
-  void givenApiException() throws Exception {
+  @DisplayName("should return BAD_REFRESH_TOKEN when invalid refresh token")
+  void shouldReturnBadRefreshTokenWhenInvalidRefreshToken() throws Exception {
     // Given / When / Then
     testHelper
         .request(new AuthTokenRequest("missing-refresh-token"))
@@ -52,8 +52,8 @@ class GlobalExceptionHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given missing permission -> response ACCESS_DENIED")
-  void givenAccessDeniedException() throws Exception {
+  @DisplayName("should return ACCESS_DENIED when missing permission")
+  void shouldReturnAccessDeniedWhenMissingPermission() throws Exception {
     // Given / When / Then
     testHelper
         .request(UID_1, new OverviewListRequest())
@@ -62,8 +62,8 @@ class GlobalExceptionHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given wrong password -> response BAD_CREDENTIAL")
-  void givenAuthenticationException() throws Exception {
+  @DisplayName("should return BAD_CREDENTIAL when wrong password")
+  void shouldReturnBadCredentialWhenWrongPassword() throws Exception {
     // Given
     testHelper.insertEntities(
         user(UID_1),
@@ -79,8 +79,8 @@ class GlobalExceptionHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given inactive user -> response USER_IS_INACTIVE")
-  void givenDisabledException() throws Exception {
+  @DisplayName("should return USER_IS_INACTIVE when inactive user")
+  void shouldReturnUserIsInactiveWhenInactiveUser() throws Exception {
     // Given
     testHelper.insertEntities(
         user(UID_1).setStatus(UserStatus.INACTIVE),
@@ -96,8 +96,8 @@ class GlobalExceptionHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unexpected runtime exception -> response ERROR")
-  void givenUnknownException() throws Exception {
+  @DisplayName("should return ERROR when unexpected runtime exception")
+  void shouldReturnErrorWhenUnexpectedRuntimeException() throws Exception {
     // Given
     doThrow(new RuntimeException("boom")).when(credentialsAuthenticator).authenticate(any());
 

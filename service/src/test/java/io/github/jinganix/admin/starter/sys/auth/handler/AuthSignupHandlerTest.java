@@ -48,8 +48,8 @@ class AuthSignupHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing username -> throw ApiException USERNAME_EXISTS")
-  void givenExistingUsername() {
+  @DisplayName("should throw ApiException USERNAME_EXISTS when existing username")
+  void shouldThrowApiExceptionUsernameExistsWhenExistingUsername() {
     // Given
     String username = "existing-user";
     testHelper.insertEntities(user(UID_1), userIdentity(UID_1).setUsername(username));
@@ -64,8 +64,8 @@ class AuthSignupHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given uid generation failed -> throw runtime exception")
-  void givenUidGenerationFailed() {
+  @DisplayName("should throw runtime exception when uid generation failed")
+  void shouldThrowRuntimeExceptionWhenUidGenerationFailed() {
     // Given
     String username = "new-user";
     String password = "password123";
@@ -78,8 +78,8 @@ class AuthSignupHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given new username -> create user and return token response")
-  void givenNewUsername() {
+  @DisplayName("should create user and return token response when new username")
+  void shouldCreateUserAndReturnTokenResponseWhenNewUsername() {
     // Given
     String username = "new-user";
     String password = "password123";
@@ -106,8 +106,8 @@ class AuthSignupHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given register-as-admin disabled -> signup user without admin role")
-  void givenRegisterAsAdminDisabled() {
+  @DisplayName("should signup user without admin role when register-as-admin disabled")
+  void shouldSignupUserWithoutAdminRoleWhenRegisterAsAdminDisabled() {
     // Given
     String username = "plain-user";
     String password = "password123";

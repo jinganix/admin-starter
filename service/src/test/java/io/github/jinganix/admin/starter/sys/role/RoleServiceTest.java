@@ -35,8 +35,8 @@ class RoleServiceTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given group permission ids -> ignore group type when create role permissions")
-  void givenGroupPermissionIds() {
+  @DisplayName("should ignore group type when create role permissions when group permission ids")
+  void shouldIgnoreGroupTypeWhenCreateRolePermissionsWhenGroupPermissionIds() {
     // Given
     long roleId = UID_4;
     testHelper.insertEntities(

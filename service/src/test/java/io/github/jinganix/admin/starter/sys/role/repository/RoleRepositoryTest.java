@@ -10,7 +10,6 @@ import io.github.jinganix.admin.starter.tests.SpringBootIntegrationTests;
 import io.github.jinganix.admin.starter.tests.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,31 +27,25 @@ class RoleRepositoryTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("filter")
-  class Filter {
+  @Test
+  @DisplayName("should return matching roles when name filter only")
+  void shouldReturnMatchingRolesWhenNameFilterOnly() {
+    testHelper.insertEntities(role(UID_1).setName("Alpha Role"), role(UID_2).setName("Beta Role"));
 
-    @Test
-    @DisplayName("Given name filter only -> returns matching roles")
-    void givenNameFilterOnly() {
-      testHelper.insertEntities(
-          role(UID_1).setName("Alpha Role"), role(UID_2).setName("Beta Role"));
+    Page<?> page = roleRepository.filter(PageRequest.of(0, 20), "Alpha", null);
 
-      Page<?> page = roleRepository.filter(PageRequest.of(0, 20), "Alpha", null);
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    assertThat(page.getContent()).hasSize(1);
+  }
 
-      assertThat(page.getTotalElements()).isEqualTo(1);
-      assertThat(page.getContent()).hasSize(1);
-    }
+  @Test
+  @DisplayName("should return matching roles when status filter only")
+  void shouldReturnMatchingRolesWhenStatusFilterOnly() {
+    testHelper.insertEntities(
+        role(UID_1).setStatus(RoleStatus.ACTIVE), role(UID_2).setStatus(RoleStatus.INACTIVE));
 
-    @Test
-    @DisplayName("Given status filter only -> returns matching roles")
-    void givenStatusFilterOnly() {
-      testHelper.insertEntities(
-          role(UID_1).setStatus(RoleStatus.ACTIVE), role(UID_2).setStatus(RoleStatus.INACTIVE));
+    Page<?> page = roleRepository.filter(PageRequest.of(0, 20), null, RoleStatus.INACTIVE);
 
-      Page<?> page = roleRepository.filter(PageRequest.of(0, 20), null, RoleStatus.INACTIVE);
-
-      assertThat(page.getTotalElements()).isEqualTo(1);
-    }
+    assertThat(page.getTotalElements()).isEqualTo(1);
   }
 }

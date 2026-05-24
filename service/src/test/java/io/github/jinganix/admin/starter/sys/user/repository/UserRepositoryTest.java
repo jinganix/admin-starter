@@ -16,7 +16,6 @@ import io.github.jinganix.admin.starter.tests.TestHelper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,176 +35,141 @@ class UserRepositoryTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("findByIdWithUsername")
-  class FindByIdWithUsername {
+  @Test
+  @DisplayName("should return mapped username when user and identity")
+  void shouldReturnMappedUsernameWhenUserAndIdentity() {
+    // Given
+    testHelper.insertEntities(user(UID_1), userIdentity(UID_1));
 
-    @Test
-    @DisplayName("Given user and identity -> return mapped username")
-    void givenUserAndIdentity() {
-      // Given
-      testHelper.insertEntities(user(UID_1), userIdentity(UID_1));
+    // When
+    UserWithUsername entity = userRepository.findByIdWithUsername(UID_1);
 
-      // When
-      UserWithUsername entity = userRepository.findByIdWithUsername(UID_1);
-
-      // Then
-      assertThat(entity).isNotNull();
-      assertThat(entity.getUser().getId()).isEqualTo(UID_1);
-      assertThat(entity.getUsername()).isEqualTo("user-10001");
-    }
+    // Then
+    assertThat(entity).isNotNull();
+    assertThat(entity.getUser().getId()).isEqualTo(UID_1);
+    assertThat(entity.getUsername()).isEqualTo("user-10001");
   }
 
-  @Nested
-  @DisplayName("filter")
-  class Filter {
+  @Test
+  @DisplayName("should return all users when null filters")
+  void shouldReturnAllUsersWhenNullFilters() {
+    // Given
+    testHelper.insertEntities(
+        user(UID_1).setStatus(UserStatus.ACTIVE),
+        user(UID_2).setStatus(UserStatus.INACTIVE),
+        userIdentity(UID_1),
+        userIdentity(UID_2));
+    Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "id"));
 
-    @Test
-    @DisplayName("Given null filters -> return all users")
-    void givenNullFilters() {
-      // Given
-      testHelper.insertEntities(
-          user(UID_1).setStatus(UserStatus.ACTIVE),
-          user(UID_2).setStatus(UserStatus.INACTIVE),
-          userIdentity(UID_1),
-          userIdentity(UID_2));
-      Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "id"));
+    // When
+    Page<UserWithUsername> page = userRepository.filter(pageable, null, null, null);
 
-      // When
-      Page<UserWithUsername> page = userRepository.filter(pageable, null, null, null);
-
-      // Then
-      assertThat(page.getTotalElements()).isEqualTo(2);
-      assertThat(page.getContent())
-          .extracting(x -> x.getUser().getId())
-          .containsExactly(UID_1, UID_2);
-    }
-
-    @Test
-    @DisplayName("Given all filters -> return matching user only")
-    void givenAllFilters() {
-      // Given
-      testHelper.insertEntities(
-          user(UID_1).setStatus(UserStatus.ACTIVE),
-          user(UID_2).setStatus(UserStatus.INACTIVE),
-          userIdentity(UID_1),
-          userIdentity(UID_2));
-      Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "id"));
-
-      // When
-      Page<UserWithUsername> page =
-          userRepository.filter(pageable, UID_2, "10002", UserStatus.INACTIVE);
-
-      // Then
-      assertThat(page.getTotalElements()).isEqualTo(1);
-      assertThat(page.getContent())
-          .singleElement()
-          .satisfies(
-              entity -> {
-                assertThat(entity.getUser().getId()).isEqualTo(UID_2);
-                assertThat(entity.getUsername()).isEqualTo("user-10002");
-              });
-    }
+    // Then
+    assertThat(page.getTotalElements()).isEqualTo(2);
+    assertThat(page.getContent())
+        .extracting(x -> x.getUser().getId())
+        .containsExactly(UID_1, UID_2);
   }
 
-  @Nested
-  @DisplayName("findById")
-  class FindById {
+  @Test
+  @DisplayName("should return matching user only when all filters")
+  void shouldReturnMatchingUserOnlyWhenAllFilters() {
+    // Given
+    testHelper.insertEntities(
+        user(UID_1).setStatus(UserStatus.ACTIVE),
+        user(UID_2).setStatus(UserStatus.INACTIVE),
+        userIdentity(UID_1),
+        userIdentity(UID_2));
+    Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "id"));
 
-    @Test
-    @DisplayName("Given user exists -> return entity")
-    void givenUserExists() {
-      // Given
-      testHelper.insertEntities(user(UID_1).setNickname("u1"));
+    // When
+    Page<UserWithUsername> page =
+        userRepository.filter(pageable, UID_2, "10002", UserStatus.INACTIVE);
 
-      // When
-      User found = userRepository.findById(UID_1);
-
-      // Then
-      assertThat(found).isNotNull();
-      assertThat(found.getId()).isEqualTo(UID_1);
-      assertThat(found.getNickname()).isEqualTo("u1");
-    }
+    // Then
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    assertThat(page.getContent())
+        .singleElement()
+        .satisfies(
+            entity -> {
+              assertThat(entity.getUser().getId()).isEqualTo(UID_2);
+              assertThat(entity.getUsername()).isEqualTo("user-10002");
+            });
   }
 
-  @Nested
-  @DisplayName("findAllById")
-  class FindAllById {
+  @Test
+  @DisplayName("should return entity when user exists")
+  void shouldReturnEntityWhenUserExists() {
+    // Given
+    testHelper.insertEntities(user(UID_1).setNickname("u1"));
 
-    @Test
-    @DisplayName("Given ids list -> return matching users")
-    void givenIdsList() {
-      // Given
-      testHelper.insertEntities(user(UID_1), user(UID_2), user(UID_3));
+    // When
+    User found = userRepository.findById(UID_1);
 
-      // When
-      List<User> users = userRepository.findAllById(List.of(UID_1, UID_3));
-
-      // Then
-      assertThat(users).extracting(User::getId).containsExactlyInAnyOrder(UID_1, UID_3);
-    }
+    // Then
+    assertThat(found).isNotNull();
+    assertThat(found.getId()).isEqualTo(UID_1);
+    assertThat(found.getNickname()).isEqualTo("u1");
   }
 
-  @Nested
-  @DisplayName("deleteAllById")
-  class DeleteAllById {
+  @Test
+  @DisplayName("should return matching users when ids list")
+  void shouldReturnMatchingUsersWhenIdsList() {
+    // Given
+    testHelper.insertEntities(user(UID_1), user(UID_2), user(UID_3));
 
-    @Test
-    @DisplayName("Given ids to delete -> remove only matching users")
-    void givenIdsToDelete() {
-      // Given
-      testHelper.insertEntities(user(UID_1), user(UID_2), user(UID_3));
+    // When
+    List<User> users = userRepository.findAllById(List.of(UID_1, UID_3));
 
-      // When
-      userRepository.deleteAllById(List.of(UID_1, UID_3));
-      List<User> remaining = userRepository.findAllById(List.of(UID_1, UID_2, UID_3));
-
-      // Then
-      assertThat(remaining).extracting(User::getId).containsExactly(UID_2);
-    }
+    // Then
+    assertThat(users).extracting(User::getId).containsExactlyInAnyOrder(UID_1, UID_3);
   }
 
-  @Nested
-  @DisplayName("insert")
-  class Insert {
+  @Test
+  @DisplayName("should remove only matching users when ids to delete")
+  void shouldRemoveOnlyMatchingUsersWhenIdsToDelete() {
+    // Given
+    testHelper.insertEntities(user(UID_1), user(UID_2), user(UID_3));
 
-    @Test
-    @DisplayName("Given user entity -> persist values")
-    void givenUserEntity() {
-      // Given
-      User entity = userEntity(UID_1, "before", UserStatus.ACTIVE);
+    // When
+    userRepository.deleteAllById(List.of(UID_1, UID_3));
+    List<User> remaining = userRepository.findAllById(List.of(UID_1, UID_2, UID_3));
 
-      // When
-      userRepository.insert(entity);
-      User inserted = userRepository.findById(UID_1);
-
-      // Then
-      assertThat(inserted).isNotNull();
-      assertThat(inserted.getNickname()).isEqualTo("before");
-      assertThat(inserted.getStatus()).isEqualTo(UserStatus.ACTIVE);
-    }
+    // Then
+    assertThat(remaining).extracting(User::getId).containsExactly(UID_2);
   }
 
-  @Nested
-  @DisplayName("update")
-  class Update {
+  @Test
+  @DisplayName("should persist values when user entity")
+  void shouldPersistValuesWhenUserEntity() {
+    // Given
+    User entity = userEntity(UID_1, "before", UserStatus.ACTIVE);
 
-    @Test
-    @DisplayName("Given existing user -> update mutable fields")
-    void givenExistingUser() {
-      // Given
-      userRepository.insert(userEntity(UID_1, "before", UserStatus.ACTIVE));
-      User changed = userEntity(UID_1, "after", UserStatus.INACTIVE);
+    // When
+    userRepository.insert(entity);
+    User inserted = userRepository.findById(UID_1);
 
-      // When
-      userRepository.update(changed);
-      User updated = userRepository.findById(UID_1);
+    // Then
+    assertThat(inserted).isNotNull();
+    assertThat(inserted.getNickname()).isEqualTo("before");
+    assertThat(inserted.getStatus()).isEqualTo(UserStatus.ACTIVE);
+  }
 
-      // Then
-      assertThat(updated).isNotNull();
-      assertThat(updated.getNickname()).isEqualTo("after");
-      assertThat(updated.getStatus()).isEqualTo(UserStatus.INACTIVE);
-    }
+  @Test
+  @DisplayName("should update mutable fields when existing user")
+  void shouldUpdateMutableFieldsWhenExistingUser() {
+    // Given
+    userRepository.insert(userEntity(UID_1, "before", UserStatus.ACTIVE));
+    User changed = userEntity(UID_1, "after", UserStatus.INACTIVE);
+
+    // When
+    userRepository.update(changed);
+    User updated = userRepository.findById(UID_1);
+
+    // Then
+    assertThat(updated).isNotNull();
+    assertThat(updated.getNickname()).isEqualTo("after");
+    assertThat(updated.getStatus()).isEqualTo(UserStatus.INACTIVE);
   }
 
   private User userEntity(long id, String nickname, UserStatus status) {

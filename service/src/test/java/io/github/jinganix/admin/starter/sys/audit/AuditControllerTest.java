@@ -20,9 +20,7 @@ import io.github.jinganix.admin.starter.tests.SpringBootIntegrationTests;
 import io.github.jinganix.admin.starter.tests.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("AuditController")
@@ -35,55 +33,49 @@ class AuditControllerTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("list")
-  @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class List {
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing SYS_AUDIT_LIST permission")
+  void shouldReturnAccessDeniedWhenMissingSysAuditListPermission() throws Exception {
+    // Given / When / Then
+    testHelper
+        .request(UID_1, new AuditListRequest(new PageablePb(), null, null, null, null))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-    @Test
-    @DisplayName("Given missing SYS_AUDIT_LIST permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given / When / Then
-      testHelper
-          .request(UID_1, new AuditListRequest(new PageablePb(), null, null, null, null))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+  @Test
+  @DisplayName("should return audit list when SYS_AUDIT_LIST permission")
+  void shouldReturnAuditListWhenSysAuditListPermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_AUDIT_LIST));
+    testHelper.insertEntities(
+        user(UID_1),
+        userIdentity(UID_1),
+        new Audit()
+            .setId(UID_3)
+            .setUserId(UID_1)
+            .setMethod("POST")
+            .setPath("/adm/sys/user/create")
+            .setParams("{}")
+            .setCreatedAt(MIN_TIMESTAMP)
+            .setUpdatedAt(MIN_TIMESTAMP));
+    AuditPb auditPb =
+        new AuditPb()
+            .setId(UID_3)
+            .setUserId(UID_1)
+            .setUsername("user-10001")
+            .setMethod("POST")
+            .setPath("/adm/sys/user/create")
+            .setCreatedAt(MIN_TIMESTAMP);
 
-    @Test
-    @DisplayName("Given SYS_AUDIT_LIST permission -> response audit list")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.SYS_AUDIT_LIST));
-      testHelper.insertEntities(
-          user(UID_1),
-          userIdentity(UID_1),
-          new Audit()
-              .setId(UID_3)
-              .setUserId(UID_1)
-              .setMethod("POST")
-              .setPath("/adm/sys/user/create")
-              .setParams("{}")
-              .setCreatedAt(MIN_TIMESTAMP)
-              .setUpdatedAt(MIN_TIMESTAMP));
-      AuditPb auditPb =
-          new AuditPb()
-              .setId(UID_3)
-              .setUserId(UID_1)
-              .setUsername("user-10001")
-              .setMethod("POST")
-              .setPath("/adm/sys/user/create")
-              .setCreatedAt(MIN_TIMESTAMP);
-
-      // When / Then
-      testHelper
-          .request(UID_1, new AuditListRequest(new PageablePb(), null, null, null, null))
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(
-                  testHelper
-                      .paging(1, new AuditListResponse(java.util.List.of(auditPb)))
-                      .setPages(1)));
-    }
+    // When / Then
+    testHelper
+        .request(UID_1, new AuditListRequest(new PageablePb(), null, null, null, null))
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(
+                testHelper
+                    .paging(1, new AuditListResponse(java.util.List.of(auditPb)))
+                    .setPages(1)));
   }
 }

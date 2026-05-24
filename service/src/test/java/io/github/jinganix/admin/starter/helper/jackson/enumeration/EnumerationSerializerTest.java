@@ -31,8 +31,8 @@ class EnumerationSerializerTest {
   }
 
   @Test
-  @DisplayName("Given integer enumeration -> should write number")
-  void givenIntegerEnumerationShouldWriteNumber() throws Exception {
+  @DisplayName("should should write number when integer enumeration")
+  void shouldShouldWriteNumberWhenIntegerEnumeration() throws Exception {
     // When
     serializer.serialize(PermissionType.GROUP, jsonGenerator, serializationContext);
 
@@ -41,8 +41,8 @@ class EnumerationSerializerTest {
   }
 
   @Test
-  @DisplayName("Given string enumeration -> should write string")
-  void givenStringEnumerationShouldWriteString() throws Exception {
+  @DisplayName("should should write string when string enumeration")
+  void shouldShouldWriteStringWhenStringEnumeration() throws Exception {
     // When
     serializer.serialize(Authority.ADM, jsonGenerator, serializationContext);
 
@@ -51,8 +51,8 @@ class EnumerationSerializerTest {
   }
 
   @Test
-  @DisplayName("Given unsupported value type -> should throw illegal argument")
-  void givenUnsupportedValueTypeShouldThrowIllegalArgument() {
+  @DisplayName("should should throw illegal argument when unsupported value type")
+  void shouldShouldThrowIllegalArgumentWhenUnsupportedValueType() {
     // Given
     @SuppressWarnings("unchecked")
     Enumeration<?> unsupported = mock(Enumeration.class);

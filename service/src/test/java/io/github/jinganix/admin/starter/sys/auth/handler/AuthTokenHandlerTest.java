@@ -37,8 +37,8 @@ class AuthTokenHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given empty refresh token -> return empty response")
-  void givenEmptyRefreshToken() {
+  @DisplayName("should return empty response when empty refresh token")
+  void shouldReturnEmptyResponseWhenEmptyRefreshToken() {
     // Given
     String refreshToken = "existing-refresh-token";
     adminUserTokenRepository.insert(userToken(UID_1).setRefreshToken(refreshToken));
@@ -52,8 +52,8 @@ class AuthTokenHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given unknown refresh token -> throw ApiException BAD_REFRESH_TOKEN")
-  void givenUnknownRefreshToken() {
+  @DisplayName("should throw ApiException BAD_REFRESH_TOKEN when unknown refresh token")
+  void shouldThrowApiExceptionBadRefreshTokenWhenUnknownRefreshToken() {
     // Given
     AuthTokenRequest request = new AuthTokenRequest("unknown-refresh-token");
 
@@ -67,8 +67,8 @@ class AuthTokenHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given token for deleted user -> throw ApiException USER_NOT_FOUND")
-  void givenTokenForDeletedUser() {
+  @DisplayName("should throw ApiException USER_NOT_FOUND when token for deleted user")
+  void shouldThrowApiExceptionUserNotFoundWhenTokenForDeletedUser() {
     // Given
     String refreshToken = "refresh-token-for-deleted-user";
     adminUserTokenRepository.insert(userToken(UID_1).setRefreshToken(refreshToken));
@@ -82,8 +82,8 @@ class AuthTokenHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given valid refresh token -> return new token response")
-  void givenValidRefreshToken() {
+  @DisplayName("should return new token response when valid refresh token")
+  void shouldReturnNewTokenResponseWhenValidRefreshToken() {
     // Given
     String oldRefreshToken = "old-refresh-token";
     String newRefreshToken = "new-refresh-token";

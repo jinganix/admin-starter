@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,40 +32,35 @@ class AuthenticationManagerImplTest {
         new AuthenticationManagerImpl(List.of(firstAuthenticator, secondAuthenticator));
   }
 
-  @Nested
-  @DisplayName("authenticate")
-  class Authenticate {
+  @Test
+  @DisplayName("should should delegate authentication when supported authenticator")
+  void shouldShouldDelegateAuthenticationWhenSupportedAuthenticator() {
+    // Given
+    Authentication token = mock(Authentication.class);
+    Authentication authenticated = mock(Authentication.class);
+    when(firstAuthenticator.support(token)).thenReturn(false);
+    when(secondAuthenticator.support(token)).thenReturn(true);
+    when(secondAuthenticator.authenticate(token)).thenReturn(authenticated);
 
-    @Test
-    @DisplayName("Given supported authenticator -> should delegate authentication")
-    void givenSupportedAuthenticatorShouldDelegateAuthentication() {
-      // Given
-      Authentication token = mock(Authentication.class);
-      Authentication authenticated = mock(Authentication.class);
-      when(firstAuthenticator.support(token)).thenReturn(false);
-      when(secondAuthenticator.support(token)).thenReturn(true);
-      when(secondAuthenticator.authenticate(token)).thenReturn(authenticated);
+    // When
+    Authentication result = authenticationManager.authenticate(token);
 
-      // When
-      Authentication result = authenticationManager.authenticate(token);
+    // Then
+    assertThat(result).isSameAs(authenticated);
+    verify(secondAuthenticator).authenticate(token);
+  }
 
-      // Then
-      assertThat(result).isSameAs(authenticated);
-      verify(secondAuthenticator).authenticate(token);
-    }
+  @Test
+  @DisplayName("should should throw when no matching authenticator")
+  void shouldShouldThrowWhenNoMatchingAuthenticator() {
+    // Given
+    Authentication token = mock(Authentication.class);
+    when(firstAuthenticator.support(token)).thenReturn(false);
+    when(secondAuthenticator.support(token)).thenReturn(false);
 
-    @Test
-    @DisplayName("Given no matching authenticator -> should throw")
-    void givenNoMatchingAuthenticatorShouldThrow() {
-      // Given
-      Authentication token = mock(Authentication.class);
-      when(firstAuthenticator.support(token)).thenReturn(false);
-      when(secondAuthenticator.support(token)).thenReturn(false);
-
-      // When / Then
-      assertThatThrownBy(() -> authenticationManager.authenticate(token))
-          .isInstanceOf(RuntimeException.class)
-          .hasMessageContaining("Unhandled authentication");
-    }
+    // When / Then
+    assertThatThrownBy(() -> authenticationManager.authenticate(token))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Unhandled authentication");
   }
 }

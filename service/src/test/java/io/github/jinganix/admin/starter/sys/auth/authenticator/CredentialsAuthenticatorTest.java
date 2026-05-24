@@ -37,45 +37,39 @@ class CredentialsAuthenticatorTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("support")
-  class Support {
+  @Test
+  @DisplayName("should return true when username/password authentication token")
+  void shouldReturnTrueWhenUsernamepasswordAuthenticationToken() {
+    // Given
+    Authentication authentication = new UsernamePasswordAuthenticationToken("username", "password");
 
-    @Test
-    @DisplayName("Given username/password authentication token -> return true")
-    void givenUsernamePasswordAuthenticationToken() {
-      // Given
-      Authentication authentication =
-          new UsernamePasswordAuthenticationToken("username", "password");
+    // When
+    boolean result = credentialsAuthenticator.support(authentication);
 
-      // When
-      boolean result = credentialsAuthenticator.support(authentication);
+    // Then
+    assertThat(result).isTrue();
+  }
 
-      // Then
-      assertThat(result).isTrue();
-    }
+  @Test
+  @DisplayName("should return false when non-username/password authentication token")
+  void shouldReturnFalseWhenNonUsernamepasswordAuthenticationToken() {
+    // Given
+    Authentication authentication = new TestingAuthenticationToken("username", "password");
 
-    @Test
-    @DisplayName("Given non-username/password authentication token -> return false")
-    void givenNonUsernamePasswordAuthenticationToken() {
-      // Given
-      Authentication authentication = new TestingAuthenticationToken("username", "password");
+    // When
+    boolean result = credentialsAuthenticator.support(authentication);
 
-      // When
-      boolean result = credentialsAuthenticator.support(authentication);
-
-      // Then
-      assertThat(result).isFalse();
-    }
+    // Then
+    assertThat(result).isFalse();
   }
 
   @Nested
-  @DisplayName("authenticate")
-  class Authenticate {
+  @DisplayName("when authenticating credentials")
+  class WhenAuthenticatingCredentials {
 
     @Test
-    @DisplayName("Given missing identity -> throw UsernameNotFoundException")
-    void givenMissingIdentity() {
+    @DisplayName("should throw UsernameNotFoundException when missing identity")
+    void shouldThrowUsernameNotFoundExceptionWhenMissingIdentity() {
       // Given
       String username = "missing-user";
       Authentication authentication =
@@ -88,8 +82,8 @@ class CredentialsAuthenticatorTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given invalid password -> throw BadCredentialsException")
-    void givenInvalidPassword() {
+    @DisplayName("should throw BadCredentialsException when invalid password")
+    void shouldThrowBadCredentialsExceptionWhenInvalidPassword() {
       // Given
       String username = "user-10001";
       testHelper.insertEntities(
@@ -107,8 +101,8 @@ class CredentialsAuthenticatorTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given missing user -> throw UsernameNotFoundException")
-    void givenMissingUser() {
+    @DisplayName("should throw UsernameNotFoundException when missing user")
+    void shouldThrowUsernameNotFoundExceptionWhenMissingUser() {
       // Given
       String username = "identity-only-user";
       testHelper.insertEntities(
@@ -125,8 +119,8 @@ class CredentialsAuthenticatorTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given inactive user -> throw DisabledException")
-    void givenInactiveUser() {
+    @DisplayName("should throw DisabledException when inactive user")
+    void shouldThrowDisabledExceptionWhenInactiveUser() {
       // Given
       String username = "inactive-user";
       testHelper.insertEntities(
@@ -144,8 +138,8 @@ class CredentialsAuthenticatorTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given active user and valid credentials -> return auth user token")
-    void givenActiveUserAndValidCredentials() {
+    @DisplayName("should return auth user token when active user and valid credentials")
+    void shouldReturnAuthUserTokenWhenActiveUserAndValidCredentials() {
       // Given
       String username = "active-user";
       testHelper.insertEntities(

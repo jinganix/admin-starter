@@ -1,4 +1,4 @@
-import { act, render, RenderResult } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ConfirmDialogProps } from "@/components/dialog/confirm.action.dialog.tsx";
@@ -15,69 +15,65 @@ vi.mock("@/components/dialog/confirm.action.dialog.tsx", () => ({
 describe("<DeleteButton />", () => {
   const onDelete = vi.fn();
 
-  const setup = (): RenderResult => render(<DeleteButton onDelete={onDelete} />);
-
-  beforeEach(() => (deleteDialogProps = null));
+  beforeEach(() => {
+    deleteDialogProps = null;
+    onDelete.mockResolvedValue(true);
+  });
 
   afterEach(() => vi.resetAllMocks());
 
-  describe("when rendered", () => {
-    it("should match snapshot", () => {
-      const { container } = setup();
+  it("should render delete button when mounted", () => {
+    render(<DeleteButton onDelete={onDelete} />);
 
-      expect(container).toMatchSnapshot();
-    });
+    expect(screen.getByRole("button")).toBeInTheDocument();
   });
 
-  describe("when clicked", () => {
-    it("should open dialog", async () => {
-      const element = setup();
+  it("should open dialog when user clicks delete", async () => {
+    render(<DeleteButton onDelete={onDelete} />);
 
-      await act(() => userEvent.click(element.getByRole("button")));
-      expect(deleteDialogProps?.open).toBeTruthy();
-    });
+    await userEvent.click(screen.getByRole("button"));
+
+    expect(deleteDialogProps?.open).toBeTruthy();
   });
 
-  describe("when dialog continue", () => {
-    it("should call onDelete", async () => {
-      const element = setup();
+  it("should call onDelete when user confirms dialog", async () => {
+    render(<DeleteButton onDelete={onDelete} />);
 
-      await act(() => userEvent.click(element.getByRole("button")));
-      await act(() => deleteDialogProps?.onContinue());
-      expect(onDelete).toHaveBeenCalled();
-    });
+    await userEvent.click(screen.getByRole("button"));
+    await deleteDialogProps?.onContinue();
 
-    describe("when onDelete return true", () => {
-      it("should close dialog", async () => {
-        onDelete.mockImplementationOnce(() => true);
-        const element = setup();
-
-        await act(() => userEvent.click(element.getByRole("button")));
-        await act(() => deleteDialogProps?.onContinue());
-        expect(deleteDialogProps?.open).toBeFalsy();
-      });
-    });
-
-    describe("when onDelete return false", () => {
-      it("should not close dialog", async () => {
-        onDelete.mockImplementationOnce(() => false);
-        const element = setup();
-
-        await act(() => userEvent.click(element.getByRole("button")));
-        await act(() => deleteDialogProps?.onContinue());
-        expect(deleteDialogProps?.open).toBeTruthy();
-      });
-    });
+    expect(onDelete).toHaveBeenCalledOnce();
   });
 
-  describe("when dialog cancel", () => {
-    it("should not call onDelete", async () => {
-      const element = setup();
+  it("should close dialog when onDelete succeeds", async () => {
+    onDelete.mockResolvedValueOnce(true);
+    render(<DeleteButton onDelete={onDelete} />);
 
-      await act(() => userEvent.click(element.getByRole("button")));
-      await act(() => deleteDialogProps?.onCancel());
-      expect(onDelete).not.toHaveBeenCalled();
-      expect(deleteDialogProps?.open).toBeFalsy();
+    await userEvent.click(screen.getByRole("button"));
+    await act(async () => {
+      await deleteDialogProps?.onContinue();
     });
+
+    expect(deleteDialogProps?.open).toBeFalsy();
+  });
+
+  it("should keep dialog open when onDelete fails", async () => {
+    onDelete.mockResolvedValueOnce(false);
+    render(<DeleteButton onDelete={onDelete} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    await deleteDialogProps?.onContinue();
+
+    expect(deleteDialogProps?.open).toBeTruthy();
+  });
+
+  it("should close dialog without calling onDelete when user cancels", async () => {
+    render(<DeleteButton onDelete={onDelete} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    await act(() => deleteDialogProps?.onCancel());
+
+    expect(onDelete).not.toHaveBeenCalled();
+    expect(deleteDialogProps?.open).toBeFalsy();
   });
 });

@@ -43,8 +43,8 @@ class RoleListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given no roles -> return empty list")
-  void givenNoRoles() {
+  @DisplayName("should return empty list when no roles")
+  void shouldReturnEmptyListWhenNoRoles() {
     // Given
     Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id"));
     RoleListRequest request =
@@ -60,8 +60,8 @@ class RoleListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given roles order by id desc -> return UID_2 first")
-  void givenRolesOrderByIdDesc() {
+  @DisplayName("should return UID_2 first when roles order by id desc")
+  void shouldReturnUid2FirstWhenRolesOrderByIdDesc() {
     // Given
     testHelper.insertEntities(role(UID_1), role(UID_2), rolePermission(UID_3, UID_1, UID_3));
     Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id"));
