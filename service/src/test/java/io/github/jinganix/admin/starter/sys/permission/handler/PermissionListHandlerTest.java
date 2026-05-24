@@ -45,8 +45,8 @@ class PermissionListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given code filter with no match -> return empty list")
-  void givenCodeFilterWithNoMatch() {
+  @DisplayName("should return empty list when code filter with no match")
+  void shouldReturnEmptyListWhenCodeFilterWithNoMatch() {
     // Given
     testHelper.insertEntities(
         permission(UID_1).setName("perm-one").setCode("/test/one"),
@@ -66,8 +66,8 @@ class PermissionListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given permissions order by id asc -> return UID_1 first")
-  void givenOrderByIdAsc() {
+  @DisplayName("should return UID_1 first when permissions order by id asc")
+  void shouldReturnUid1FirstWhenPermissionsOrderByIdAsc() {
     // Given
     testHelper.insertEntities(
         permission(UID_1).setName("perm-one").setCode("/test/one").setDescription(""),

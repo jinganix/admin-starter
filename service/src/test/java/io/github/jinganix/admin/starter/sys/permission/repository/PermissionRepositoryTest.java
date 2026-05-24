@@ -31,12 +31,12 @@ class PermissionRepositoryTest extends SpringBootIntegrationTests {
   }
 
   @Nested
-  @DisplayName("filter")
-  class Filter {
+  @DisplayName("when filtering permissions")
+  class WhenFilteringPermissions {
 
     @Test
-    @DisplayName("Given code filter only -> returns matching permissions")
-    void givenCodeFilterOnly() {
+    @DisplayName("should return matching permissions when code filter only")
+    void shouldReturnMatchingPermissionsWhenCodeFilterOnly() {
       testHelper.insertEntities(
           permission(UID_1).setCode("alpha-code-1"), permission(UID_2).setCode("beta-code-2"));
 
@@ -46,8 +46,8 @@ class PermissionRepositoryTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given status filter only -> returns matching permissions")
-    void givenStatusFilterOnly() {
+    @DisplayName("should return matching permissions when status filter only")
+    void shouldReturnMatchingPermissionsWhenStatusFilterOnly() {
       testHelper.insertEntities(
           permission(UID_1).setCode("status-alpha").setStatus(PermissionStatus.ACTIVE),
           permission(UID_2).setCode("status-beta").setStatus(PermissionStatus.INACTIVE));
@@ -59,8 +59,8 @@ class PermissionRepositoryTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given type filter only -> returns matching permissions")
-    void givenTypeFilterOnly() {
+    @DisplayName("should return matching permissions when type filter only")
+    void shouldReturnMatchingPermissionsWhenTypeFilterOnly() {
       testHelper.insertEntities(
           permission(UID_1).setCode("type-api").setType(PermissionType.API),
           permission(UID_2).setCode("type-ui").setType(PermissionType.UI));

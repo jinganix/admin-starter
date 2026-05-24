@@ -20,8 +20,8 @@ class AuthorityTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given valid authority value -> fromValue returns enum")
-  void givenValidValue() {
+  @DisplayName("should fromValue returns enum when valid authority value")
+  void shouldFromValueReturnsEnumWhenValidAuthorityValue() {
     // Given
     String value = Authority.SYS_USER_LIST.getValue();
 
@@ -33,8 +33,8 @@ class AuthorityTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given invalid authority value -> fromValue returns null")
-  void givenInvalidValue() {
+  @DisplayName("should fromValue returns null when invalid authority value")
+  void shouldFromValueReturnsNullWhenInvalidAuthorityValue() {
     // Given
     String value = "/sys/unknown/path";
 
@@ -46,8 +46,8 @@ class AuthorityTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given enum constant -> getValue returns configured path")
-  void givenEnumConstant() {
+  @DisplayName("should getValue returns configured path when enum constant")
+  void shouldGetValueReturnsConfiguredPathWhenEnumConstant() {
     // Given / When
     String value = Authority.ADM_OVERVIEW_LIST.getValue();
 

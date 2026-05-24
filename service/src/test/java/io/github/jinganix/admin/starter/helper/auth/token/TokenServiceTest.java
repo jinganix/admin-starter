@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,76 +28,66 @@ class TokenServiceTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("generate")
-  class Generate {
+  @Test
+  @DisplayName("should return token that can be decoded when user id")
+  void shouldReturnTokenThatCanBeDecodedWhenUserId() {
+    // Given
+    Long userId = UID_1;
 
-    @Test
-    @DisplayName("Given user id -> return token that can be decoded")
-    void givenUserId() {
-      // Given
-      Long userId = UID_1;
+    // When
+    String token = tokenService.generate(userId);
+    AuthUserToken authUserToken = tokenService.decode(token);
 
-      // When
-      String token = tokenService.generate(userId);
-      AuthUserToken authUserToken = tokenService.decode(token);
-
-      // Then
-      assertThat(authUserToken).usingRecursiveComparison().isEqualTo(new AuthUserToken(userId));
-    }
+    // Then
+    assertThat(authUserToken).usingRecursiveComparison().isEqualTo(new AuthUserToken(userId));
   }
 
-  @Nested
-  @DisplayName("decode")
-  class Decode {
+  @Test
+  @DisplayName("should return null when token with invalid signature")
+  void shouldReturnNullWhenTokenWithInvalidSignature() {
+    // Given
+    String text =
+        JWT.create()
+            .withClaim("uid", UID_1)
+            .withIssuedAt(new Date(MILLIS))
+            .withIssuer(ISSUER)
+            .sign(Algorithm.HMAC256("wrong-secret"));
 
-    @Test
-    @DisplayName("Given token with invalid signature -> return null")
-    void givenInvalidSignature() {
-      // Given
-      String text =
-          JWT.create()
-              .withClaim("uid", UID_1)
-              .withIssuedAt(new Date(MILLIS))
-              .withIssuer(ISSUER)
-              .sign(Algorithm.HMAC256("wrong-secret"));
+    // When
+    AuthUserToken authUserToken = tokenService.decode(text);
 
-      // When
-      AuthUserToken authUserToken = tokenService.decode(text);
+    // Then
+    assertThat(authUserToken).isNull();
+  }
 
-      // Then
-      assertThat(authUserToken).isNull();
-    }
+  @Test
+  @DisplayName("should return null when expired token")
+  void shouldReturnNullWhenExpiredToken() {
+    // Given
+    String text =
+        JWT.create()
+            .withClaim("uid", UID_1)
+            .withIssuedAt(new Date(MILLIS - TimeUnit.DAYS.toMillis(8)))
+            .withIssuer(ISSUER)
+            .sign(Algorithm.HMAC256(JWT_SECRET));
 
-    @Test
-    @DisplayName("Given expired token -> return null")
-    void givenExpiredToken() {
-      // Given
-      String text =
-          JWT.create()
-              .withClaim("uid", UID_1)
-              .withIssuedAt(new Date(MILLIS - TimeUnit.DAYS.toMillis(8)))
-              .withIssuer(ISSUER)
-              .sign(Algorithm.HMAC256(JWT_SECRET));
+    // When
+    AuthUserToken authUserToken = tokenService.decode(text);
 
-      // When
-      AuthUserToken authUserToken = tokenService.decode(text);
+    // Then
+    assertThat(authUserToken).isNull();
+  }
 
-      // Then
-      assertThat(authUserToken).isNull();
-    }
+  @Test
+  @DisplayName("should return null when null token text")
+  void shouldReturnNullWhenNullTokenText() {
+    // Given
+    String text = null;
 
-    @Test
-    @DisplayName("Given null token text -> return null")
-    void givenNullTokenText() {
-      // Given
-      String text = null;
+    // When
+    AuthUserToken authUserToken = tokenService.decode(text);
 
-      // When
-      AuthUserToken authUserToken = tokenService.decode(text);
-
-      // Then
-      assertThat(authUserToken).isNull();
-    }
+    // Then
+    assertThat(authUserToken).isNull();
   }
 }

@@ -44,12 +44,12 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
   }
 
   @Nested
-  @DisplayName("getApiAuthorities")
-  class GetApiAuthorities {
+  @DisplayName("when resolving api authorities")
+  class WhenResolvingApiAuthorities {
 
     @Test
-    @DisplayName("Given admin user -> return built-in admin api authorities")
-    void givenAdminUser() {
+    @DisplayName("should return built-in admin api authorities when admin user")
+    void shouldReturnBuiltInAdminApiAuthoritiesWhenAdminUser() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -65,8 +65,8 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
 
     @Test
     @DisplayName(
-        "Given active regular role with api permission -> return authed user and api authority")
-    void givenActiveRegularRoleWithApiPermission() {
+        "should return authed user and api authority when active regular role with api permission")
+    void shouldReturnAuthedUserAndApiAuthorityWhenActiveRegularRoleWithApiPermission() {
       // Given
       testHelper.insertEntities(
           user(UID_1),
@@ -96,8 +96,8 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given no roles -> return authed user authority only")
-    void givenNoRoles() {
+    @DisplayName("should return authed user authority only when no roles")
+    void shouldReturnAuthedUserAuthorityOnlyWhenNoRoles() {
       // Given
       testHelper.insertEntities(user(UID_1));
 
@@ -110,8 +110,8 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
 
     @Test
     @DisplayName(
-        "Given inactive role with api permission -> ignore role and permission authorities")
-    void givenInactiveRoleWithApiPermission() {
+        "should ignore role and permission authorities when inactive role with api permission")
+    void shouldIgnoreRoleAndPermissionAuthoritiesWhenInactiveRoleWithApiPermission() {
       // Given
       testHelper.insertEntities(
           user(UID_1),
@@ -138,12 +138,12 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
   }
 
   @Nested
-  @DisplayName("getUiAuthorities")
-  class GetUiAuthorities {
+  @DisplayName("when resolving ui authorities")
+  class WhenResolvingUiAuthorities {
 
     @Test
-    @DisplayName("Given admin user -> return admin role and all ui permissions")
-    void givenAdminUser() {
+    @DisplayName("should return admin role and all ui permissions when admin user")
+    void shouldReturnAdminRoleAndAllUiPermissionsWhenAdminUser() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -173,8 +173,8 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
 
     @Test
     @DisplayName(
-        "Given active regular role with ui permissions -> return role authority and active ui permissions")
-    void givenActiveRegularRoleWithUiPermissions() {
+        "should return role authority and active ui permissions when active regular role with ui permissions")
+    void shouldReturnRoleAuthorityAndActiveUiPermissionsWhenActiveRegularRoleWithUiPermissions() {
       // Given
       testHelper.insertEntities(
           user(UID_1),
@@ -207,8 +207,8 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given no roles -> return authed user authority only")
-    void givenNoRoles() {
+    @DisplayName("should return authed user authority only when no roles")
+    void shouldReturnAuthedUserAuthorityOnlyWhenNoRoles() {
       // Given
       testHelper.insertEntities(user(UID_1));
 
@@ -220,8 +220,8 @@ class RoleAuthorityServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given inactive role with ui permission -> ignore role and ui permissions")
-    void givenInactiveRoleWithUiPermission() {
+    @DisplayName("should ignore role and ui permissions when inactive role with ui permission")
+    void shouldIgnoreRoleAndUiPermissionsWhenInactiveRoleWithUiPermission() {
       // Given
       testHelper.insertEntities(
           user(UID_1),

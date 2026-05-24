@@ -13,8 +13,8 @@ import org.springframework.boot.SpringApplication;
 class AdminStarterApplicationTest extends SpringBootIntegrationTests {
 
   @Test
-  @DisplayName("Given startup -> application runs")
-  void givenStartup() {
+  @DisplayName("should application runs when startup")
+  void shouldApplicationRunsWhenStartup() {
     // Given
     try (MockedStatic<SpringApplication> application = mockStatic(SpringApplication.class)) {
       // When / Then

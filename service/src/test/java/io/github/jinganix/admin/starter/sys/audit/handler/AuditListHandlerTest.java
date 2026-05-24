@@ -57,8 +57,8 @@ class AuditListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given no audits -> return empty list")
-  void givenNoAudits() {
+  @DisplayName("should return empty list when no audits")
+  void shouldReturnEmptyListWhenNoAudits() {
     // Given
     Pageable pageable = PageRequest.of(0, 20);
     AuditListRequest request = new AuditListRequest(new PageablePb(), null, null, null, null);
@@ -73,8 +73,8 @@ class AuditListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given audits -> return all records")
-  void givenAudits() {
+  @DisplayName("should return all records when audits")
+  void shouldReturnAllRecordsWhenAudits() {
     // Given
     testHelper.insertEntities(
         user(UID_1),
@@ -99,8 +99,8 @@ class AuditListHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given userId filter -> return matching records")
-  void givenUserIdFilter() {
+  @DisplayName("should return matching records when userId filter")
+  void shouldReturnMatchingRecordsWhenUserIdFilter() {
     // Given
     testHelper.insertEntities(
         user(UID_1),

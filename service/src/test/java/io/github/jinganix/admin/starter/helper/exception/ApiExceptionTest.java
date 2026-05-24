@@ -12,12 +12,12 @@ import org.springframework.http.HttpStatus;
 class ApiExceptionTest {
 
   @Nested
-  @DisplayName("of")
-  class Of {
+  @DisplayName("when creating exception")
+  class WhenCreatingException {
 
     @Test
-    @DisplayName("Given error code and message -> returns bad request exception")
-    void givenErrorCodeAndMessage() {
+    @DisplayName("should return bad request exception when error code and message")
+    void shouldReturnBadRequestExceptionWhenErrorCodeAndMessage() {
       ApiException exception = ApiException.of(ErrorCode.BAD_REQUEST, "invalid");
 
       assertThat(exception.getCode()).isEqualTo(ErrorCode.BAD_REQUEST);
@@ -26,8 +26,8 @@ class ApiExceptionTest {
     }
 
     @Test
-    @DisplayName("Given status and error code -> returns exception")
-    void givenStatusAndErrorCode() {
+    @DisplayName("should return exception when status and error code")
+    void shouldReturnExceptionWhenStatusAndErrorCode() {
       ApiException exception = ApiException.of(HttpStatus.NOT_FOUND, ErrorCode.USER_NOT_FOUND);
 
       assertThat(exception.getCode()).isEqualTo(ErrorCode.USER_NOT_FOUND);
@@ -35,8 +35,8 @@ class ApiExceptionTest {
     }
 
     @Test
-    @DisplayName("Given error code only -> returns bad request exception")
-    void givenErrorCodeOnly() {
+    @DisplayName("should return bad request exception when error code only")
+    void shouldReturnBadRequestExceptionWhenErrorCodeOnly() {
       ApiException exception = ApiException.of(ErrorCode.ERROR);
 
       assertThat(exception.getCode()).isEqualTo(ErrorCode.ERROR);
@@ -44,16 +44,11 @@ class ApiExceptionTest {
     }
   }
 
-  @Nested
-  @DisplayName("fillInStackTrace")
-  class FillInStackTrace {
+  @Test
+  @DisplayName("should return same instance without stack trace when exception")
+  void shouldReturnSameInstanceWithoutStackTraceWhenException() {
+    ApiException exception = ApiException.of(ErrorCode.ERROR);
 
-    @Test
-    @DisplayName("Given exception -> returns same instance without stack trace")
-    void givenException() {
-      ApiException exception = ApiException.of(ErrorCode.ERROR);
-
-      assertThat(exception.fillInStackTrace()).isSameAs(exception);
-    }
+    assertThat(exception.fillInStackTrace()).isSameAs(exception);
   }
 }

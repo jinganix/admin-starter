@@ -44,8 +44,8 @@ class DataInitializerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given empty database -> initialize creates baseline data")
-  void givenEmptyDatabase() {
+  @DisplayName("should initialize creates baseline data when empty database")
+  void shouldInitializeCreatesBaselineDataWhenEmptyDatabase() {
     // Given
     DataInitializer dataInitializer =
         new DataInitializer(
@@ -66,8 +66,8 @@ class DataInitializerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given initialized database -> initialize keeps data idempotent")
-  void givenInitializedDatabase() {
+  @DisplayName("should initialize keeps data idempotent when initialized database")
+  void shouldInitializeKeepsDataIdempotentWhenInitializedDatabase() {
     // Given
     DataInitializer dataInitializer =
         new DataInitializer(

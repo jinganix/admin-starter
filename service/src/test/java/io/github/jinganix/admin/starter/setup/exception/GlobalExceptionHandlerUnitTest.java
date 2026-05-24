@@ -9,7 +9,6 @@ import io.github.jinganix.admin.starter.proto.service.enumeration.ErrorCode;
 import io.github.jinganix.admin.starter.proto.service.error.ErrorMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -33,133 +32,102 @@ class GlobalExceptionHandlerUnitTest {
     handler = new GlobalExceptionHandler();
   }
 
-  @Nested
-  @DisplayName("handleValidationException")
-  class HandleValidationException {
+  @Test
+  @DisplayName("should return bad request with field map when field errors")
+  void shouldReturnBadRequestWithFieldMapWhenFieldErrors() {
+    BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "target");
+    bindingResult.addError(new FieldError("target", "username", "must not be blank"));
+    MethodArgumentNotValidException exception =
+        new MethodArgumentNotValidException(null, bindingResult);
 
-    @Test
-    @DisplayName("Given field errors -> returns bad request with field map")
-    void givenFieldErrors() {
-      BeanPropertyBindingResult bindingResult =
-          new BeanPropertyBindingResult(new Object(), "target");
-      bindingResult.addError(new FieldError("target", "username", "must not be blank"));
-      MethodArgumentNotValidException exception =
-          new MethodArgumentNotValidException(null, bindingResult);
+    ResponseEntity<?> response = handler.handleValidationException(exception);
 
-      ResponseEntity<?> response = handler.handleValidationException(exception);
-
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-      assertThat(response.getBody()).isInstanceOf(ErrorMessage.class);
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.BAD_REQUEST);
-      assertThat(body.getErrors()).containsEntry("username", "must not be blank");
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody()).isInstanceOf(ErrorMessage.class);
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.BAD_REQUEST);
+    assertThat(body.getErrors()).containsEntry("username", "must not be blank");
   }
 
-  @Nested
-  @DisplayName("handleBindException")
-  class HandleBindException {
+  @Test
+  @DisplayName("should return bad request when web exchange bind exception")
+  void shouldReturnBadRequestWhenWebExchangeBindException() {
+    WebExchangeBindException exception = mock(WebExchangeBindException.class);
+    when(exception.getMessage()).thenReturn("bind failed");
 
-    @Test
-    @DisplayName("Given web exchange bind exception -> returns bad request")
-    void givenWebExchangeBindException() {
-      WebExchangeBindException exception = mock(WebExchangeBindException.class);
-      when(exception.getMessage()).thenReturn("bind failed");
+    ResponseEntity<?> response = handler.handleBindException(exception);
 
-      ResponseEntity<?> response = handler.handleBindException(exception);
-
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.BAD_REQUEST);
-      assertThat(body.getMessage()).isEqualTo("bind failed");
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.BAD_REQUEST);
+    assertThat(body.getMessage()).isEqualTo("bind failed");
   }
 
-  @Nested
-  @DisplayName("handleApiException")
-  class HandleApiException {
+  @Test
+  @DisplayName("should return configured status and code when api exception")
+  void shouldReturnConfiguredStatusAndCodeWhenApiException() {
+    ApiException exception = ApiException.of(HttpStatus.NOT_FOUND, ErrorCode.USER_NOT_FOUND);
 
-    @Test
-    @DisplayName("Given api exception -> returns configured status and code")
-    void givenApiException() {
-      ApiException exception = ApiException.of(HttpStatus.NOT_FOUND, ErrorCode.USER_NOT_FOUND);
+    ResponseEntity<?> response = handler.handleApiException(exception);
 
-      ResponseEntity<?> response = handler.handleApiException(exception);
-
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.USER_NOT_FOUND);
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.USER_NOT_FOUND);
   }
 
-  @Nested
-  @DisplayName("handleAuthenticationException")
-  class HandleAuthenticationException {
+  @Test
+  @DisplayName("should return user inactive when disabled exception")
+  void shouldReturnUserInactiveWhenDisabledException() {
+    ResponseEntity<?> response =
+        handler.handleAuthenticationException(new DisabledException("inactive"));
 
-    @Test
-    @DisplayName("Given disabled exception -> returns user inactive")
-    void givenDisabledException() {
-      ResponseEntity<?> response =
-          handler.handleAuthenticationException(new DisabledException("inactive"));
-
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.USER_IS_INACTIVE);
-    }
-
-    @Test
-    @DisplayName("Given bad credentials -> returns bad credential")
-    void givenBadCredentials() {
-      ResponseEntity<?> response =
-          handler.handleAuthenticationException(new BadCredentialsException("bad"));
-
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.BAD_CREDENTIAL);
-    }
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.USER_IS_INACTIVE);
   }
 
-  @Nested
-  @DisplayName("handleAccessDeniedException")
-  class HandleAccessDeniedException {
+  @Test
+  @DisplayName("should return bad credential when bad credentials")
+  void shouldReturnBadCredentialWhenBadCredentials() {
+    ResponseEntity<?> response =
+        handler.handleAuthenticationException(new BadCredentialsException("bad"));
 
-    @Test
-    @DisplayName("Given access denied -> returns forbidden")
-    void givenAccessDenied() {
-      ResponseEntity<?> response =
-          handler.handleAccessDeniedException(new AccessDeniedException("denied"));
-
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.ACCESS_DENIED);
-    }
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.BAD_CREDENTIAL);
   }
 
-  @Nested
-  @DisplayName("handleGenericException")
-  class HandleGenericException {
+  @Test
+  @DisplayName("should return forbidden when access denied")
+  void shouldReturnForbiddenWhenAccessDenied() {
+    ResponseEntity<?> response =
+        handler.handleAccessDeniedException(new AccessDeniedException("denied"));
 
-    @Test
-    @DisplayName("Given error response exception -> returns configured status")
-    void givenErrorResponseException() {
-      Exception errorResponse = new ErrorResponseException("conflict", HttpStatus.CONFLICT);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.ACCESS_DENIED);
+  }
 
-      ResponseEntity<?> response = handler.handleGenericException(errorResponse);
+  @Test
+  @DisplayName("should return configured status when error response exception")
+  void shouldReturnConfiguredStatusWhenErrorResponseException() {
+    Exception errorResponse = new ErrorResponseException("conflict", HttpStatus.CONFLICT);
 
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.ERROR);
-      assertThat(body.getMessage()).isEqualTo("conflict");
-    }
+    ResponseEntity<?> response = handler.handleGenericException(errorResponse);
 
-    @Test
-    @DisplayName("Given generic exception -> returns internal server error")
-    void givenGenericException() {
-      ResponseEntity<?> response = handler.handleGenericException(new RuntimeException("boom"));
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.ERROR);
+    assertThat(body.getMessage()).isEqualTo("conflict");
+  }
 
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-      ErrorMessage body = (ErrorMessage) response.getBody();
-      assertThat(body.getCode()).isEqualTo(ErrorCode.ERROR);
-      assertThat(body.getMessage()).isEqualTo("boom");
-    }
+  @Test
+  @DisplayName("should return internal server error when generic exception")
+  void shouldReturnInternalServerErrorWhenGenericException() {
+    ResponseEntity<?> response = handler.handleGenericException(new RuntimeException("boom"));
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    ErrorMessage body = (ErrorMessage) response.getBody();
+    assertThat(body.getCode()).isEqualTo(ErrorCode.ERROR);
+    assertThat(body.getMessage()).isEqualTo("boom");
   }
 
   private static final class ErrorResponseException extends Exception implements ErrorResponse {

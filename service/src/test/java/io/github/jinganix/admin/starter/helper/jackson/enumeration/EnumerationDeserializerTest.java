@@ -42,53 +42,48 @@ class EnumerationDeserializerTest {
   }
 
   @Nested
-  @DisplayName("deserialize")
-  class Deserialize {
+  @DisplayName("when deserializing enumeration")
+  class WhenDeserializingEnumeration {
 
     @Test
-    @DisplayName("Given string value -> should resolve enumeration")
-    void givenStringValueShouldResolveEnumeration() throws Exception {
+    @DisplayName("should should resolve enumeration when string value")
+    void shouldShouldResolveEnumerationWhenStringValue() throws Exception {
       PermissionType result = deserialize("\"1\"");
 
       assertThat(result).isEqualTo(PermissionType.API);
     }
 
     @Test
-    @DisplayName("Given integer value -> should resolve enumeration")
-    void givenIntegerValueShouldResolveEnumeration() throws Exception {
+    @DisplayName("should should resolve enumeration when integer value")
+    void shouldShouldResolveEnumerationWhenIntegerValue() throws Exception {
       PermissionType result = deserialize("2");
 
       assertThat(result).isEqualTo(PermissionType.UI);
     }
 
     @Test
-    @DisplayName("Given unknown value -> should return null")
-    void givenUnknownValueShouldReturnNull() throws Exception {
+    @DisplayName("should should return null when unknown value")
+    void shouldShouldReturnNullWhenUnknownValue() throws Exception {
       PermissionType result = deserialize("\"unknown\"");
 
       assertThat(result).isNull();
     }
 
     @Test
-    @DisplayName("Given unsupported token -> should return null")
-    void givenUnsupportedTokenShouldReturnNull() throws Exception {
+    @DisplayName("should should return null when unsupported token")
+    void shouldShouldReturnNullWhenUnsupportedToken() throws Exception {
       PermissionType result = deserialize("true");
 
       assertThat(result).isNull();
     }
   }
 
-  @Nested
-  @DisplayName("createContextual")
-  class CreateContextual {
+  @Test
+  @DisplayName("should should resolve enumeration from enum map when contextual type")
+  void shouldShouldResolveEnumerationFromEnumMapWhenContextualType() throws Exception {
+    PermissionType result = deserialize("0");
 
-    @Test
-    @DisplayName("Given contextual type -> should resolve enumeration from enum map")
-    void givenContextualTypeShouldResolveEnumerationFromEnumMap() throws Exception {
-      PermissionType result = deserialize("0");
-
-      assertThat(result).isEqualTo(PermissionType.GROUP);
-    }
+    assertThat(result).isEqualTo(PermissionType.GROUP);
   }
 
   private PermissionType deserialize(String json) throws Exception {

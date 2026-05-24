@@ -40,41 +40,36 @@ class AuditRepositoryTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("insert")
-  class Insert {
+  @Test
+  @DisplayName("should persist and query by filters when audit entity")
+  void shouldPersistAndQueryByFiltersWhenAuditEntity() {
+    // Given
+    testHelper.insertEntities(user(UID_1), userIdentity(UID_1));
+    Audit audit = audit(UID_1, UID_1, "GET", "/adm/inserted");
 
-    @Test
-    @DisplayName("Given audit entity -> persist and query by filters")
-    void givenAuditEntity() {
-      // Given
-      testHelper.insertEntities(user(UID_1), userIdentity(UID_1));
-      Audit audit = audit(UID_1, UID_1, "GET", "/adm/inserted");
+    // When
+    auditRepository.insert(audit);
+    Page<AuditWithUsername> page =
+        auditRepository.filter(PageRequest.of(0, 20), UID_1, "10001", "GET", "inserted");
 
-      // When
-      auditRepository.insert(audit);
-      Page<AuditWithUsername> page =
-          auditRepository.filter(PageRequest.of(0, 20), UID_1, "10001", "GET", "inserted");
-
-      // Then
-      assertThat(page.getTotalElements()).isEqualTo(1);
-      assertThat(page.getContent())
-          .singleElement()
-          .satisfies(
-              entity -> {
-                assertThat(entity.getAudit().getId()).isEqualTo(UID_1);
-                assertThat(entity.getUsername()).isEqualTo("user-10001");
-              });
-    }
+    // Then
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    assertThat(page.getContent())
+        .singleElement()
+        .satisfies(
+            entity -> {
+              assertThat(entity.getAudit().getId()).isEqualTo(UID_1);
+              assertThat(entity.getUsername()).isEqualTo("user-10001");
+            });
   }
 
   @Nested
-  @DisplayName("filter")
-  class Filter {
+  @DisplayName("when filtering audits")
+  class WhenFilteringAudits {
 
     @Test
-    @DisplayName("Given null filters -> return all records and allow missing identity username")
-    void givenNullFilters() {
+    @DisplayName("should return all records and allow missing identity username when null filters")
+    void shouldReturnAllRecordsAndAllowMissingIdentityUsernameWhenNullFilters() {
       // Given
       testHelper.insertEntities(user(UID_1), user(UID_2), userIdentity(UID_1));
       testHelper.insertEntities(
@@ -94,8 +89,8 @@ class AuditRepositoryTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given all filters -> return matching records only")
-    void givenAllFilters() {
+    @DisplayName("should return matching records only when all filters")
+    void shouldReturnMatchingRecordsOnlyWhenAllFilters() {
       // Given
       testHelper.insertEntities(user(UID_1), user(UID_2), userIdentity(UID_1), userIdentity(UID_2));
       testHelper.insertEntities(
@@ -114,8 +109,8 @@ class AuditRepositoryTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given user without identity -> returns null username")
-    void givenUserWithoutIdentity() {
+    @DisplayName("should return null username when user without identity")
+    void shouldReturnNullUsernameWhenUserWithoutIdentity() {
       testHelper.insertEntities(user(UID_2));
       testHelper.insertEntities(audit(UID_2, UID_2, "POST", "/adm/no-identity"));
 
@@ -130,8 +125,8 @@ class AuditRepositoryTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given deleted identity -> returns audit with null username")
-    void givenDeletedIdentity() {
+    @DisplayName("should return audit with null username when deleted identity")
+    void shouldReturnAuditWithNullUsernameWhenDeletedIdentity() {
       // Given
       testHelper.insertEntities(user(UID_2), userIdentity(UID_2));
       auditRepository.insert(audit(UID_2, UID_2, "POST", "/adm/deleted-user"));

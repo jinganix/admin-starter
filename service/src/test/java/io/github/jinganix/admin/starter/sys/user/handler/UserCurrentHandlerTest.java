@@ -34,8 +34,8 @@ class UserCurrentHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found -> throw ApiException")
-  void givenUserNotFound() {
+  @DisplayName("should throw ApiException when user not found")
+  void shouldThrowApiExceptionWhenUserNotFound() {
     // Given
     Long userId = UID_1;
 
@@ -48,8 +48,8 @@ class UserCurrentHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing user -> return current user response")
-  void givenExistingUser() {
+  @DisplayName("should return current user response when existing user")
+  void shouldReturnCurrentUserResponseWhenExistingUser() {
     // Given
     testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
 

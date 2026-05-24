@@ -32,8 +32,8 @@ class UserRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found -> throw ApiException")
-  void givenUserNotFound() {
+  @DisplayName("should throw ApiException when user not found")
+  void shouldThrowApiExceptionWhenUserNotFound() {
     // Given
     UserRetrieveRequest request = new UserRetrieveRequest().setId(UID_1);
 
@@ -46,8 +46,8 @@ class UserRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing user -> return user details")
-  void givenExistingUser() {
+  @DisplayName("should return user details when existing user")
+  void shouldReturnUserDetailsWhenExistingUser() {
     // Given
     testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
     UserRetrieveRequest request = new UserRetrieveRequest().setId(UID_1);

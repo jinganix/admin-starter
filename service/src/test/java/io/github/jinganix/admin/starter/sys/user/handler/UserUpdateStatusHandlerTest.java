@@ -44,8 +44,8 @@ class UserUpdateStatusHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found -> throw ApiException")
-  void givenUserNotFound() {
+  @DisplayName("should throw ApiException when user not found")
+  void shouldThrowApiExceptionWhenUserNotFound() {
     // Given
     UserUpdateStatusRequest request = new UserUpdateStatusRequest(UID_1, UserStatus.INACTIVE);
 
@@ -58,8 +58,8 @@ class UserUpdateStatusHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given admin user -> throw ApiException")
-  void givenAdminUser() {
+  @DisplayName("should throw ApiException when admin user")
+  void shouldThrowApiExceptionWhenAdminUser() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
     adminService.initAdminData(MILLIS);
@@ -75,8 +75,8 @@ class UserUpdateStatusHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing user -> return updated user response")
-  void givenExistingUser() {
+  @DisplayName("should return updated user response when existing user")
+  void shouldReturnUpdatedUserResponseWhenExistingUser() {
     // Given
     testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
     UserUpdateStatusRequest request = new UserUpdateStatusRequest(UID_1, UserStatus.INACTIVE);
@@ -98,8 +98,8 @@ class UserUpdateStatusHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given null status -> fail and keep original status")
-  void givenNullStatus() {
+  @DisplayName("should fail and keep original status when null status")
+  void shouldFailAndKeepOriginalStatusWhenNullStatus() {
     // Given
     testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
     UserUpdateStatusRequest request = new UserUpdateStatusRequest(UID_1, null);

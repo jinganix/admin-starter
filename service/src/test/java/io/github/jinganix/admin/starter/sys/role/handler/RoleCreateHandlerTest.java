@@ -46,8 +46,8 @@ class RoleCreateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given duplicate role code -> throw ApiException")
-  void givenDuplicateRoleCode() {
+  @DisplayName("should throw ApiException when duplicate role code")
+  void shouldThrowApiExceptionWhenDuplicateRoleCode() {
     // Given
     testHelper.insertEntities(role(UID_1).setCode("dup-code"));
     RoleCreateRequest request =
@@ -66,8 +66,8 @@ class RoleCreateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given valid request -> create role")
-  void givenValidRequest() {
+  @DisplayName("should create role when valid request")
+  void shouldCreateRoleWhenValidRequest() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1);
     RoleCreateRequest request =
@@ -97,8 +97,8 @@ class RoleCreateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given group permission id -> create role permissions excludes group permission")
-  void givenGroupPermissionId() {
+  @DisplayName("should create role permissions excludes group permission when group permission id")
+  void shouldCreateRolePermissionsExcludesGroupPermissionWhenGroupPermissionId() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_4);
     testHelper.insertEntities(

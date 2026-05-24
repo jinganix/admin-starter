@@ -12,35 +12,35 @@ class AuthProviderDbConverterTest {
   private final AuthProvider.DbConverter converter = new AuthProvider.DbConverter();
 
   @Nested
-  @DisplayName("from")
-  class From {
+  @DisplayName("when converting to entity attribute")
+  class WhenConvertingToEntityAttribute {
 
     @Test
-    @DisplayName("Given null -> returns null")
-    void givenNull() {
+    @DisplayName("should return null when null")
+    void shouldReturnNullWhenNull() {
       assertThat(converter.from(null)).isNull();
     }
 
     @Test
-    @DisplayName("Given value -> returns enum")
-    void givenValue() {
+    @DisplayName("should return enum when value")
+    void shouldReturnEnumWhenValue() {
       assertThat(converter.from((byte) 0)).isEqualTo(AuthProvider.USERNAME);
     }
   }
 
   @Nested
-  @DisplayName("to")
-  class To {
+  @DisplayName("when converting to database column")
+  class WhenConvertingToDatabaseColumn {
 
     @Test
-    @DisplayName("Given null -> returns null")
-    void givenNull() {
+    @DisplayName("should return null when null")
+    void shouldReturnNullWhenNull() {
       assertThat(converter.to(null)).isNull();
     }
 
     @Test
-    @DisplayName("Given enum -> returns byte")
-    void givenEnum() {
+    @DisplayName("should return byte when enum")
+    void shouldReturnByteWhenEnum() {
       assertThat(converter.to(AuthProvider.USERNAME)).isEqualTo((byte) 0);
     }
   }

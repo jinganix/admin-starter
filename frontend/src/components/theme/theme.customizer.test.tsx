@@ -1,13 +1,20 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { ThemeCustomizer } from "@/components/theme/theme.customizer.tsx";
 
 describe("<ThemeCustomizer />", () => {
-  describe("when rendered", () => {
-    it("should match snapshot", () => {
-      const { container } = render(<ThemeCustomizer />);
+  it("should render theme trigger button when mounted", () => {
+    render(<ThemeCustomizer />);
 
-      expect(container).toMatchSnapshot();
-    });
+    expect(screen.getByRole("button")).toBeInTheDocument();
+  });
+
+  it("should show theme palette when user opens menu", async () => {
+    render(<ThemeCustomizer />);
+
+    await userEvent.click(screen.getByRole("button"));
+
+    expect(screen.getByText("theme.title.")).toBeInTheDocument();
   });
 });

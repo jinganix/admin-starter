@@ -51,8 +51,8 @@ class UserServiceTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given empty role codes when create user -> skip user role relations")
-  void givenEmptyRoleCodesWhenCreateUser() {
+  @DisplayName("should skip user role relations when empty role codes create user")
+  void shouldSkipUserRoleRelationsWhenEmptyRoleCodesCreateUser() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2);
 
@@ -73,8 +73,8 @@ class UserServiceTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given role codes when create user -> create user role relations")
-  void givenRoleCodesWhenCreateUser() {
+  @DisplayName("should create user role relations when role codes create user")
+  void shouldCreateUserRoleRelationsWhenRoleCodesCreateUser() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
     roleRepository.insert(
@@ -125,8 +125,8 @@ class UserServiceTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing identity when change password -> update encoded password")
-  void givenExistingIdentityWhenChangePassword() {
+  @DisplayName("should update encoded password when existing identity change password")
+  void shouldUpdateEncodedPasswordWhenExistingIdentityChangePassword() {
     // Given
     String oldPassword = "old-password";
     String newPassword = "new-password";
@@ -143,8 +143,8 @@ class UserServiceTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found when change password -> throw ApiException")
-  void givenUserNotFoundWhenChangePassword() {
+  @DisplayName("should throw ApiException when user not found change password")
+  void shouldThrowApiExceptionWhenUserNotFoundChangePassword() {
     // Given
     long missingUserId = UID_1;
 

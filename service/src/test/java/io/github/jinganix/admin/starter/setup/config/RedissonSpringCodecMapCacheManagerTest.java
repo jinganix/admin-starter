@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
@@ -34,59 +33,49 @@ class RedissonSpringCodecMapCacheManagerTest {
     }
   }
 
-  @Nested
-  @DisplayName("getMap")
-  class GetMap {
+  @Test
+  @DisplayName("should IllegalArgumentException when missing codec for cache name")
+  void shouldIllegalArgumentExceptionWhenMissingCodecForCacheName() {
+    // Given
+    RedissonClient redisson = mock(RedissonClient.class);
+    ExposedManager manager = new ExposedManager(redisson, Map.of(), Map.of());
 
-    @Test
-    @DisplayName("Given missing codec for cache name -> IllegalArgumentException")
-    void givenMissingCodec() {
-      // Given
-      RedissonClient redisson = mock(RedissonClient.class);
-      ExposedManager manager = new ExposedManager(redisson, Map.of(), Map.of());
-
-      // When / Then
-      assertThatThrownBy(() -> manager.exposeMap("unknown"))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessageContaining("No codec found for name: unknown");
-    }
-
-    @Test
-    @DisplayName("Given registered codec -> returns map with codec")
-    void givenRegisteredCodec() {
-      // Given
-      RedissonClient redisson = mock(RedissonClient.class);
-      Codec codec = mock(Codec.class);
-      @SuppressWarnings("unchecked")
-      RMap<Object, Object> map = (RMap<Object, Object>) mock(RMap.class);
-      when(redisson.getMap("cache-a", codec)).thenReturn(map);
-      ExposedManager manager =
-          new ExposedManager(
-              redisson, Map.of("cache-a", new CacheConfig()), Map.of("cache-a", codec));
-
-      // When
-      RMap<Object, Object> result = manager.exposeMap("cache-a");
-
-      // Then
-      assertThat(result).isSameAs(map);
-    }
+    // When / Then
+    assertThatThrownBy(() -> manager.exposeMap("unknown"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("No codec found for name: unknown");
   }
 
-  @Nested
-  @DisplayName("getMapCache")
-  class GetMapCache {
+  @Test
+  @DisplayName("should return map with codec when registered codec")
+  void shouldReturnMapWithCodecWhenRegisteredCodec() {
+    // Given
+    RedissonClient redisson = mock(RedissonClient.class);
+    Codec codec = mock(Codec.class);
+    @SuppressWarnings("unchecked")
+    RMap<Object, Object> map = (RMap<Object, Object>) mock(RMap.class);
+    when(redisson.getMap("cache-a", codec)).thenReturn(map);
+    ExposedManager manager =
+        new ExposedManager(
+            redisson, Map.of("cache-a", new CacheConfig()), Map.of("cache-a", codec));
 
-    @Test
-    @DisplayName("Given missing codec for cache name -> IllegalArgumentException")
-    void givenMissingCodec() {
-      // Given
-      RedissonClient redisson = mock(RedissonClient.class);
-      ExposedManager manager = new ExposedManager(redisson, Map.of(), Map.of());
+    // When
+    RMap<Object, Object> result = manager.exposeMap("cache-a");
 
-      // When / Then
-      assertThatThrownBy(() -> manager.exposeMapCache("unknown"))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessageContaining("No codec found for name: unknown");
-    }
+    // Then
+    assertThat(result).isSameAs(map);
+  }
+
+  @Test
+  @DisplayName("should IllegalArgumentException when missing codec for map cache name")
+  void shouldIllegalArgumentExceptionWhenMissingCodecForMapCacheName() {
+    // Given
+    RedissonClient redisson = mock(RedissonClient.class);
+    ExposedManager manager = new ExposedManager(redisson, Map.of(), Map.of());
+
+    // When / Then
+    assertThatThrownBy(() -> manager.exposeMapCache("unknown"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("No codec found for name: unknown");
   }
 }

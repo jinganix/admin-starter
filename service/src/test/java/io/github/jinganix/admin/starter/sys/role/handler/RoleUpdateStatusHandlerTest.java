@@ -44,8 +44,8 @@ class RoleUpdateStatusHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given role not found -> throw ApiException")
-  void givenRoleNotFound() {
+  @DisplayName("should throw ApiException when role not found")
+  void shouldThrowApiExceptionWhenRoleNotFound() {
     // Given
     RoleUpdateStatusRequest request = new RoleUpdateStatusRequest(UID_5, RoleStatus.INACTIVE);
 
@@ -58,8 +58,8 @@ class RoleUpdateStatusHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given admin role -> throw ApiException")
-  void givenAdminRole() {
+  @DisplayName("should throw ApiException when admin role")
+  void shouldThrowApiExceptionWhenAdminRole() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
     adminService.initAdminData(MILLIS);
@@ -77,8 +77,8 @@ class RoleUpdateStatusHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing role -> update role status")
-  void givenExistingRole() {
+  @DisplayName("should update role status when existing role")
+  void shouldUpdateRoleStatusWhenExistingRole() {
     // Given
     testHelper.insertEntities(role(UID_4));
     RoleUpdateStatusRequest request = new RoleUpdateStatusRequest(UID_4, RoleStatus.INACTIVE);

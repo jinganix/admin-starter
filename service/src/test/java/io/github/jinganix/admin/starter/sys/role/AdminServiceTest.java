@@ -55,12 +55,12 @@ class AdminServiceTest extends SpringBootIntegrationTests {
   }
 
   @Nested
-  @DisplayName("initAdminData")
-  class InitAdminData {
+  @DisplayName("when initializing admin data")
+  class WhenInitializingAdminData {
 
     @Test
-    @DisplayName("Given missing admin data -> initialize admin role and user")
-    void givenMissingAdminData() {
+    @DisplayName("should initialize admin role and user when missing admin data")
+    void shouldInitializeAdminRoleAndUserWhenMissingAdminData() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
 
@@ -83,8 +83,8 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given admin identity at reset marker -> reset password")
-    void givenAdminIdentityAtResetMarker() {
+    @DisplayName("should reset password when admin identity at reset marker")
+    void shouldResetPasswordWhenAdminIdentityAtResetMarker() {
       // Given
       String oldPassword = "old-password";
       testHelper.insertEntities(
@@ -111,8 +111,8 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given admin identity not at reset marker -> keep password")
-    void givenAdminIdentityNotAtResetMarker() {
+    @DisplayName("should keep password when admin identity not at reset marker")
+    void shouldKeepPasswordWhenAdminIdentityNotAtResetMarker() {
       // Given
       String oldPassword = "old-password";
       testHelper.insertEntities(
@@ -139,8 +139,8 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given existing admin data -> keep existing admin role relation")
-    void givenExistingAdminData() {
+    @DisplayName("should keep existing admin role relation when existing admin data")
+    void shouldKeepExistingAdminRoleRelationWhenExistingAdminData() {
       // Given
       testHelper.insertEntities(
           role(UID_1).setCode(RoleCode.ADMIN.name()).setName(AdminService.ADMIN_ROLE_CODE),
@@ -176,12 +176,12 @@ class AdminServiceTest extends SpringBootIntegrationTests {
   }
 
   @Nested
-  @DisplayName("hasAdminRole")
-  class HasAdminRole {
+  @DisplayName("when checking admin role in role list")
+  class WhenCheckingAdminRoleInRoleList {
 
     @Test
-    @DisplayName("Given role list contains admin role -> return true")
-    void givenRoleListContainsAdminRole() {
+    @DisplayName("should return true when role list contains admin role")
+    void shouldReturnTrueWhenRoleListContainsAdminRole() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -196,8 +196,8 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given role list without admin role -> return false")
-    void givenRoleListWithoutAdminRole() {
+    @DisplayName("should return false when role list without admin role")
+    void shouldReturnFalseWhenRoleListWithoutAdminRole() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -211,8 +211,8 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given role list with non-admin role id -> return false")
-    void givenRoleListWithNonAdminRoleId() {
+    @DisplayName("should return false when role list with non-admin role id")
+    void shouldReturnFalseWhenRoleListWithNonAdminRoleId() {
       // Given
       UserRole role = new UserRole().setRoleId(Long.MAX_VALUE);
 
@@ -225,12 +225,12 @@ class AdminServiceTest extends SpringBootIntegrationTests {
   }
 
   @Nested
-  @DisplayName("isAdminRole")
-  class IsAdminRole {
+  @DisplayName("when checking if role is admin")
+  class WhenCheckingIfRoleIsAdmin {
 
     @Test
-    @DisplayName("Given initialized admin role id -> return true")
-    void givenInitializedAdminRoleId() {
+    @DisplayName("should return true when initialized admin role id")
+    void shouldReturnTrueWhenInitializedAdminRoleId() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -243,8 +243,8 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given non-admin role id -> return false")
-    void givenNonAdminRoleId() {
+    @DisplayName("should return false when non-admin role id")
+    void shouldReturnFalseWhenNonAdminRoleId() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -258,12 +258,12 @@ class AdminServiceTest extends SpringBootIntegrationTests {
   }
 
   @Nested
-  @DisplayName("isAdminUser")
-  class IsAdminUser {
+  @DisplayName("when checking if user is admin")
+  class WhenCheckingIfUserIsAdmin {
 
     @Test
-    @DisplayName("Given initialized admin user id -> return true")
-    void givenInitializedAdminUserId() {
+    @DisplayName("should return true when initialized admin user id")
+    void shouldReturnTrueWhenInitializedAdminUserId() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -276,8 +276,8 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
 
     @Test
-    @DisplayName("Given non-admin user id -> return false")
-    void givenNonAdminUserId() {
+    @DisplayName("should return false when non-admin user id")
+    void shouldReturnFalseWhenNonAdminUserId() {
       // Given
       when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
       adminService.initAdminData(MILLIS);
@@ -290,23 +290,18 @@ class AdminServiceTest extends SpringBootIntegrationTests {
     }
   }
 
-  @Nested
-  @DisplayName("resetAdminPassword")
-  class ResetAdminPassword {
+  @Test
+  @DisplayName("should throw ApiException USER_NOT_FOUND when missing admin identity")
+  void shouldThrowApiExceptionUserNotFoundWhenMissingAdminIdentity() {
+    // Given
+    ReflectionTestUtils.setField(adminService, "adminUserId", UID_1);
 
-    @Test
-    @DisplayName("Given missing admin identity -> throw ApiException USER_NOT_FOUND")
-    void givenMissingAdminIdentity() {
-      // Given
-      ReflectionTestUtils.setField(adminService, "adminUserId", UID_1);
-
-      // When / Then
-      assertThatThrownBy(
-              () -> ReflectionTestUtils.invokeMethod(adminService, "resetAdminPassword", MILLIS))
-          .isInstanceOf(ApiException.class)
-          .satisfies(
-              error ->
-                  assertThat(((ApiException) error).getCode()).isEqualTo(ErrorCode.USER_NOT_FOUND));
-    }
+    // When / Then
+    assertThatThrownBy(
+            () -> ReflectionTestUtils.invokeMethod(adminService, "resetAdminPassword", MILLIS))
+        .isInstanceOf(ApiException.class)
+        .satisfies(
+            error ->
+                assertThat(((ApiException) error).getCode()).isEqualTo(ErrorCode.USER_NOT_FOUND));
   }
 }

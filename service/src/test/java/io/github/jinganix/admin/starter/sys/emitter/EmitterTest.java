@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,8 +26,9 @@ class EmitterTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given mixed field types -> initialize sorts only abstract emitter lists")
-  void givenMixedFieldTypesOnInitialize() throws IllegalAccessException {
+  @DisplayName("should initialize sorts only abstract emitter lists when mixed field types")
+  void shouldInitializeSortsOnlyAbstractEmitterListsWhenMixedFieldTypes()
+      throws IllegalAccessException {
     // Given
     RecordingOnApiCalled second = new RecordingOnApiCalled(2);
     RecordingOnApiCalled first = new RecordingOnApiCalled(1);
@@ -42,181 +42,146 @@ class EmitterTest extends SpringBootIntegrationTests {
     assertThat(emitter.sortedOrders()).containsExactly(1, 2);
   }
 
-  @Nested
-  @DisplayName("apiCalled")
-  class ApiCalled {
+  @Test
+  @DisplayName("should dispatch in ascending order when ordered emitters")
+  void shouldDispatchInAscendingOrderWhenOrderedEmitters() throws IllegalAccessException {
+    // Given
+    List<String> calls = new ArrayList<>();
+    OrderedApiEmitter second = new OrderedApiEmitter(2, "second", calls);
+    OrderedApiEmitter first = new OrderedApiEmitter(1, "first", calls);
+    Emitter emitter =
+        new Emitter(
+            new ArrayList<>(List.of(second, first)),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>());
+    emitter.initialize();
 
-    @Test
-    @DisplayName("Given ordered emitters -> dispatch in ascending order")
-    void givenOrderedEmitters() throws IllegalAccessException {
-      // Given
-      List<String> calls = new ArrayList<>();
-      OrderedApiEmitter second = new OrderedApiEmitter(2, "second", calls);
-      OrderedApiEmitter first = new OrderedApiEmitter(1, "first", calls);
-      Emitter emitter =
-          new Emitter(
-              new ArrayList<>(List.of(second, first)),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>());
-      emitter.initialize();
+    // When
+    emitter.apiCalled("post", "/api/path");
 
-      // When
-      emitter.apiCalled("post", "/api/path");
-
-      // Then
-      assertThat(calls).containsExactly("first:post:/api/path", "second:post:/api/path");
-    }
-
-    @Test
-    @DisplayName("Given empty emitter list -> do nothing")
-    void givenEmptyEmitterList() {
-      // Given
-      Emitter emitter =
-          new Emitter(
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>());
-
-      // When / Then
-      assertThatCode(() -> emitter.apiCalled("GET", "/any")).doesNotThrowAnyException();
-    }
+    // Then
+    assertThat(calls).containsExactly("first:post:/api/path", "second:post:/api/path");
   }
 
-  @Nested
-  @DisplayName("permissionsCreated")
-  class PermissionsCreated {
+  @Test
+  @DisplayName("should do nothing when empty emitter list")
+  void shouldDoNothingWhenEmptyEmitterList() {
+    // Given
+    Emitter emitter =
+        new Emitter(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>());
 
-    @Test
-    @DisplayName("Given permission emitters -> delegate call")
-    void givenPermissionEmitters() {
-      // Given
-      Permission permission = new Permission().setCode("P");
-      RecordingOnPermissionCreated recorder = new RecordingOnPermissionCreated();
-      Emitter emitter =
-          new Emitter(
-              List.of(), List.of(recorder), List.of(), List.of(), List.of(), List.of(), List.of());
-
-      // When
-      emitter.permissionsCreated(List.of(permission));
-
-      // Then
-      assertThat(recorder.permissions).containsExactly(permission);
-    }
+    // When / Then
+    assertThatCode(() -> emitter.apiCalled("GET", "/any")).doesNotThrowAnyException();
   }
 
-  @Nested
-  @DisplayName("permissionDeleted")
-  class PermissionDeleted {
+  @Test
+  @DisplayName("should delegate call when permission emitters")
+  void shouldDelegateCallWhenPermissionEmitters() {
+    // Given
+    Permission permission = new Permission().setCode("P");
+    RecordingOnPermissionCreated recorder = new RecordingOnPermissionCreated();
+    Emitter emitter =
+        new Emitter(
+            List.of(), List.of(recorder), List.of(), List.of(), List.of(), List.of(), List.of());
 
-    @Test
-    @DisplayName("Given permission deleted emitters -> delegate call")
-    void givenPermissionDeletedEmitters() {
-      // Given
-      RecordingOnPermissionDeleted recorder = new RecordingOnPermissionDeleted();
-      Emitter emitter =
-          new Emitter(
-              List.of(), List.of(), List.of(recorder), List.of(), List.of(), List.of(), List.of());
+    // When
+    emitter.permissionsCreated(List.of(permission));
 
-      // When
-      emitter.permissionDeleted(List.of(1L, 2L));
-
-      // Then
-      assertThat(recorder.ids).containsExactly(1L, 2L);
-    }
+    // Then
+    assertThat(recorder.permissions).containsExactly(permission);
   }
 
-  @Nested
-  @DisplayName("roleCreated")
-  class RoleCreated {
+  @Test
+  @DisplayName("should delegate call when permission deleted emitters")
+  void shouldDelegateCallWhenPermissionDeletedEmitters() {
+    // Given
+    RecordingOnPermissionDeleted recorder = new RecordingOnPermissionDeleted();
+    Emitter emitter =
+        new Emitter(
+            List.of(), List.of(), List.of(recorder), List.of(), List.of(), List.of(), List.of());
 
-    @Test
-    @DisplayName("Given role created emitters -> delegate call")
-    void givenRoleCreatedEmitters() {
-      // Given
-      Role role = new Role().setCode("ROLE");
-      RecordingOnRoleCreated recorder = new RecordingOnRoleCreated();
-      Emitter emitter =
-          new Emitter(
-              List.of(), List.of(), List.of(), List.of(recorder), List.of(), List.of(), List.of());
+    // When
+    emitter.permissionDeleted(List.of(1L, 2L));
 
-      // When
-      emitter.roleCreated(role);
-
-      // Then
-      assertThat(recorder.role).isEqualTo(role);
-    }
+    // Then
+    assertThat(recorder.ids).containsExactly(1L, 2L);
   }
 
-  @Nested
-  @DisplayName("roleDeleted")
-  class RoleDeleted {
+  @Test
+  @DisplayName("should delegate call when role created emitters")
+  void shouldDelegateCallWhenRoleCreatedEmitters() {
+    // Given
+    Role role = new Role().setCode("ROLE");
+    RecordingOnRoleCreated recorder = new RecordingOnRoleCreated();
+    Emitter emitter =
+        new Emitter(
+            List.of(), List.of(), List.of(), List.of(recorder), List.of(), List.of(), List.of());
 
-    @Test
-    @DisplayName("Given role deleted emitters -> delegate call")
-    void givenRoleDeletedEmitters() {
-      // Given
-      RecordingOnRoleDeleted recorder = new RecordingOnRoleDeleted();
-      Emitter emitter =
-          new Emitter(
-              List.of(), List.of(), List.of(), List.of(), List.of(recorder), List.of(), List.of());
+    // When
+    emitter.roleCreated(role);
 
-      // When
-      emitter.roleDeleted(List.of(3L, 4L));
-
-      // Then
-      assertThat(recorder.ids).containsExactly(3L, 4L);
-    }
+    // Then
+    assertThat(recorder.role).isEqualTo(role);
   }
 
-  @Nested
-  @DisplayName("userCreated")
-  class UserCreated {
+  @Test
+  @DisplayName("should delegate call when role deleted emitters")
+  void shouldDelegateCallWhenRoleDeletedEmitters() {
+    // Given
+    RecordingOnRoleDeleted recorder = new RecordingOnRoleDeleted();
+    Emitter emitter =
+        new Emitter(
+            List.of(), List.of(), List.of(), List.of(), List.of(recorder), List.of(), List.of());
 
-    @Test
-    @DisplayName("Given user created emitters -> delegate call")
-    void givenUserCreatedEmitters() {
-      // Given
-      User user = new User().setNickname("tester");
-      RecordingOnUserCreated recorder = new RecordingOnUserCreated();
-      Emitter emitter =
-          new Emitter(
-              List.of(), List.of(), List.of(), List.of(), List.of(), List.of(recorder), List.of());
+    // When
+    emitter.roleDeleted(List.of(3L, 4L));
 
-      // When
-      emitter.userCreated(user);
-
-      // Then
-      assertThat(recorder.user).isEqualTo(user);
-    }
+    // Then
+    assertThat(recorder.ids).containsExactly(3L, 4L);
   }
 
-  @Nested
-  @DisplayName("userDeleted")
-  class UserDeleted {
+  @Test
+  @DisplayName("should delegate call when user created emitters")
+  void shouldDelegateCallWhenUserCreatedEmitters() {
+    // Given
+    User user = new User().setNickname("tester");
+    RecordingOnUserCreated recorder = new RecordingOnUserCreated();
+    Emitter emitter =
+        new Emitter(
+            List.of(), List.of(), List.of(), List.of(), List.of(), List.of(recorder), List.of());
 
-    @Test
-    @DisplayName("Given user deleted emitters -> delegate call")
-    void givenUserDeletedEmitters() {
-      // Given
-      RecordingOnUserDeleted recorder = new RecordingOnUserDeleted();
-      Emitter emitter =
-          new Emitter(
-              List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(recorder));
+    // When
+    emitter.userCreated(user);
 
-      // When
-      emitter.userDeleted(List.of(5L, 6L));
+    // Then
+    assertThat(recorder.user).isEqualTo(user);
+  }
 
-      // Then
-      assertThat(recorder.ids).containsExactly(5L, 6L);
-    }
+  @Test
+  @DisplayName("should delegate call when user deleted emitters")
+  void shouldDelegateCallWhenUserDeletedEmitters() {
+    // Given
+    RecordingOnUserDeleted recorder = new RecordingOnUserDeleted();
+    Emitter emitter =
+        new Emitter(
+            List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), List.of(recorder));
+
+    // When
+    emitter.userDeleted(List.of(5L, 6L));
+
+    // Then
+    assertThat(recorder.ids).containsExactly(5L, 6L);
   }
 
   private static class OrderedApiEmitter extends OnApiCalled {

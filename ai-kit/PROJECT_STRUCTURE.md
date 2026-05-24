@@ -153,13 +153,13 @@ The starter ships as one Gradle `service` module with package boundaries. When t
 - `tests/TestHelper.java`: HTTP/data/assertion helpers.
 - `tests/TestConst.java`: test constants.
 
-Testing rules: [JAVA_TEST_CONVENTIONS.md](JAVA_TEST_CONVENTIONS.md).
+Testing rules: [BACKEND_TEST_CONVENTIONS.md](BACKEND_TEST_CONVENTIONS.md).
 
 ---
 
 ## Typical change mapping
 
 - Business logic: update `service/src/main/...` + matching handler (or service) tests.
-- Request schema/validation: update `proto/...` + controller tests.
+- Request schema/validation: update `proto/...` + API boundary (controller) tests.
 - DB schema: add migration SQL + repository/handler tests.
 - Side effect on platform event: add or update `adm/.../event/*` + tests if non-trivial.

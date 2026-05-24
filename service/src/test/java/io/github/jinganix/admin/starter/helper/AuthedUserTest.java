@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 class AuthedUserTest {
 
   @Test
-  @DisplayName("Given id -> getter and setter should round-trip")
-  void givenIdShouldRoundTrip() {
+  @DisplayName("should getter and setter should round-trip when id")
+  void shouldGetterAndSetterShouldRoundTripWhenId() {
     AuthedUser user = new AuthedUser().setId(100L);
 
     assertThat(user.getId()).isEqualTo(100L);

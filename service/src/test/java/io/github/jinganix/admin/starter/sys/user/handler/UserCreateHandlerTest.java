@@ -42,8 +42,8 @@ class UserCreateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing username -> throw ApiException")
-  void givenExistingUsername() {
+  @DisplayName("should throw ApiException when existing username")
+  void shouldThrowApiExceptionWhenExistingUsername() {
     // Given
     testHelper.insertEntities(user(UID_1), userIdentity(UID_1).setUsername("existing-user"));
     UserCreateRequest request =
@@ -63,8 +63,8 @@ class UserCreateHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given valid request -> create user")
-  void givenValidRequest() {
+  @DisplayName("should create user when valid request")
+  void shouldCreateUserWhenValidRequest() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2);
     UserCreateRequest request =

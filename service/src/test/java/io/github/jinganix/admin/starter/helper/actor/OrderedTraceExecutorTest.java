@@ -14,8 +14,8 @@ import org.redisson.api.RedissonClient;
 class OrderedTraceExecutorTest {
 
   @Test
-  @DisplayName("Given null redisson client -> uses caffeine queue provider")
-  void givenNullRedissonClient() {
+  @DisplayName("should uses caffeine queue provider when null redisson client")
+  void shouldUsesCaffeineQueueProviderWhenNullRedissonClient() {
     TraceExecutor executor = mock(TraceExecutor.class);
     when(executor.getTracer()).thenReturn(mock(Tracer.class));
 
@@ -25,8 +25,8 @@ class OrderedTraceExecutorTest {
   }
 
   @Test
-  @DisplayName("Given redisson client -> uses distributed queue provider")
-  void givenRedissonClient() {
+  @DisplayName("should uses distributed queue provider when redisson client")
+  void shouldUsesDistributedQueueProviderWhenRedissonClient() {
     TraceExecutor executor = mock(TraceExecutor.class);
     when(executor.getTracer()).thenReturn(mock(Tracer.class));
     RedissonClient redissonClient = mock(RedissonClient.class);

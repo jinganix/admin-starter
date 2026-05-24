@@ -15,41 +15,41 @@ class SnowflakeTest {
   private static final long MACHINE_MASK = (1L << 10) - 1;
 
   @Nested
-  @DisplayName("constructor")
-  class Constructor {
+  @DisplayName("when constructing with invalid ids")
+  class WhenConstructingWithInvalidIds {
 
     @Test
-    @DisplayName("Given negative datacenter id -> should throw exception")
-    void givenNegativeDatacenterIdShouldThrowException() {
+    @DisplayName("should should throw exception when negative datacenter id")
+    void shouldShouldThrowExceptionWhenNegativeDatacenterId() {
       assertThrows(IllegalArgumentException.class, () -> new Snowflake(-1L, MACHINE_ID));
     }
 
     @Test
-    @DisplayName("Given datacenter id above max -> should throw exception")
-    void givenDatacenterIdAboveMaxShouldThrowException() {
+    @DisplayName("should should throw exception when datacenter id above max")
+    void shouldShouldThrowExceptionWhenDatacenterIdAboveMax() {
       assertThrows(IllegalArgumentException.class, () -> new Snowflake(1L, MACHINE_ID));
     }
 
     @Test
-    @DisplayName("Given negative machine id -> should throw exception")
-    void givenNegativeMachineIdShouldThrowException() {
+    @DisplayName("should should throw exception when negative machine id")
+    void shouldShouldThrowExceptionWhenNegativeMachineId() {
       assertThrows(IllegalArgumentException.class, () -> new Snowflake(0L, -1L));
     }
 
     @Test
-    @DisplayName("Given machine id above max -> should throw exception")
-    void givenMachineIdAboveMaxShouldThrowException() {
+    @DisplayName("should should throw exception when machine id above max")
+    void shouldShouldThrowExceptionWhenMachineIdAboveMax() {
       assertThrows(IllegalArgumentException.class, () -> new Snowflake(0L, 1024L));
     }
   }
 
   @Nested
-  @DisplayName("nextId")
-  class NextId {
+  @DisplayName("when generating next id")
+  class WhenGeneratingNextId {
 
     @Test
-    @DisplayName("Given first call -> should encode timestamp machine and sequence")
-    void givenFirstCallShouldEncodeTimestampMachineAndSequence() {
+    @DisplayName("should should encode timestamp machine and sequence when first call")
+    void shouldShouldEncodeTimestampMachineAndSequenceWhenFirstCall() {
       long currentMillis = 1_500L;
       FixedTimeSnowflake snowflake = new FixedTimeSnowflake(0L, MACHINE_ID, currentMillis);
 
@@ -61,8 +61,8 @@ class SnowflakeTest {
     }
 
     @Test
-    @DisplayName("Given same millisecond -> should generate distinct ids")
-    void givenSameMillisecondShouldGenerateDistinctIds() {
+    @DisplayName("should should generate distinct ids when same millisecond")
+    void shouldShouldGenerateDistinctIdsWhenSameMillisecond() {
       FixedTimeSnowflake snowflake = new FixedTimeSnowflake(0L, MACHINE_ID, 2_000L);
 
       long firstId = snowflake.nextId();
@@ -73,8 +73,8 @@ class SnowflakeTest {
     }
 
     @Test
-    @DisplayName("Given clock moved backwards -> should throw exception")
-    void givenClockMovedBackwardsShouldThrowException() {
+    @DisplayName("should should throw exception when clock moved backwards")
+    void shouldShouldThrowExceptionWhenClockMovedBackwards() {
       FixedTimeSnowflake snowflake = new FixedTimeSnowflake(0L, MACHINE_ID, 2_000L);
       snowflake.nextId();
       snowflake.setMillis(1_999L);
@@ -83,8 +83,8 @@ class SnowflakeTest {
     }
 
     @Test
-    @DisplayName("Given getNextMillis -> should advance beyond last stamp")
-    void givenGetNextMillisShouldAdvanceBeyondLastStamp() {
+    @DisplayName("should should advance beyond last stamp when getNextMillis")
+    void shouldShouldAdvanceBeyondLastStampWhenGetNextMillis() {
       AdvancingTimeSnowflake snowflake = new AdvancingTimeSnowflake(0L, MACHINE_ID, 1_000L);
       org.springframework.test.util.ReflectionTestUtils.setField(snowflake, "lastStamp", 1_000L);
 
@@ -92,8 +92,8 @@ class SnowflakeTest {
     }
 
     @Test
-    @DisplayName("Given sequence magic -> should advance timestamp")
-    void givenSequenceMagicShouldAdvanceTimestamp() {
+    @DisplayName("should should advance timestamp when sequence magic")
+    void shouldShouldAdvanceTimestampWhenSequenceMagic() {
       AdvancingTimeSnowflake snowflake = new AdvancingTimeSnowflake(0L, MACHINE_ID, 1_021L);
       org.springframework.test.util.ReflectionTestUtils.setField(snowflake, "lastStamp", 1_021L);
       org.springframework.test.util.ReflectionTestUtils.setField(snowflake, "sequence", 4_095L);
@@ -102,20 +102,15 @@ class SnowflakeTest {
     }
   }
 
-  @Nested
-  @DisplayName("getMillis")
-  class GetMillis {
+  @Test
+  @DisplayName("should should return current time millis when call")
+  void shouldShouldReturnCurrentTimeMillisWhenCall() {
+    Snowflake snowflake = new Snowflake(0L, MACHINE_ID);
+    long before = System.currentTimeMillis();
 
-    @Test
-    @DisplayName("Given call -> should return current time millis")
-    void givenCallShouldReturnCurrentTimeMillis() {
-      Snowflake snowflake = new Snowflake(0L, MACHINE_ID);
-      long before = System.currentTimeMillis();
+    long millis = snowflake.getMillis();
 
-      long millis = snowflake.getMillis();
-
-      assertThat(millis).isBetween(before, System.currentTimeMillis());
-    }
+    assertThat(millis).isBetween(before, System.currentTimeMillis());
   }
 
   private static final class FixedTimeSnowflake extends Snowflake {

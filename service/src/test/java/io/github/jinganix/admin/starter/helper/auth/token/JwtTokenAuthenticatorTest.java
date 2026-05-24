@@ -39,31 +39,25 @@ class JwtTokenAuthenticatorTest {
     jwtTokenAuthenticator = new JwtTokenAuthenticator(tokenService, userInactiveChecker);
   }
 
-  @Nested
-  @DisplayName("support")
-  class Support {
+  @Test
+  @DisplayName("should return true when bearer token")
+  void shouldReturnTrueWhenBearerToken() {
+    assertThat(jwtTokenAuthenticator.support(new BearerTokenAuthenticationToken("token"))).isTrue();
+  }
 
-    @Test
-    @DisplayName("Given bearer token -> returns true")
-    void givenBearerToken() {
-      assertThat(jwtTokenAuthenticator.support(new BearerTokenAuthenticationToken("token")))
-          .isTrue();
-    }
-
-    @Test
-    @DisplayName("Given other authentication -> returns false")
-    void givenOtherAuthentication() {
-      assertThat(jwtTokenAuthenticator.support(new TestingAuthenticationToken("a", "b"))).isFalse();
-    }
+  @Test
+  @DisplayName("should return false when other authentication")
+  void shouldReturnFalseWhenOtherAuthentication() {
+    assertThat(jwtTokenAuthenticator.support(new TestingAuthenticationToken("a", "b"))).isFalse();
   }
 
   @Nested
-  @DisplayName("authenticate")
-  class Authenticate {
+  @DisplayName("when authenticating bearer token")
+  class WhenAuthenticatingBearerToken {
 
     @Test
-    @DisplayName("Given invalid token -> throws invalid bearer token")
-    void givenInvalidToken() {
+    @DisplayName("should throws invalid bearer token when invalid token")
+    void shouldThrowsInvalidBearerTokenWhenInvalidToken() {
       when(tokenService.decode("bad-token")).thenReturn(null);
 
       assertThatThrownBy(
@@ -74,8 +68,8 @@ class JwtTokenAuthenticatorTest {
     }
 
     @Test
-    @DisplayName("Given inactive user -> throws disabled exception")
-    void givenInactiveUser() {
+    @DisplayName("should throws disabled exception when inactive user")
+    void shouldThrowsDisabledExceptionWhenInactiveUser() {
       when(tokenService.decode("token")).thenReturn(new AuthUserToken(TestConst.UID_1));
       when(userInactiveChecker.isInactive(TestConst.UID_1)).thenReturn(true);
 
@@ -85,8 +79,8 @@ class JwtTokenAuthenticatorTest {
     }
 
     @Test
-    @DisplayName("Given active user without authority service -> returns token")
-    void givenActiveUserWithoutAuthorityService() {
+    @DisplayName("should return token when active user without authority service")
+    void shouldReturnTokenWhenActiveUserWithoutAuthorityService() {
       AuthUserToken token = new AuthUserToken(TestConst.UID_1);
       when(tokenService.decode("token")).thenReturn(token);
       when(userInactiveChecker.isInactive(TestConst.UID_1)).thenReturn(false);
@@ -100,8 +94,8 @@ class JwtTokenAuthenticatorTest {
     }
 
     @Test
-    @DisplayName("Given active user with authority service -> attaches authorities")
-    void givenActiveUserWithAuthorityService() {
+    @DisplayName("should attaches authorities when active user with authority service")
+    void shouldAttachesAuthoritiesWhenActiveUserWithAuthorityService() {
       AuthUserToken token = new AuthUserToken(TestConst.UID_1);
       AuthorityService authorityService = mock(AuthorityService.class);
       when(tokenService.decode("token")).thenReturn(token);

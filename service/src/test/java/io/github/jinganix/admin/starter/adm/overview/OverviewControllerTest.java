@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,88 +36,82 @@ class OverviewControllerTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("list")
-  class List {
+  @Test
+  @DisplayName("should return BAD_TOKEN when malformed bearer token")
+  void shouldReturnBadTokenWhenMalformedBearerToken() throws Exception {
+    // Given
+    String malformedToken = "malformed-token";
 
-    @Test
-    @DisplayName("Given malformed bearer token -> response BAD_TOKEN")
-    void givenMalformedToken() throws Exception {
-      // Given
-      String malformedToken = "malformed-token";
+    // When / Then
+    testHelper
+        .request(malformedToken, new OverviewListRequest())
+        .andExpect(status().isUnauthorized())
+        .andExpect(testHelper.isError(ErrorCode.BAD_TOKEN));
+    verify(credentialsAuthenticator, never()).authenticate(any());
+  }
 
-      // When / Then
-      testHelper
-          .request(malformedToken, new OverviewListRequest())
-          .andExpect(status().isUnauthorized())
-          .andExpect(testHelper.isError(ErrorCode.BAD_TOKEN));
-      verify(credentialsAuthenticator, never()).authenticate(any());
-    }
+  @Test
+  @DisplayName("should return BAD_TOKEN when expired bearer token")
+  void shouldReturnBadTokenWhenExpiredBearerToken() throws Exception {
+    // Given
+    String token = tokenService.generate(UID_1);
+    when(utilsService.currentTimeMillis())
+        .thenReturn(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(8));
 
-    @Test
-    @DisplayName("Given expired bearer token -> response BAD_TOKEN")
-    void givenExpiredToken() throws Exception {
-      // Given
-      String token = tokenService.generate(UID_1);
-      when(utilsService.currentTimeMillis())
-          .thenReturn(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(8));
+    // When / Then
+    testHelper
+        .request(token, new OverviewListRequest())
+        .andExpect(status().isUnauthorized())
+        .andExpect(testHelper.isError(ErrorCode.BAD_TOKEN));
+    verify(credentialsAuthenticator, never()).authenticate(any());
+  }
 
-      // When / Then
-      testHelper
-          .request(token, new OverviewListRequest())
-          .andExpect(status().isUnauthorized())
-          .andExpect(testHelper.isError(ErrorCode.BAD_TOKEN));
-      verify(credentialsAuthenticator, never()).authenticate(any());
-    }
+  @Test
+  @DisplayName("should return USER_IS_INACTIVE when inactive user token")
+  void shouldReturnUserIsInactiveWhenInactiveUserToken() throws Exception {
+    // Given
+    String token = tokenService.generate(UID_1);
+    doReturn(true).when(userInactiveChecker).isInactive(UID_1);
 
-    @Test
-    @DisplayName("Given inactive user token -> response USER_IS_INACTIVE")
-    void givenInactiveUserToken() throws Exception {
-      // Given
-      String token = tokenService.generate(UID_1);
-      doReturn(true).when(userInactiveChecker).isInactive(UID_1);
+    // When / Then
+    testHelper
+        .request(token, new OverviewListRequest())
+        .andExpect(status().isForbidden())
+        .andExpect(testHelper.isError(ErrorCode.USER_IS_INACTIVE));
+    verify(credentialsAuthenticator, never()).authenticate(any());
+  }
 
-      // When / Then
-      testHelper
-          .request(token, new OverviewListRequest())
-          .andExpect(status().isForbidden())
-          .andExpect(testHelper.isError(ErrorCode.USER_IS_INACTIVE));
-      verify(credentialsAuthenticator, never()).authenticate(any());
-    }
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing ADM_OVERVIEW_LIST permission")
+  void shouldReturnAccessDeniedWhenMissingAdmOverviewListPermission() throws Exception {
+    // Given / When / Then
+    testHelper
+        .request(UID_1, new OverviewListRequest())
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-    @Test
-    @DisplayName("Given missing ADM_OVERVIEW_LIST permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given / When / Then
-      testHelper
-          .request(UID_1, new OverviewListRequest())
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+  @Test
+  @DisplayName("should return overview list when ADM_OVERVIEW_LIST permission")
+  void shouldReturnOverviewListWhenAdmOverviewListPermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.ADM_OVERVIEW_LIST));
+    LocalDate includedMonth = LocalDate.now().withDayOfMonth(2).minusMonths(1).withDayOfMonth(1);
+    Overview overview =
+        (Overview)
+            new Overview()
+                .setId(UID_1)
+                .setMonth(includedMonth)
+                .setCreatedAt(MIN_TIMESTAMP)
+                .setUpdatedAt(MIN_TIMESTAMP);
+    testHelper.insertEntities(overview);
 
-    @Test
-    @DisplayName("Given ADM_OVERVIEW_LIST permission -> response overview list")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.ADM_OVERVIEW_LIST));
-      LocalDate includedMonth = LocalDate.now().withDayOfMonth(2).minusMonths(1).withDayOfMonth(1);
-      Overview overview =
-          (Overview)
-              new Overview()
-                  .setId(UID_1)
-                  .setMonth(includedMonth)
-                  .setCreatedAt(MIN_TIMESTAMP)
-                  .setUpdatedAt(MIN_TIMESTAMP);
-      testHelper.insertEntities(overview);
-
-      // When / Then
-      testHelper
-          .request(UID_1, new OverviewListRequest())
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(
-                  new OverviewListResponse(
-                      java.util.List.of(overviewMapper.overviewPb(overview)))));
-    }
+    // When / Then
+    testHelper
+        .request(UID_1, new OverviewListRequest())
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(
+                new OverviewListResponse(java.util.List.of(overviewMapper.overviewPb(overview)))));
   }
 }

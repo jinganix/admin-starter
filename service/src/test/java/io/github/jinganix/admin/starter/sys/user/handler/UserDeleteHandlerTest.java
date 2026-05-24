@@ -49,8 +49,8 @@ class UserDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found -> throw ApiException")
-  void givenUserNotFound() {
+  @DisplayName("should throw ApiException when user not found")
+  void shouldThrowApiExceptionWhenUserNotFound() {
     // Given
     UserDeleteRequest request = new UserDeleteRequest().setIds(List.of(MISSING_USER_ID));
 
@@ -63,8 +63,8 @@ class UserDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given partially missing users -> throw ApiException")
-  void givenPartiallyMissingUsers() {
+  @DisplayName("should throw ApiException when partially missing users")
+  void shouldThrowApiExceptionWhenPartiallyMissingUsers() {
     // Given
     testHelper.insertEntities(
         user(NORMAL_USER_ID).setNickname("foo"), userIdentity(NORMAL_USER_ID));
@@ -81,8 +81,8 @@ class UserDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given admin user -> throw ApiException")
-  void givenAdminUser() {
+  @DisplayName("should throw ApiException when admin user")
+  void shouldThrowApiExceptionWhenAdminUser() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
     adminService.initAdminData(MILLIS);
@@ -100,8 +100,8 @@ class UserDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given request contains admin user -> keep all users unchanged")
-  void givenRequestContainsAdminUser() {
+  @DisplayName("should keep all users unchanged when request contains admin user")
+  void shouldKeepAllUsersUnchangedWhenRequestContainsAdminUser() {
     // Given
     when(uidGenerator.nextUid()).thenReturn(UID_1, UID_2, UID_3, UID_4);
     adminService.initAdminData(MILLIS);
@@ -122,8 +122,8 @@ class UserDeleteHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given existing user -> delete user")
-  void givenExistingUser() {
+  @DisplayName("should delete user when existing user")
+  void shouldDeleteUserWhenExistingUser() {
     // Given
     testHelper.insertEntities(
         user(NORMAL_USER_ID).setNickname("foo"), userIdentity(NORMAL_USER_ID));

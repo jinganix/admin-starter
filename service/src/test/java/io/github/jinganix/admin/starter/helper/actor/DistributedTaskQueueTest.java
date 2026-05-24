@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import io.github.jinganix.peashooter.queue.ExecutionCountStats;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -40,84 +39,68 @@ class DistributedTaskQueueTest {
     }
   }
 
-  @Nested
-  @DisplayName("tryLock")
-  class TryLock {
+  @Test
+  @DisplayName("should return true when lock acquired")
+  void shouldReturnTrueWhenLockAcquired() throws Exception {
+    RLock lock = mock(RLock.class);
+    RedissonClient redissonClient = mock(RedissonClient.class);
+    when(redissonClient.getFairLock("queue")).thenReturn(lock);
+    when(lock.tryLock(10L, TimeUnit.SECONDS)).thenReturn(true);
+    DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
 
-    @Test
-    @DisplayName("Given lock acquired -> returns true")
-    void givenLockAcquired() throws Exception {
-      RLock lock = mock(RLock.class);
-      RedissonClient redissonClient = mock(RedissonClient.class);
-      when(redissonClient.getFairLock("queue")).thenReturn(lock);
-      when(lock.tryLock(10L, TimeUnit.SECONDS)).thenReturn(true);
-      DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
-
-      assertThat(queue.tryLock(new ExecutionCountStats())).isTrue();
-    }
-
-    @Test
-    @DisplayName("Given interrupted wait -> returns false")
-    void givenInterruptedWait() throws Exception {
-      RLock lock = mock(RLock.class);
-      RedissonClient redissonClient = mock(RedissonClient.class);
-      when(redissonClient.getFairLock("queue")).thenReturn(lock);
-      when(lock.tryLock(anyLong(), any(TimeUnit.class)))
-          .thenThrow(new InterruptedException("test"));
-      DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
-
-      assertThat(queue.tryLock(new ExecutionCountStats())).isFalse();
-    }
+    assertThat(queue.tryLock(new ExecutionCountStats())).isTrue();
   }
 
-  @Nested
-  @DisplayName("shouldYield")
-  class ShouldYield {
+  @Test
+  @DisplayName("should return false when interrupted wait")
+  void shouldReturnFalseWhenInterruptedWait() throws Exception {
+    RLock lock = mock(RLock.class);
+    RedissonClient redissonClient = mock(RedissonClient.class);
+    when(redissonClient.getFairLock("queue")).thenReturn(lock);
+    when(lock.tryLock(anyLong(), any(TimeUnit.class))).thenThrow(new InterruptedException("test"));
+    DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
 
-    @Test
-    @DisplayName("Given tenth execution -> returns true")
-    void givenTenthExecution() {
-      RLock lock = mock(RLock.class);
-      RedissonClient redissonClient = mock(RedissonClient.class);
-      when(redissonClient.getFairLock("queue")).thenReturn(lock);
-      DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
-      ExecutionCountStats stats = new ExecutionCountStats();
-      for (int i = 0; i < 10; i++) {
-        stats.record();
-      }
+    assertThat(queue.tryLock(new ExecutionCountStats())).isFalse();
+  }
 
-      assertThat(queue.shouldYield(stats)).isTrue();
-    }
-
-    @Test
-    @DisplayName("Given non-tenth execution -> returns false")
-    void givenNonTenthExecution() {
-      RLock lock = mock(RLock.class);
-      RedissonClient redissonClient = mock(RedissonClient.class);
-      when(redissonClient.getFairLock("queue")).thenReturn(lock);
-      DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
-      ExecutionCountStats stats = new ExecutionCountStats();
+  @Test
+  @DisplayName("should return true when tenth execution")
+  void shouldReturnTrueWhenTenthExecution() {
+    RLock lock = mock(RLock.class);
+    RedissonClient redissonClient = mock(RedissonClient.class);
+    when(redissonClient.getFairLock("queue")).thenReturn(lock);
+    DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
+    ExecutionCountStats stats = new ExecutionCountStats();
+    for (int i = 0; i < 10; i++) {
       stats.record();
-
-      assertThat(queue.shouldYield(stats)).isFalse();
     }
+
+    assertThat(queue.shouldYield(stats)).isTrue();
   }
 
-  @Nested
-  @DisplayName("unlock")
-  class Unlock {
+  @Test
+  @DisplayName("should return false when non-tenth execution")
+  void shouldReturnFalseWhenNonTenthExecution() {
+    RLock lock = mock(RLock.class);
+    RedissonClient redissonClient = mock(RedissonClient.class);
+    when(redissonClient.getFairLock("queue")).thenReturn(lock);
+    DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
+    ExecutionCountStats stats = new ExecutionCountStats();
+    stats.record();
 
-    @Test
-    @DisplayName("Given locked queue -> force unlocks")
-    void givenLockedQueue() {
-      RLock lock = mock(RLock.class);
-      RedissonClient redissonClient = mock(RedissonClient.class);
-      when(redissonClient.getFairLock("queue")).thenReturn(lock);
-      DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
+    assertThat(queue.shouldYield(stats)).isFalse();
+  }
 
-      queue.unlock();
+  @Test
+  @DisplayName("should force unlocks when locked queue")
+  void shouldForceUnlocksWhenLockedQueue() {
+    RLock lock = mock(RLock.class);
+    RedissonClient redissonClient = mock(RedissonClient.class);
+    when(redissonClient.getFairLock("queue")).thenReturn(lock);
+    DistributedTaskQueue queue = new TestableDistributedTaskQueue(redissonClient, "queue");
 
-      verify(lock).forceUnlock();
-    }
+    queue.unlock();
+
+    verify(lock).forceUnlock();
   }
 }

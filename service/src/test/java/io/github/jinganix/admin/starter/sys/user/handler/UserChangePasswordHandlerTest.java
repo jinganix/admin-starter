@@ -36,8 +36,8 @@ class UserChangePasswordHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given user not found -> throw ApiException")
-  void givenUserNotFound() {
+  @DisplayName("should throw ApiException when user not found")
+  void shouldThrowApiExceptionWhenUserNotFound() {
     // Given
     UserChangePasswordRequest request =
         new UserChangePasswordRequest().setCurrent("password123").setPassword("newpassword1");
@@ -51,8 +51,8 @@ class UserChangePasswordHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given current password mismatch -> throw ApiException")
-  void givenCurrentPasswordMismatch() {
+  @DisplayName("should throw ApiException when current password mismatch")
+  void shouldThrowApiExceptionWhenCurrentPasswordMismatch() {
     // Given
     String currentPassword = "password123";
     testHelper.insertEntities(
@@ -74,8 +74,8 @@ class UserChangePasswordHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given valid current password -> change password")
-  void givenValidCurrentPassword() {
+  @DisplayName("should change password when valid current password")
+  void shouldChangePasswordWhenValidCurrentPassword() {
     // Given
     String currentPassword = "password123";
     String newPassword = "newpassword1";

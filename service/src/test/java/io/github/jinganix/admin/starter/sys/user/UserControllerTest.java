@@ -65,179 +65,176 @@ class UserControllerTest extends SpringBootIntegrationTests {
     testHelper.clearAll();
   }
 
-  @Nested
-  @DisplayName("current")
-  class Current {
+  @Test
+  @DisplayName("should return current user when existing user")
+  void shouldReturnCurrentUserWhenExistingUser() throws Exception {
+    // Given
+    testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
 
-    @Test
-    @DisplayName("Given existing user -> response current user")
-    void givenValidRequest() throws Exception {
-      // Given
-      testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
+    // When / Then
+    testHelper
+        .request(UID_1, new UserCurrentRequest())
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(
+                new UserCurrentResponse()
+                    .setUser(
+                        (UserCurrentPb)
+                            new UserCurrentPb()
+                                .setAuthorities(java.util.List.of(RoleCode.AUTHED_USER.getCode()))
+                                .setId(UID_1)
+                                .setStatus(UserStatus.ACTIVE)
+                                .setNickname("foo")
+                                .setUsername("user-10001")
+                                .setCreatedAt(MIN_TIMESTAMP))));
+  }
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserCurrentRequest())
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(
-                  new UserCurrentResponse()
-                      .setUser(
-                          (UserCurrentPb)
-                              new UserCurrentPb()
-                                  .setAuthorities(java.util.List.of(RoleCode.AUTHED_USER.getCode()))
-                                  .setId(UID_1)
-                                  .setStatus(UserStatus.ACTIVE)
-                                  .setNickname("foo")
-                                  .setUsername("user-10001")
-                                  .setCreatedAt(MIN_TIMESTAMP))));
-    }
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing SYS_USER_LIST permission")
+  void shouldReturnAccessDeniedWhenMissingSysUserListPermission() throws Exception {
+    // Given / When / Then
+    testHelper
+        .request(
+            UID_1,
+            new UserListRequest(
+                new PageablePb().setSort(Map.of("id", SortDirection.desc)), null, null, null))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
+
+  @Test
+  @DisplayName("should return user list when SYS_USER_LIST permission")
+  void shouldReturnUserListWhenSysUserListPermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_LIST));
+    testHelper.insertEntities(
+        user(UID_1).setNickname("foo"),
+        user(UID_2).setNickname("bar"),
+        userIdentity(UID_1),
+        userIdentity(UID_2));
+    UserPb user1 =
+        new UserPb()
+            .setId(UID_1)
+            .setUsername("user-10001")
+            .setNickname("foo")
+            .setStatus(UserStatus.ACTIVE)
+            .setCreatedAt(MIN_TIMESTAMP);
+    UserPb user2 =
+        new UserPb()
+            .setId(UID_2)
+            .setUsername("user-10002")
+            .setNickname("bar")
+            .setStatus(UserStatus.ACTIVE)
+            .setCreatedAt(MIN_TIMESTAMP);
+
+    // When / Then
+    testHelper
+        .request(UID_1, new UserListRequest(new PageablePb(), null, null, null))
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(
+                testHelper
+                    .paging(2, new UserListResponse(java.util.List.of(user1, user2)))
+                    .setPages(1)));
   }
 
   @Nested
-  @DisplayName("list")
-  class List {
-
-    @Test
-    @DisplayName("Given missing SYS_USER_LIST permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given / When / Then
-      testHelper
-          .request(
-              UID_1,
-              new UserListRequest(
-                  new PageablePb().setSort(Map.of("id", SortDirection.desc)), null, null, null))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
-
-    @Test
-    @DisplayName("Given SYS_USER_LIST permission -> response user list")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_LIST));
-      testHelper.insertEntities(
-          user(UID_1).setNickname("foo"),
-          user(UID_2).setNickname("bar"),
-          userIdentity(UID_1),
-          userIdentity(UID_2));
-      UserPb user1 =
-          new UserPb()
-              .setId(UID_1)
-              .setUsername("user-10001")
-              .setNickname("foo")
-              .setStatus(UserStatus.ACTIVE)
-              .setCreatedAt(MIN_TIMESTAMP);
-      UserPb user2 =
-          new UserPb()
-              .setId(UID_2)
-              .setUsername("user-10002")
-              .setNickname("bar")
-              .setStatus(UserStatus.ACTIVE)
-              .setCreatedAt(MIN_TIMESTAMP);
-
-      // When / Then
-      testHelper
-          .request(UID_1, new UserListRequest(new PageablePb(), null, null, null))
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(
-                  testHelper
-                      .paging(2, new UserListResponse(java.util.List.of(user1, user2)))
-                      .setPages(1)));
-    }
-  }
-
-  @Nested
-  @DisplayName("changePassword")
+  @DisplayName("when change password request is invalid")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class ChangePassword {
+  class WhenChangePasswordRequestIsInvalid {
 
     private Stream<InvalidRequestCase<UserChangePasswordRequest>> invalidRequests() {
       return Stream.of(
-          badRequest(new UserChangePasswordRequest(null, null), "current and password are null"),
           badRequest(
-              new UserChangePasswordRequest("12345", "123456"), "current below min length (6)"),
+              new UserChangePasswordRequest(null, null),
+              "should return bad request when current and password are null"),
+          badRequest(
+              new UserChangePasswordRequest("12345", "123456"),
+              "should return bad request when current below min length (6)"),
           badRequest(
               new UserChangePasswordRequest("123456789012345678901", "123456"),
-              "current above max length (20)"),
-          badRequest(new UserChangePasswordRequest("123456", null), "password is null"),
+              "should return bad request when current above max length (20)"),
           badRequest(
-              new UserChangePasswordRequest("123456", "12345"), "password below min length (6)"),
+              new UserChangePasswordRequest("123456", null),
+              "should return bad request when password is null"),
+          badRequest(
+              new UserChangePasswordRequest("123456", "12345"),
+              "should return bad request when password below min length (6)"),
           badRequest(
               new UserChangePasswordRequest("123456", "123456789012345678901"),
-              "password above max length (20)"));
+              "should return bad request when password above max length (20)"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidRequests")
-    void givenInvalidRequest(InvalidRequestCase<UserChangePasswordRequest> testCase)
-        throws Exception {
+    void shouldReturnBadRequestWhenRequestIsInvalid(
+        InvalidRequestCase<UserChangePasswordRequest> testCase) throws Exception {
       // Given / When / Then
       testHelper.expectError(testHelper.request(UID_1, testCase.request()), testCase.errorCode());
     }
+  }
 
-    @Test
-    @DisplayName("Given missing AUTHED_USER role -> response ACCESS_DENIED")
-    void givenMissingRole() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(Set.of());
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing AUTHED_USER role")
+  void shouldReturnAccessDeniedWhenMissingAuthedUserRoleForChangePassword() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(Set.of());
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserChangePasswordRequest("123456", "654321"))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+    // When / Then
+    testHelper
+        .request(UID_1, new UserChangePasswordRequest("123456", "654321"))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-    @Test
-    @DisplayName("Given valid request -> response ok")
-    void givenValidRequest() throws Exception {
-      // Given
-      String password = "password123";
-      testHelper.insertEntities(
-          user(UID_1).setNickname("foo"),
-          userIdentity(UID_1).setPassword(passwordEncoder.encode(password)));
+  @Test
+  @DisplayName("should return ok when valid request")
+  void shouldReturnOkWhenValidChangePasswordRequest() throws Exception {
+    // Given
+    String password = "password123";
+    testHelper.insertEntities(
+        user(UID_1).setNickname("foo"),
+        userIdentity(UID_1).setPassword(passwordEncoder.encode(password)));
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserChangePasswordRequest(password, "newpassword"))
-          .andExpect(status().isOk());
-    }
+    // When / Then
+    testHelper
+        .request(UID_1, new UserChangePasswordRequest(password, "newpassword"))
+        .andExpect(status().isOk());
   }
 
   @Nested
-  @DisplayName("create")
+  @DisplayName("when create request is invalid")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class Create {
+  class WhenCreateRequestIsInvalid {
 
     private Stream<InvalidRequestCase<UserCreateRequest>> invalidRequests() {
       return Stream.of(
-          badRequest(createRequest(null, null, null), "username, password and status are null"),
           badRequest(
-              createRequest("ab", "123456", UserStatus.ACTIVE), "username below min length (3)"),
+              createRequest(null, null, null),
+              "should return bad request when username, password and status are null"),
+          badRequest(
+              createRequest("ab", "123456", UserStatus.ACTIVE),
+              "should return bad request when username below min length (3)"),
           badRequest(
               createRequest("abcdefghijklmnopqrstu", "123456", UserStatus.ACTIVE),
-              "username above max length (20)"),
-          badRequest(createRequest("aaaaaa", null, UserStatus.ACTIVE), "password is null"),
+              "should return bad request when username above max length (20)"),
           badRequest(
-              createRequest("aaaaaa", "12", UserStatus.ACTIVE), "password below min length (3)"),
+              createRequest("aaaaaa", null, UserStatus.ACTIVE),
+              "should return bad request when password is null"),
+          badRequest(
+              createRequest("aaaaaa", "12", UserStatus.ACTIVE),
+              "should return bad request when password below min length (3)"),
           badRequest(
               createRequest("aaaaaa", "123456789012345678901", UserStatus.ACTIVE),
-              "password above max length (20)"),
-          badRequest(createRequest("aaaaaa", "aaaaaa", null), "status is null"));
-    }
-
-    private UserCreateRequest createRequest(String username, String password, UserStatus status) {
-      UserCreateRequest request = new UserCreateRequest();
-      request.setUsername(username);
-      request.setPassword(password);
-      request.setStatus(status);
-      return request;
+              "should return bad request when password above max length (20)"),
+          badRequest(
+              createRequest("aaaaaa", "aaaaaa", null),
+              "should return bad request when status is null"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidRequests")
-    void givenInvalidRequest(InvalidRequestCase<UserCreateRequest> testCase) throws Exception {
+    void shouldReturnBadRequestWhenRequestIsInvalid(InvalidRequestCase<UserCreateRequest> testCase)
+        throws Exception {
       // Given
       when(roleAuthorityService.getApiAuthorities(UID_1))
           .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_CREATE));
@@ -245,49 +242,51 @@ class UserControllerTest extends SpringBootIntegrationTests {
       // When / Then
       testHelper.expectError(testHelper.request(UID_1, testCase.request()), testCase.errorCode());
     }
+  }
 
-    @Test
-    @DisplayName("Given missing SYS_USER_CREATE permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given / When / Then
-      testHelper
-          .request(
-              UID_1,
-              createRequest("newuser", "password", UserStatus.ACTIVE)
-                  .setRoleIds(Collections.emptyList()))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing SYS_USER_CREATE permission")
+  void shouldReturnAccessDeniedWhenMissingSysUserCreatePermission() throws Exception {
+    // Given / When / Then
+    testHelper
+        .request(
+            UID_1,
+            createRequest("newuser", "password", UserStatus.ACTIVE)
+                .setRoleIds(Collections.emptyList()))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-    @Test
-    @DisplayName("Given SYS_USER_CREATE permission -> response ok")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_CREATE));
-      when(uidGenerator.nextUid()).thenReturn(UID_3, UID_3 + 1);
+  @Test
+  @DisplayName("should return ok when SYS_USER_CREATE permission")
+  void shouldReturnOkWhenSysUserCreatePermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_CREATE));
+    when(uidGenerator.nextUid()).thenReturn(UID_3, UID_3 + 1);
 
-      // When / Then
-      testHelper
-          .request(
-              UID_1,
-              createRequest("newuser", "password", UserStatus.ACTIVE)
-                  .setRoleIds(Collections.emptyList()))
-          .andExpect(status().isOk());
-    }
+    // When / Then
+    testHelper
+        .request(
+            UID_1,
+            createRequest("newuser", "password", UserStatus.ACTIVE)
+                .setRoleIds(Collections.emptyList()))
+        .andExpect(status().isOk());
   }
 
   @Nested
-  @DisplayName("delete")
+  @DisplayName("when delete request is invalid")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class Delete {
+  class WhenDeleteRequestIsInvalid {
 
     private Stream<InvalidRequestCase<UserDeleteRequest>> invalidRequests() {
-      return Stream.of(badRequest(new UserDeleteRequest(), "ids is null"));
+      return Stream.of(
+          badRequest(new UserDeleteRequest(), "should return bad request when ids is null"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidRequests")
-    void givenInvalidRequest(InvalidRequestCase<UserDeleteRequest> testCase) throws Exception {
+    void shouldReturnBadRequestWhenRequestIsInvalid(InvalidRequestCase<UserDeleteRequest> testCase)
+        throws Exception {
       // Given
       when(roleAuthorityService.getApiAuthorities(UID_1))
           .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_DELETE));
@@ -295,47 +294,49 @@ class UserControllerTest extends SpringBootIntegrationTests {
       // When / Then
       testHelper.expectError(testHelper.request(UID_1, testCase.request()), testCase.errorCode());
     }
+  }
 
-    @Test
-    @DisplayName("Given missing SYS_USER_DELETE permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing SYS_USER_DELETE permission")
+  void shouldReturnAccessDeniedWhenMissingSysUserDeletePermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserDeleteRequest(java.util.List.of(UID_2)))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+    // When / Then
+    testHelper
+        .request(UID_1, new UserDeleteRequest(java.util.List.of(UID_2)))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-    @Test
-    @DisplayName("Given SYS_USER_DELETE permission -> response ok")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_DELETE));
-      testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
+  @Test
+  @DisplayName("should return ok when SYS_USER_DELETE permission")
+  void shouldReturnOkWhenSysUserDeletePermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_DELETE));
+    testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
 
-      // When / Then
-      testHelper
-          .request(
-              UID_1, (UserDeleteRequest) new UserDeleteRequest().setIds(java.util.List.of(UID_3)))
-          .andExpect(status().isOk());
-    }
+    // When / Then
+    testHelper
+        .request(
+            UID_1, (UserDeleteRequest) new UserDeleteRequest().setIds(java.util.List.of(UID_3)))
+        .andExpect(status().isOk());
   }
 
   @Nested
-  @DisplayName("retrieve")
+  @DisplayName("when retrieve request is invalid")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class Retrieve {
+  class WhenRetrieveRequestIsInvalid {
 
     private Stream<InvalidRequestCase<UserRetrieveRequest>> invalidRequests() {
-      return Stream.of(badRequest(new UserRetrieveRequest(), "id is null"));
+      return Stream.of(
+          badRequest(new UserRetrieveRequest(), "should return bad request when id is null"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidRequests")
-    void givenInvalidRequest(InvalidRequestCase<UserRetrieveRequest> testCase) throws Exception {
+    void shouldReturnBadRequestWhenRequestIsInvalid(
+        InvalidRequestCase<UserRetrieveRequest> testCase) throws Exception {
       // Given
       when(roleAuthorityService.getApiAuthorities(UID_1))
           .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_LIST));
@@ -343,66 +344,63 @@ class UserControllerTest extends SpringBootIntegrationTests {
       // When / Then
       testHelper.expectError(testHelper.request(UID_1, testCase.request()), testCase.errorCode());
     }
+  }
 
-    @Test
-    @DisplayName("Given missing SYS_USER_LIST permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing SYS_USER_LIST permission")
+  void shouldReturnAccessDeniedWhenMissingSysUserListPermissionForRetrieve() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserRetrieveRequest(), java.util.Map.of("id", String.valueOf(UID_3)))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+    // When / Then
+    testHelper
+        .request(UID_1, new UserRetrieveRequest(), java.util.Map.of("id", String.valueOf(UID_3)))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-    @Test
-    @DisplayName("Given SYS_USER_LIST permission -> response user details")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_LIST));
-      testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
+  @Test
+  @DisplayName("should return user details when SYS_USER_LIST permission")
+  void shouldReturnUserDetailsWhenSysUserListPermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_LIST));
+    testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserRetrieveRequest(), java.util.Map.of("id", String.valueOf(UID_3)))
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(
-                  new UserRetrieveResponse()
-                      .setUser(
-                          userDetailsPb(UID_3, "user-10003", "bar", Collections.emptyList()))));
-    }
+    // When / Then
+    testHelper
+        .request(UID_1, new UserRetrieveRequest(), java.util.Map.of("id", String.valueOf(UID_3)))
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(
+                new UserRetrieveResponse()
+                    .setUser(userDetailsPb(UID_3, "user-10003", "bar", Collections.emptyList()))));
   }
 
   @Nested
-  @DisplayName("update")
+  @DisplayName("when update request is invalid")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class Update {
+  class WhenUpdateRequestIsInvalid {
 
     private Stream<InvalidRequestCase<UserUpdateRequest>> invalidRequests() {
       return Stream.of(
-          badRequest(updateRequest(UID_2, null, UserStatus.ACTIVE), "nickname is null"),
           badRequest(
-              updateRequest(UID_2, "ab", UserStatus.ACTIVE), "nickname below min length (3)"),
+              updateRequest(UID_2, null, UserStatus.ACTIVE),
+              "should return bad request when nickname is null"),
+          badRequest(
+              updateRequest(UID_2, "ab", UserStatus.ACTIVE),
+              "should return bad request when nickname below min length (3)"),
           badRequest(
               updateRequest(UID_2, "abcdefghijklmnopqrstu", UserStatus.ACTIVE),
-              "nickname above max length (20)"),
-          badRequest(updateRequest(UID_2, "aaaaaa", null), "status is null"));
-    }
-
-    private UserUpdateRequest updateRequest(Long id, String nickname, UserStatus status) {
-      UserUpdateRequest request = new UserUpdateRequest();
-      request.setId(id);
-      request.setNickname(nickname);
-      request.setStatus(status);
-      return request;
+              "should return bad request when nickname above max length (20)"),
+          badRequest(
+              updateRequest(UID_2, "aaaaaa", null),
+              "should return bad request when status is null"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidRequests")
-    void givenInvalidRequest(InvalidRequestCase<UserUpdateRequest> testCase) throws Exception {
+    void shouldReturnBadRequestWhenRequestIsInvalid(InvalidRequestCase<UserUpdateRequest> testCase)
+        throws Exception {
       // Given
       when(roleAuthorityService.getApiAuthorities(UID_1))
           .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_UPDATE));
@@ -410,136 +408,152 @@ class UserControllerTest extends SpringBootIntegrationTests {
       // When / Then
       testHelper.expectError(testHelper.request(UID_1, testCase.request()), testCase.errorCode());
     }
+  }
 
-    @Test
-    @DisplayName("Given missing SYS_USER_UPDATE permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing SYS_USER_UPDATE permission")
+  void shouldReturnAccessDeniedWhenMissingSysUserUpdatePermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
 
-      // When / Then
-      testHelper
-          .request(
-              UID_1,
-              updateRequest(UID_2, "aaaaaa", UserStatus.ACTIVE).setRoleIds(Collections.emptyList()))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+    // When / Then
+    testHelper
+        .request(
+            UID_1,
+            updateRequest(UID_2, "aaaaaa", UserStatus.ACTIVE).setRoleIds(Collections.emptyList()))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-    @Test
-    @DisplayName("Given SYS_USER_UPDATE permission -> response updated user")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_UPDATE));
-      testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
+  @Test
+  @DisplayName("should return updated user when SYS_USER_UPDATE permission")
+  void shouldReturnUpdatedUserWhenSysUserUpdatePermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_UPDATE));
+    testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
 
-      // When / Then
-      testHelper
-          .request(
-              UID_1,
-              updateRequest(UID_3, "updated", UserStatus.INACTIVE)
-                  .setRoleIds(Collections.emptyList()))
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(new UserUpdateResponse().setUser(expectedUpdatedUser(UID_3))));
-    }
+    // When / Then
+    testHelper
+        .request(
+            UID_1,
+            updateRequest(UID_3, "updated", UserStatus.INACTIVE)
+                .setRoleIds(Collections.emptyList()))
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(new UserUpdateResponse().setUser(expectedUpdatedUser(UID_3))));
   }
 
   @Nested
-  @DisplayName("updateProfile")
+  @DisplayName("when update profile request is invalid")
   @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-  class UpdateProfile {
+  class WhenUpdateProfileRequestIsInvalid {
 
     private Stream<InvalidRequestCase<UserUpdateProfileRequest>> invalidRequests() {
       return Stream.of(
-          badRequest(new UserUpdateProfileRequest(null), "nickname is null"),
-          badRequest(new UserUpdateProfileRequest("ab"), "nickname below min length (3)"),
+          badRequest(
+              new UserUpdateProfileRequest(null),
+              "should return bad request when nickname is null"),
+          badRequest(
+              new UserUpdateProfileRequest("ab"),
+              "should return bad request when nickname below min length (3)"),
           badRequest(
               new UserUpdateProfileRequest("abcdefghijklmnopqrstu"),
-              "nickname above max length (20)"));
+              "should return bad request when nickname above max length (20)"));
     }
 
     @ParameterizedTest
     @MethodSource("invalidRequests")
-    void givenInvalidRequest(InvalidRequestCase<UserUpdateProfileRequest> testCase)
-        throws Exception {
+    void shouldReturnBadRequestWhenRequestIsInvalid(
+        InvalidRequestCase<UserUpdateProfileRequest> testCase) throws Exception {
       // Given / When / Then
       testHelper.expectError(testHelper.request(UID_1, testCase.request()), testCase.errorCode());
     }
-
-    @Test
-    @DisplayName("Given missing AUTHED_USER role -> response ACCESS_DENIED")
-    void givenMissingRole() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(Set.of());
-
-      // When / Then
-      testHelper
-          .request(UID_1, new UserUpdateProfileRequest("updated"))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
-
-    @Test
-    @DisplayName("Given valid request -> response updated user")
-    void givenValidRequest() throws Exception {
-      // Given
-      testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
-
-      // When / Then
-      testHelper
-          .request(UID_1, new UserUpdateProfileRequest("updated"))
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(
-                  new UserUpdateProfileResponse(
-                      new UserPb()
-                          .setId(UID_1)
-                          .setUsername("user-10001")
-                          .setNickname("updated")
-                          .setStatus(UserStatus.ACTIVE)
-                          .setCreatedAt(MIN_TIMESTAMP))));
-    }
   }
 
-  @Nested
-  @DisplayName("updateStatus")
-  class UpdateStatus {
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing AUTHED_USER role")
+  void shouldReturnAccessDeniedWhenMissingAuthedUserRoleForUpdateProfile() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(Set.of());
 
-    @Test
-    @DisplayName("Given missing SYS_USER_STATUS permission -> response ACCESS_DENIED")
-    void givenMissingPermission() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
+    // When / Then
+    testHelper
+        .request(UID_1, new UserUpdateProfileRequest("updated"))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserUpdateStatusRequest(UID_2, UserStatus.INACTIVE))
-          .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
-    }
+  @Test
+  @DisplayName("should return updated user when valid request")
+  void shouldReturnUpdatedUserWhenValidUpdateProfileRequest() throws Exception {
+    // Given
+    testHelper.insertEntities(user(UID_1).setNickname("foo"), userIdentity(UID_1));
 
-    @Test
-    @DisplayName("Given SYS_USER_STATUS permission -> response updated user")
-    void givenValidRequest() throws Exception {
-      // Given
-      when(roleAuthorityService.getApiAuthorities(UID_1))
-          .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_STATUS));
-      testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
+    // When / Then
+    testHelper
+        .request(UID_1, new UserUpdateProfileRequest("updated"))
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(
+                new UserUpdateProfileResponse(
+                    new UserPb()
+                        .setId(UID_1)
+                        .setUsername("user-10001")
+                        .setNickname("updated")
+                        .setStatus(UserStatus.ACTIVE)
+                        .setCreatedAt(MIN_TIMESTAMP))));
+  }
 
-      // When / Then
-      testHelper
-          .request(UID_1, new UserUpdateStatusRequest(UID_3, UserStatus.INACTIVE))
-          .andExpect(status().isOk())
-          .andExpect(
-              testHelper.isResponse(
-                  new UserUpdateStatusResponse(
-                      (UserPb)
-                          new UserPb()
-                              .setId(UID_3)
-                              .setUsername("user-10003")
-                              .setNickname("bar")
-                              .setStatus(UserStatus.INACTIVE)
-                              .setCreatedAt(MIN_TIMESTAMP))));
-    }
+  @Test
+  @DisplayName("should return ACCESS_DENIED when missing SYS_USER_STATUS permission")
+  void shouldReturnAccessDeniedWhenMissingSysUserStatusPermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1)).thenReturn(java.util.Set.of());
+
+    // When / Then
+    testHelper
+        .request(UID_1, new UserUpdateStatusRequest(UID_2, UserStatus.INACTIVE))
+        .andExpect(testHelper.isError(ErrorCode.ACCESS_DENIED));
+  }
+
+  @Test
+  @DisplayName("should return updated user when SYS_USER_STATUS permission")
+  void shouldReturnUpdatedUserWhenSysUserStatusPermission() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_USER_STATUS));
+    testHelper.insertEntities(user(UID_3).setNickname("bar"), userIdentity(UID_3));
+
+    // When / Then
+    testHelper
+        .request(UID_1, new UserUpdateStatusRequest(UID_3, UserStatus.INACTIVE))
+        .andExpect(status().isOk())
+        .andExpect(
+            testHelper.isResponse(
+                new UserUpdateStatusResponse(
+                    (UserPb)
+                        new UserPb()
+                            .setId(UID_3)
+                            .setUsername("user-10003")
+                            .setNickname("bar")
+                            .setStatus(UserStatus.INACTIVE)
+                            .setCreatedAt(MIN_TIMESTAMP))));
+  }
+
+  private static UserCreateRequest createRequest(
+      String username, String password, UserStatus status) {
+    UserCreateRequest request = new UserCreateRequest();
+    request.setUsername(username);
+    request.setPassword(password);
+    request.setStatus(status);
+    return request;
+  }
+
+  private static UserUpdateRequest updateRequest(Long id, String nickname, UserStatus status) {
+    UserUpdateRequest request = new UserUpdateRequest();
+    request.setId(id);
+    request.setNickname(nickname);
+    request.setStatus(status);
+    return request;
   }
 
   private static UserDetailsPb expectedUpdatedUser(long id) {

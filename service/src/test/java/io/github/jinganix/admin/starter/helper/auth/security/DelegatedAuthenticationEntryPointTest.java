@@ -32,12 +32,12 @@ class DelegatedAuthenticationEntryPointTest {
   }
 
   @Nested
-  @DisplayName("commence")
-  class Commence {
+  @DisplayName("when commencing unauthorized response")
+  class WhenCommencingUnauthorizedResponse {
 
     @Test
-    @DisplayName("Given invalid bearer token -> response BAD_TOKEN")
-    void givenInvalidBearerToken() throws Exception {
+    @DisplayName("should return BAD_TOKEN when invalid bearer token")
+    void shouldReturnBadTokenWhenInvalidBearerToken() throws Exception {
       MockHttpServletResponse response = new MockHttpServletResponse();
 
       entryPoint.commence(
@@ -50,8 +50,8 @@ class DelegatedAuthenticationEntryPointTest {
     }
 
     @Test
-    @DisplayName("Given bad credentials -> response BAD_CREDENTIAL")
-    void givenBadCredentials() throws Exception {
+    @DisplayName("should return BAD_CREDENTIAL when bad credentials")
+    void shouldReturnBadCredentialWhenBadCredentials() throws Exception {
       MockHttpServletResponse response = new MockHttpServletResponse();
 
       entryPoint.commence(
@@ -64,8 +64,8 @@ class DelegatedAuthenticationEntryPointTest {
     }
 
     @Test
-    @DisplayName("Given disabled user -> response USER_IS_INACTIVE")
-    void givenDisabledUser() throws Exception {
+    @DisplayName("should return USER_IS_INACTIVE when disabled user")
+    void shouldReturnUserIsInactiveWhenDisabledUser() throws Exception {
       MockHttpServletResponse response = new MockHttpServletResponse();
 
       entryPoint.commence(
@@ -78,8 +78,8 @@ class DelegatedAuthenticationEntryPointTest {
     }
 
     @Test
-    @DisplayName("Given unknown authentication exception -> response PERMISSION_DENIED")
-    void givenUnknownAuthenticationException() throws Exception {
+    @DisplayName("should return PERMISSION_DENIED when unknown authentication exception")
+    void shouldReturnPermissionDeniedWhenUnknownAuthenticationException() throws Exception {
       MockHttpServletResponse response = new MockHttpServletResponse();
 
       entryPoint.commence(

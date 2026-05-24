@@ -43,20 +43,20 @@ class UserIdArgumentResolverTest {
   @interface WrappedUserId {}
 
   @Nested
-  @DisplayName("supportsParameter")
-  class SupportsParameter {
+  @DisplayName("when checking parameter support")
+  class WhenCheckingParameterSupport {
 
     @Test
-    @DisplayName("Given @UserId parameter -> returns true")
-    void givenUserIdParameter() throws NoSuchMethodException {
+    @DisplayName("should return true when @UserId parameter")
+    void shouldReturnTrueWhenUserIdParameter() throws NoSuchMethodException {
       MethodParameter parameter =
           new MethodParameter(SampleController.class.getDeclaredMethod("method", Long.class), 0);
       assertThat(resolver.supportsParameter(parameter)).isTrue();
     }
 
     @Test
-    @DisplayName("Given meta @UserId parameter -> returns true")
-    void givenMetaUserIdParameter() throws NoSuchMethodException {
+    @DisplayName("should return true when meta @UserId parameter")
+    void shouldReturnTrueWhenMetaUserIdParameter() throws NoSuchMethodException {
       MethodParameter parameter =
           new MethodParameter(
               SampleController.class.getDeclaredMethod("wrappedMethod", Long.class), 0);
@@ -65,8 +65,8 @@ class UserIdArgumentResolverTest {
     }
 
     @Test
-    @DisplayName("Given plain parameter -> returns false")
-    void givenPlainParameter() throws NoSuchMethodException {
+    @DisplayName("should return false when plain parameter")
+    void shouldReturnFalseWhenPlainParameter() throws NoSuchMethodException {
       MethodParameter parameter =
           new MethodParameter(
               SampleController.class.getDeclaredMethod("plainMethod", Long.class), 0);
@@ -75,8 +75,8 @@ class UserIdArgumentResolverTest {
     }
 
     @Test
-    @DisplayName("Given getattr with other annotation -> returns false")
-    void givenOtherAnnotation() throws NoSuchMethodException {
+    @DisplayName("should return false when getattr with other annotation")
+    void shouldReturnFalseWhenGetattrWithOtherAnnotation() throws NoSuchMethodException {
       MethodParameter parameter =
           new MethodParameter(
               SampleController.class.getDeclaredMethod("requestParamMethod", Long.class), 0);
@@ -86,12 +86,12 @@ class UserIdArgumentResolverTest {
   }
 
   @Nested
-  @DisplayName("resolveArgument")
-  class ResolveArgument {
+  @DisplayName("when resolving user id argument")
+  class WhenResolvingUserIdArgument {
 
     @Test
-    @DisplayName("Given AuthUserToken principal -> returns user id")
-    void givenAuthUserTokenPrincipal() throws Exception {
+    @DisplayName("should return user id when AuthUserToken principal")
+    void shouldReturnUserIdWhenAuthUserTokenPrincipal() throws Exception {
       // Given
       MethodParameter parameter =
           new MethodParameter(SampleController.class.getDeclaredMethod("method", Long.class), 0);
@@ -107,8 +107,8 @@ class UserIdArgumentResolverTest {
     }
 
     @Test
-    @DisplayName("Given missing principal -> returns null")
-    void givenMissingPrincipal() throws Exception {
+    @DisplayName("should return null when missing principal")
+    void shouldReturnNullWhenMissingPrincipal() throws Exception {
       // Given
       MethodParameter parameter =
           new MethodParameter(SampleController.class.getDeclaredMethod("method", Long.class), 0);
@@ -122,8 +122,8 @@ class UserIdArgumentResolverTest {
     }
 
     @Test
-    @DisplayName("Given meta @UserId parameter -> returns user id")
-    void givenMetaUserIdParameter() throws Exception {
+    @DisplayName("should return user id when meta @UserId parameter")
+    void shouldReturnUserIdWhenMetaUserIdParameter() throws Exception {
       MethodParameter parameter =
           new MethodParameter(
               SampleController.class.getDeclaredMethod("wrappedMethod", Long.class), 0);
@@ -137,8 +137,8 @@ class UserIdArgumentResolverTest {
     }
 
     @Test
-    @DisplayName("Given non-servlet request -> throws illegal state")
-    void givenNonServletRequest() throws Exception {
+    @DisplayName("should throws illegal state when non-servlet request")
+    void shouldThrowsIllegalStateWhenNonServletRequest() throws Exception {
       // Given
       MethodParameter parameter =
           new MethodParameter(SampleController.class.getDeclaredMethod("method", Long.class), 0);

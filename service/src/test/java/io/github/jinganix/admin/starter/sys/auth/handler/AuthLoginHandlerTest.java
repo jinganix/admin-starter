@@ -36,8 +36,8 @@ class AuthLoginHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given username not found -> throw UsernameNotFoundException")
-  void givenUsernameNotFound() {
+  @DisplayName("should throw UsernameNotFoundException when username not found")
+  void shouldThrowUsernameNotFoundExceptionWhenUsernameNotFound() {
     // Given
     AuthLoginRequest request = new AuthLoginRequest("nonexistent-user", "password123");
 
@@ -48,8 +48,8 @@ class AuthLoginHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given valid credentials -> return token response")
-  void givenValidCredentials() {
+  @DisplayName("should return token response when valid credentials")
+  void shouldReturnTokenResponseWhenValidCredentials() {
     // Given
     String username = "test-user";
     String password = "password123";

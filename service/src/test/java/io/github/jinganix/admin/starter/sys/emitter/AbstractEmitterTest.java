@@ -25,8 +25,8 @@ class AbstractEmitterTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given base abstract emitter -> default methods are no-op")
-  void givenDefaultEmitterMethods() {
+  @DisplayName("should default methods are no-op when base abstract emitter")
+  void shouldDefaultMethodsAreNoOpWhenBaseAbstractEmitter() {
     // Given
     AbstractEmitter emitter = new AbstractEmitter() {};
     Role role = new Role().setCode("ROLE");

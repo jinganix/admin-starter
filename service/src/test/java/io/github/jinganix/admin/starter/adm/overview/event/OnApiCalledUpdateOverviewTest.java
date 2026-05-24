@@ -22,28 +22,28 @@ class OnApiCalledUpdateOverviewTest {
   @InjectMocks private OnApiCalledUpdateOverview onApiCalledUpdateOverview;
 
   @Nested
-  @DisplayName("apiCalled")
-  class ApiCalled {
+  @DisplayName("when api is called")
+  class WhenApiIsCalled {
 
     @Test
-    @DisplayName("Given GET method -> increments api get counter")
-    void givenGetMethod() {
+    @DisplayName("should increments api get counter when GET method")
+    void shouldIncrementsApiGetCounterWhenGetMethod() {
       onApiCalledUpdateOverview.apiCalled("GET", "/adm/overview");
 
       verify(overviewRepository).incrementApiGet(LocalDate.now().withDayOfMonth(1), 1);
     }
 
     @Test
-    @DisplayName("Given POST method -> increments api post counter")
-    void givenPostMethod() {
+    @DisplayName("should increments api post counter when POST method")
+    void shouldIncrementsApiPostCounterWhenPostMethod() {
       onApiCalledUpdateOverview.apiCalled("POST", "/sys/auth/token");
 
       verify(overviewRepository).incrementApiPost(LocalDate.now().withDayOfMonth(1), 1);
     }
 
     @Test
-    @DisplayName("Given other method -> does nothing")
-    void givenOtherMethod() {
+    @DisplayName("should does nothing when other method")
+    void shouldDoesNothingWhenOtherMethod() {
       onApiCalledUpdateOverview.apiCalled("PUT", "/sys/user");
 
       assertThat(onApiCalledUpdateOverview).isNotNull();

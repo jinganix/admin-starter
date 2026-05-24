@@ -29,8 +29,8 @@ class RoleOptionsHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given only inactive roles -> return empty options")
-  void givenOnlyInactiveRoles() {
+  @DisplayName("should return empty options when only inactive roles")
+  void shouldReturnEmptyOptionsWhenOnlyInactiveRoles() {
     // Given
     testHelper.insertEntities(role(UID_1).setStatus(RoleStatus.INACTIVE));
 
@@ -42,8 +42,8 @@ class RoleOptionsHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given active role -> return role option")
-  void givenActiveRole() {
+  @DisplayName("should return role option when active role")
+  void shouldReturnRoleOptionWhenActiveRole() {
     // Given
     testHelper.insertEntities(role(UID_1));
 

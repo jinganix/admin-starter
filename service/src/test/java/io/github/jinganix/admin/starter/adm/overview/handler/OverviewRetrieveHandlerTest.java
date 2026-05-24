@@ -33,8 +33,8 @@ class OverviewRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given no overviews -> return empty list")
-  void givenNoOverviews() {
+  @DisplayName("should return empty list when no overviews")
+  void shouldReturnEmptyListWhenNoOverviews() {
     // Given / When
     OverviewListResponse response = overviewRetrieveHandler.handle();
 
@@ -45,8 +45,8 @@ class OverviewRetrieveHandlerTest extends SpringBootIntegrationTests {
   }
 
   @Test
-  @DisplayName("Given overviews before cutoff -> return only eligible records")
-  void givenOverviewsBeforeCutoff() {
+  @DisplayName("should return only eligible records when overviews before cutoff")
+  void shouldReturnOnlyEligibleRecordsWhenOverviewsBeforeCutoff() {
     // Given
     LocalDate cutoff = LocalDate.now().withDayOfMonth(2);
     LocalDate includedMonth = cutoff.minusMonths(1).withDayOfMonth(1);
