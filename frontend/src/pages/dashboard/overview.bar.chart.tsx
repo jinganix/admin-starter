@@ -24,7 +24,7 @@ export const OverviewBarChart: FC<Props> = ({ className, chartData }) => {
         <CardTitle>{t(chartData.title)}</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={config}>
+        <ChartContainer className="w-full" config={config}>
           <BarChart accessibilityLayer data={chartData.records}>
             <CartesianGrid vertical={false} />
             <XAxis
