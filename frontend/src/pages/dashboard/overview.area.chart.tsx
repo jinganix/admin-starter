@@ -30,7 +30,7 @@ export const OverviewAreaChart: FC<Props> = ({ className, chartData }) => {
         <CardTitle>{t(chartData.title)}</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={config}>
+        <ChartContainer className="w-full" config={config}>
           <AreaChart accessibilityLayer data={chartData.records} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
             <XAxis
