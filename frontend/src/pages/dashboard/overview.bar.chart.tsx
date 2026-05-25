@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartData } from "@helpers/chart.data.ts";
+import { ChartData, formatMonthTick } from "@helpers/chart.data.ts";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
@@ -32,7 +32,7 @@ export const OverviewBarChart: FC<Props> = ({ className, chartData }) => {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={formatMonthTick}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
             {Object.entries(config).map(([key]) => {

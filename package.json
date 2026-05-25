@@ -28,7 +28,7 @@
         [
           "deps",
           "frontend",
-          "lib",
+          "proto",
           "service"
         ]
       ]

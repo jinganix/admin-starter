@@ -27,7 +27,7 @@ export const ThemePalette: FC = () => {
           variant="ghost"
           size="icon"
           className="ml-auto rounded-[0.5rem]"
-          onClick={() => resetConfig}
+          onClick={() => resetConfig()}
         >
           <RepeatIcon />
         </Button>
