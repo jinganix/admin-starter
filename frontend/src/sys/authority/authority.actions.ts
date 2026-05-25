@@ -21,7 +21,7 @@ export class AuthorityActions {
         description: "",
         name: `authority${replace(x, /\//g, ".")}`,
         status: PermissionStatus.ACTIVE,
-        type: x.endsWith(".") ? PermissionType.GROUP : PermissionType.UI,
+        type: x.endsWith("/") ? PermissionType.GROUP : PermissionType.UI,
       };
     });
     const res = await container

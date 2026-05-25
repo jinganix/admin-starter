@@ -167,6 +167,16 @@ public class TestHelper {
             .content(WebpbUtils.serialize(message)));
   }
 
+  public ResultActions requestRawJson(Long userId, String method, String path, String content)
+      throws Exception {
+    String token = tokenService.generate(userId);
+    return mockMvc.perform(
+        MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path)
+            .header("Authorization", "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content));
+  }
+
   public ResultActions request(Long userId, WebpbMessage message, Map<String, String> queryParams)
       throws Exception {
     HttpMethod method = HttpMethod.valueOf(message.webpbMeta().getMethod());

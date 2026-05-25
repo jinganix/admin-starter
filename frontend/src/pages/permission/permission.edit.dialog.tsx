@@ -49,7 +49,7 @@ export function PermissionEditDialog({ permission, open, onOpenChange }: Props):
   };
 
   const formSchema = z.object({
-    code: z.string().min(3, t("role.edit.code.min")).max(20, t("role.edit.code.max")),
+    code: z.string().min(3, t("role.edit.code.min")).max(50, t("role.edit.code.max")),
     description: z.string().optional(),
     name: z.string().min(3, t("role.edit.name.min")).max(40, t("role.edit.name.max")),
     status: z.nativeEnum(PermissionStatus),

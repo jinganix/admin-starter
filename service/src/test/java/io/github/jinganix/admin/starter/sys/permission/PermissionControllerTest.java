@@ -11,6 +11,7 @@ import static io.github.jinganix.admin.starter.tests.InvalidRequestCase.badReque
 import static io.github.jinganix.admin.starter.tests.TestConst.UID_1;
 import static io.github.jinganix.admin.starter.tests.TestConst.UID_3;
 import static io.github.jinganix.admin.starter.tests.TestConst.UID_4;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +40,8 @@ import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUpdateSta
 import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUpdateStatusResponse;
 import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUploadRequest;
 import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUploadResponse;
+import io.github.jinganix.admin.starter.sys.permission.model.Permission;
+import io.github.jinganix.admin.starter.sys.permission.repository.PermissionRepository;
 import io.github.jinganix.admin.starter.tests.InvalidRequestCase;
 import io.github.jinganix.admin.starter.tests.SpringBootIntegrationTests;
 import io.github.jinganix.admin.starter.tests.TestHelper;
@@ -57,6 +60,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 class PermissionControllerTest extends SpringBootIntegrationTests {
 
   @Autowired TestHelper testHelper;
+
+  @Autowired PermissionRepository permissionRepository;
 
   @BeforeEach
   void setup() {
@@ -112,10 +117,10 @@ class PermissionControllerTest extends SpringBootIntegrationTests {
               (PermissionCreateRequest)
                   new PermissionCreateRequest()
                       .setName(NAME)
-                      .setCode("a".repeat(21))
+                      .setCode("a".repeat(51))
                       .setType(PermissionType.API)
                       .setStatus(PermissionStatus.ACTIVE),
-              "should return bad request when code above max length (20)"),
+              "should return bad request when code above max length (50)"),
           badRequest(
               (PermissionCreateRequest)
                   new PermissionCreateRequest()
@@ -389,8 +394,8 @@ class PermissionControllerTest extends SpringBootIntegrationTests {
               (PermissionUpdateRequest) updateRequest(UID_3).setCode("ab"),
               "should return bad request when code below min length (3)"),
           badRequest(
-              (PermissionUpdateRequest) updateRequest(UID_3).setCode("a".repeat(21)),
-              "should return bad request when code above max length (20)"),
+              (PermissionUpdateRequest) updateRequest(UID_3).setCode("a".repeat(51)),
+              "should return bad request when code above max length (50)"),
           badRequest(
               (PermissionUpdateRequest) updateRequest(UID_3).setType(null),
               "should return bad request when type is null"),
@@ -494,6 +499,52 @@ class PermissionControllerTest extends SpringBootIntegrationTests {
     testHelper
         .request(
             UID_1, new PermissionUploadRequest(java.util.List.of(editPb().setCode("upload-code"))))
+        .andExpect(status().isOk())
+        .andExpect(testHelper.isResponse(new PermissionUploadResponse()));
+  }
+
+  @Test
+  @DisplayName("should persist permission type when upload json uses webpb aliases")
+  void shouldPersistPermissionTypeWhenUploadJsonUsesWebpbAliases() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_PERMISSION_UPLOAD));
+    when(uidGenerator.nextUid()).thenReturn(UID_3);
+
+    // When
+    testHelper
+        .requestRawJson(
+            UID_1,
+            "POST",
+            "/adm/sys/permission/upload",
+            """
+            {"a":[{"a":"authority.menu.","b":"/menu/","c":0,"d":"","e":1}]}
+            """)
+        .andExpect(status().isOk());
+
+    // Then
+    Permission permission = permissionRepository.findById(UID_3);
+    assertThat(permission.getType())
+        .isEqualTo(io.github.jinganix.admin.starter.sys.permission.model.PermissionType.GROUP);
+  }
+
+  @Test
+  @DisplayName("should return uploaded when ui permission codes exceed legacy max length")
+  void shouldReturnUploadedWhenUiPermissionCodesExceedLegacyMaxLength() throws Exception {
+    // Given
+    when(roleAuthorityService.getApiAuthorities(UID_1))
+        .thenReturn(PermissionUtils.permissions(Authority.SYS_PERMISSION_UPLOAD));
+    when(uidGenerator.nextUid()).thenReturn(UID_3, UID_4);
+
+    // When / Then
+    testHelper
+        .requestRawJson(
+            UID_1,
+            "POST",
+            "/adm/sys/permission/upload",
+            """
+            {"a":[{"a":"authority.menu.system.permissions","b":"/menu/system/permissions","c":2,"d":"","e":1},{"a":"authority.button.addPermission","b":"/button/addPermission","c":2,"d":"","e":1}]}
+            """)
         .andExpect(status().isOk())
         .andExpect(testHelper.isResponse(new PermissionUploadResponse()));
   }

@@ -50,6 +50,8 @@ class PermissionUploadHandlerTest extends SpringBootIntegrationTests {
     Permission permission = permissionRepository.findById(UID_3);
     assertThat(permission.getCode()).isEqualTo("upload-code");
     assertThat(permission.getName()).isEqualTo("upload-name");
+    assertThat(permission.getType())
+        .isEqualTo(io.github.jinganix.admin.starter.sys.permission.model.PermissionType.API);
   }
 
   @Test

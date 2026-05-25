@@ -18,20 +18,32 @@ public class EnumValuesMap {
     Map<Class<?>, Map<Object, Enumeration<?>>> valuesMap = new HashMap<>();
     for (Class<?> clazz : ReflectionUtils.findAllClasses("io.github.jinganix.admin.starter")) {
       if (Enumeration.class.isAssignableFrom(clazz)) {
-        Map<Object, Enumeration<?>> valueMap = new HashMap<>();
-        Class<Enumeration<?>> enumClass = (Class<Enumeration<?>>) clazz;
-        for (Enumeration<?> value : enumClass.getEnumConstants()) {
-          valueMap.put(value.getValue(), value);
-          valueMap.put(String.valueOf(value.getValue()), value);
-          valueMap.put(String.valueOf(value), value);
-        }
-        valuesMap.put(enumClass, valueMap);
+        valuesMap.put(clazz, buildValueMap(clazz));
       }
     }
     return valuesMap;
   }
 
   public static Map<Object, Enumeration<?>> getValueMap(Class<?> clazz) {
-    return valuesMap.get(clazz);
+    Map<Object, Enumeration<?>> map = valuesMap.get(clazz);
+    if (map != null) {
+      return map;
+    }
+    return buildValueMap(clazz);
+  }
+
+  @SuppressWarnings("unchecked")
+  static Map<Object, Enumeration<?>> buildValueMap(Class<?> clazz) {
+    if (!clazz.isEnum() || !Enumeration.class.isAssignableFrom(clazz)) {
+      return null;
+    }
+    Class<? extends Enumeration<?>> enumClass = (Class<? extends Enumeration<?>>) clazz;
+    Map<Object, Enumeration<?>> valueMap = new HashMap<>();
+    for (Enumeration<?> value : enumClass.getEnumConstants()) {
+      valueMap.put(value.getValue(), value);
+      valueMap.put(String.valueOf(value.getValue()), value);
+      valueMap.put(String.valueOf(value), value);
+    }
+    return valueMap;
   }
 }

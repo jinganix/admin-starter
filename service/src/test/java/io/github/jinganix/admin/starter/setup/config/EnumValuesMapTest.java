@@ -21,4 +21,16 @@ class EnumValuesMapTest {
     assertThat(EnumValuesMap.getValueMap(PermissionType.class).get("1"))
         .isEqualTo(PermissionType.API);
   }
+
+  @Test
+  @DisplayName("should should expose proto enumeration value maps when proto enumeration classes")
+  void shouldShouldExposeProtoEnumerationValueMapsWhenProtoEnumerationClasses() {
+    Class<?> protoPermissionType =
+        io.github.jinganix.admin.starter.proto.sys.permission.PermissionType.class;
+
+    assertThat(EnumValuesMap.getValuesMap()).containsKey(protoPermissionType);
+    assertThat(EnumValuesMap.getValueMap(protoPermissionType)).containsKey(2);
+    assertThat(EnumValuesMap.getValueMap(protoPermissionType).get(2))
+        .isEqualTo(io.github.jinganix.admin.starter.proto.sys.permission.PermissionType.UI);
+  }
 }
