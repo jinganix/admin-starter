@@ -3,6 +3,10 @@ import { ChartConfig } from "@/components/shadcn/chart.tsx";
 
 export type ChartConfigProvider = (t: Trans) => ChartConfig;
 
+export function formatMonthTick(value: string): string {
+  return value.slice(0, 3);
+}
+
 export class ChartData<T> {
   title: string;
   xKey: string;

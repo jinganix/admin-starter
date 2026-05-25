@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 export type TreeState = "expanded" | "collapsed" | "partially";
 
-const TreeStateContext = createContext<TreeStateValue>(["partially", () => {}]);
+const TreeStateContext = createContext<TreeStateValue | undefined>(undefined);
 
 type TreeStateProps = {
   children: ReactNode;

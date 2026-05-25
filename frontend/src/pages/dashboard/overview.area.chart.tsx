@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartData } from "@helpers/chart.data.ts";
+import { ChartData, formatMonthTick } from "@helpers/chart.data.ts";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
@@ -38,7 +38,7 @@ export const OverviewAreaChart: FC<Props> = ({ className, chartData }) => {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={formatMonthTick}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
             {Object.entries(config).map(([key]) => {
