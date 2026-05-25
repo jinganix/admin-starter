@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.github.jinganix.admin.starter.proto.sys.permission.PermissionStatus;
+import io.github.jinganix.admin.starter.proto.sys.permission.PermissionUploadRequest;
 import io.github.jinganix.admin.starter.sys.permission.model.PermissionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -84,6 +86,24 @@ class EnumerationDeserializerTest {
     PermissionType result = deserialize("0");
 
     assertThat(result).isEqualTo(PermissionType.GROUP);
+  }
+
+  @Test
+  @DisplayName("should deserialize permission upload request when json uses property aliases")
+  void shouldDeserializePermissionUploadRequestWhenJsonUsesPropertyAliases() throws Exception {
+    PermissionUploadRequest request =
+        jsonMapper.readValue(
+            """
+            {"a":[{"a":"perm-name","b":"perm-code","c":1,"e":1}]}
+            """,
+            PermissionUploadRequest.class);
+
+    assertThat(request.getPermissions()).hasSize(1);
+    assertThat(request.getPermissions().getFirst().getName()).isEqualTo("perm-name");
+    assertThat(request.getPermissions().getFirst().getCode()).isEqualTo("perm-code");
+    assertThat(request.getPermissions().getFirst().getType())
+        .isEqualTo(io.github.jinganix.admin.starter.proto.sys.permission.PermissionType.API);
+    assertThat(request.getPermissions().getFirst().getStatus()).isEqualTo(PermissionStatus.ACTIVE);
   }
 
   private PermissionType deserialize(String json) throws Exception {

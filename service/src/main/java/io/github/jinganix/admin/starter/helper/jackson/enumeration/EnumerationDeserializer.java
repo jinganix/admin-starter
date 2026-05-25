@@ -12,26 +12,47 @@ import tools.jackson.databind.ValueDeserializer;
 
 public class EnumerationDeserializer<E extends Enumeration<?>> extends ValueDeserializer<E> {
 
-  private Map<Object, E> valueMap;
+  private final Map<Object, E> valueMap;
 
-  public EnumerationDeserializer() {}
+  public EnumerationDeserializer() {
+    this.valueMap = null;
+  }
+
+  private EnumerationDeserializer(Map<Object, E> valueMap) {
+    this.valueMap = valueMap;
+  }
 
   @Override
   public E deserialize(JsonParser p, DeserializationContext ctx) throws JacksonException {
+    Map<Object, E> map = resolveValueMap(ctx);
+    if (map == null) {
+      return null;
+    }
     if (p.hasToken(JsonToken.VALUE_STRING)) {
-      return valueMap.get(p.getString());
+      return map.get(p.getString());
     }
     if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-      return valueMap.get(p.getIntValue());
+      return map.get(p.getIntValue());
     }
     return null;
+  }
+
+  @SuppressWarnings("unchecked")
+  private Map<Object, E> resolveValueMap(DeserializationContext ctx) {
+    if (valueMap != null) {
+      return valueMap;
+    }
+    if (ctx.getContextualType() == null) {
+      return null;
+    }
+    Class<E> clazz = (Class<E>) ctx.getContextualType().getRawClass();
+    return (Map<Object, E>) EnumValuesMap.getValueMap(clazz);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public ValueDeserializer<?> createContextual(DeserializationContext ctx, BeanProperty property) {
     Class<E> clazz = (Class<E>) ctx.getContextualType().getRawClass();
-    this.valueMap = (Map<Object, E>) EnumValuesMap.getValueMap(clazz);
-    return this;
+    return new EnumerationDeserializer<>((Map<Object, E>) EnumValuesMap.getValueMap(clazz));
   }
 }
