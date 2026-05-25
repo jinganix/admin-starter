@@ -167,6 +167,14 @@ tasks.check {
   dependsOn(tasks.spotlessCheck)
 }
 
+coveralls {
+  jacocoReportPath = "build/reports/jacoco/test/jacocoTestReport.xml"
+}
+
+tasks.coveralls {
+  dependsOn(tasks.jacocoTestReport)
+}
+
 protobuf {
   protoc {
     artifact = "com.google.protobuf:protoc:${Vers.versionProtobuf}"
