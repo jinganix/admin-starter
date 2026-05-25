@@ -11,8 +11,8 @@
     "preview": "vite preview",
     "proto": "../gradlew :frontend:generateProto",
     "start": "npm run proto && npm run dev",
-    "test": "vitest run",
-    "coverage": "vitest run --coverage"
+    "test": "npm run proto && vitest run",
+    "coverage": "npm run proto && vitest run --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

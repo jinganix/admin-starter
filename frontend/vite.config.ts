@@ -48,6 +48,7 @@ export default defineConfig({
     coverage: {
       exclude: ["src/components/shadcn/**", "src/index.tsx"],
       include: ["src/**"],
+      reporter: ["text", "html", "lcov"],
     },
     environment: "jsdom",
     globals: true,

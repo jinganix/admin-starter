@@ -22,8 +22,9 @@ jobs:
         with:
           configFile: package.json
           failOnWarnings: true
-  build:
-    name: Build
+
+  backend:
+    name: Backend
     needs: [ commitlint ]
     runs-on: ${{ matrix.os }}
     permissions:
@@ -42,14 +43,68 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.jdk }}
 
+      - name: Build backend
+        run: ./gradlew clean build
+
+      - name: Upload backend coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: service/build/reports/jacoco/test/jacocoTestReport.xml
+          format: jacoco
+          flag-name: backend
+          parallel: true
+          base-path: service
+
+  frontend:
+    name: Frontend
+    needs: [ commitlint ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 25
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
 
-      - name: Build backend
-        run: ./gradlew clean build
-
       - name: Build frontend
         working-directory: frontend
-        run: npm ci && npm run test && npm run build
+        run: npm ci && npm run coverage && npm run build
+
+      - name: Upload frontend coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: frontend/coverage/lcov.info
+          format: lcov
+          flag-name: frontend
+          parallel: true
+          base-path: frontend
+
+  coveralls:
+    name: Coveralls
+    needs: [ backend, frontend ]
+    if: always() && needs.backend.result != 'cancelled' && needs.frontend.result != 'cancelled'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finish Coveralls parallel build
+        uses: coverallsapp/github-action@v2
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          carryforward: "backend,frontend"
