@@ -42,6 +42,18 @@ class ReflectionUtilsTest {
   }
 
   @Test
+  @DisplayName("should should load class when boot inf prefixed name")
+  void shouldShouldLoadClassWhenBootInfPrefixedName() {
+    ClassLoader classLoader = ReflectionUtils.class.getClassLoader();
+    String bootInfName = "BOOT-INF.classes." + ReflectionUtils.class.getName();
+
+    assertThat(ReflectionUtils.loadClass(bootInfName, classLoader))
+        .isEqualTo(ReflectionUtils.class);
+    assertThat(ReflectionUtils.normalizeClassName(bootInfName))
+        .isEqualTo(ReflectionUtils.class.getName());
+  }
+
+  @Test
   @DisplayName("should should throw illegal state when missing class name")
   void shouldShouldThrowIllegalStateWhenMissingClassName() {
     assertThatThrownBy(
