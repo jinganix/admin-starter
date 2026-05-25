@@ -26,7 +26,6 @@ import utils.Vers.versionWebpb
 
 plugins {
   id("com.diffplug.spotless")
-  id("com.github.kt3k.coveralls")
   id("com.google.protobuf")
   id("conventions.common")
   id("io.spring.dependency-management")
@@ -165,14 +164,6 @@ spotless {
 
 tasks.check {
   dependsOn(tasks.spotlessCheck)
-}
-
-coveralls {
-  jacocoReportPath = "build/reports/jacoco/test/jacocoTestReport.xml"
-}
-
-tasks.coveralls {
-  dependsOn(tasks.jacocoTestReport)
 }
 
 protobuf {

@@ -12,7 +12,6 @@ object Vers {
   lateinit var versionCaffeine: String
   lateinit var versionCommonsCodec: String
   lateinit var versionCommonsLang3: String
-  lateinit var versionCoverallsGradlePlugin: String
   lateinit var versionDependencyManagementPlugin: String
   lateinit var versionFlyway: String
   lateinit var versionFreemarker: String
