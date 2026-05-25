@@ -34,7 +34,6 @@ for (key in properties.stringPropertyNames()) {
   ext.set(key, properties.getProperty(key))
 }
 
-val versionCoverallsGradlePlugin: String by project
 val versionDependencyManagementPlugin: String by project
 val versionFreemarker: String by project
 val versionGradleVersionsPlugin: String by project
@@ -47,7 +46,6 @@ val versionSpringBootGradlePlugin: String by project
 dependencies {
   implementation("com.diffplug.spotless:spotless-plugin-gradle:${versionSpotlessPluginGradle}")
   implementation("com.github.ben-manes:gradle-versions-plugin:${versionGradleVersionsPlugin}")
-  implementation("com.github.kt3k.coveralls:com.github.kt3k.coveralls.gradle.plugin:${versionCoverallsGradlePlugin}")
   implementation("com.google.protobuf:protobuf-gradle-plugin:${versionProtobufGradlePlugin}")
   implementation("io.spring.gradle:dependency-management-plugin:${versionDependencyManagementPlugin}")
   implementation("org.freemarker:freemarker:${versionFreemarker}")

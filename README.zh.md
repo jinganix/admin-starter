@@ -1,6 +1,6 @@
 [![CI](https://github.com/jinganix/admin-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/jinganix/admin-starter/actions/workflows/ci.yml)
-[![Backend coverage](https://coveralls.io/repos/github/jinganix/admin-starter/badge.svg?branch=master&flag=backend)](https://coveralls.io/github/jinganix/admin-starter?branch=master&flag=backend)
-[![Frontend coverage](https://coveralls.io/repos/github/jinganix/admin-starter/badge.svg?branch=master&flag=frontend)](https://coveralls.io/github/jinganix/admin-starter?branch=master&flag=frontend)
+[![Backend coverage](https://codecov.io/gh/jinganix/admin-starter/flags/backend/graph/badge.svg?branch=master)](https://codecov.io/gh/jinganix/admin-starter/flags/backend)
+[![Frontend coverage](https://codecov.io/gh/jinganix/admin-starter/flags/frontend/graph/badge.svg?branch=master)](https://codecov.io/gh/jinganix/admin-starter/flags/frontend)
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 [English Version](README.md)

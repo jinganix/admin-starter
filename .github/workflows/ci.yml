@@ -46,17 +46,15 @@ jobs:
       - name: Build backend
         run: ./gradlew clean build
 
-      - name: Upload backend coverage to Coveralls
-        uses: coverallsapp/github-action@v2
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Upload backend coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          file: service/build/reports/jacoco/test/jacocoTestReport.xml
-          format: jacoco
-          flag-name: backend
-          parallel: true
-          base-path: service
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: service/build/reports/jacoco/test/jacocoTestReport.xml
+          flags: backend
+          name: backend
+          disable_search: true
+          fail_ci_if_error: false
 
   frontend:
     name: Frontend
@@ -82,29 +80,12 @@ jobs:
         working-directory: frontend
         run: npm ci && npm run coverage && npm run build
 
-      - name: Upload frontend coverage to Coveralls
-        uses: coverallsapp/github-action@v2
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          file: frontend/coverage/lcov.info
-          format: lcov
-          flag-name: frontend
-          parallel: true
-          base-path: frontend
-
-  coveralls:
-    name: Coveralls
-    needs: [ backend, frontend ]
-    if: always() && needs.backend.result != 'cancelled' && needs.frontend.result != 'cancelled'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Finish Coveralls parallel build
-        uses: coverallsapp/github-action@v2
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
-          carryforward: "backend,frontend"
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend
+          disable_search: true
+          fail_ci_if_error: false
