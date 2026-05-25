@@ -33,7 +33,12 @@ describe("AuthorityActions", () => {
       { permissions: Array<{ code: string; type: PermissionType; status: PermissionStatus }> },
     ];
     expect(permissions).toHaveLength(Object.values(Authority).length);
-    expect(permissions.every((p) => p.type === PermissionType.UI)).toBe(true);
+    permissions.forEach((permission) => {
+      const expectedType = permission.code.endsWith("/")
+        ? PermissionType.GROUP
+        : PermissionType.UI;
+      expect(permission.type).toBe(expectedType);
+    });
     expect(permissions.every((p) => p.status === PermissionStatus.ACTIVE)).toBe(true);
   });
 

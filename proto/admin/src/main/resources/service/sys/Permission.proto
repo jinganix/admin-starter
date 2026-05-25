@@ -152,7 +152,7 @@ message PermissionUploadRequest {
     path: "/adm/sys/permission/upload"
   };
 
-  repeated PermissionEditPb permissions = 1;
+  repeated PermissionEditPb permissions = 1 [(opts).java = {annotation: '@Valid'}];
 }
 
 message PermissionUploadResponse {

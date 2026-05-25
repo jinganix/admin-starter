@@ -89,6 +89,22 @@ class EnumerationDeserializerTest {
   }
 
   @Test
+  @DisplayName("should deserialize permission upload request when type is zero")
+  void shouldDeserializePermissionUploadRequestWhenTypeIsZero() throws Exception {
+    PermissionUploadRequest request =
+        jsonMapper.readValue(
+            """
+            {"a":[{"a":"perm-name","b":"perm-code","c":0,"e":1}]}
+            """,
+            PermissionUploadRequest.class);
+
+    assertThat(request.getPermissions()).hasSize(1);
+    assertThat(request.getPermissions().getFirst().getType())
+        .isEqualTo(io.github.jinganix.admin.starter.proto.sys.permission.PermissionType.GROUP);
+    assertThat(request.getPermissions().getFirst().getStatus()).isEqualTo(PermissionStatus.ACTIVE);
+  }
+
+  @Test
   @DisplayName("should deserialize permission upload request when json uses property aliases")
   void shouldDeserializePermissionUploadRequestWhenJsonUsesPropertyAliases() throws Exception {
     PermissionUploadRequest request =
